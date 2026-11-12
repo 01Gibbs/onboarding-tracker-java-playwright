@@ -8,7 +8,6 @@ import dev.upskill.ledger.auth.UserDirectory.LoginResult;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,11 +21,6 @@ public class AuthApi {
     public AuthApi(UserDirectory users, TokenStore tokens) {
         this.users = users;
         this.tokens = tokens;
-    }
-
-    @GetMapping("/api/health")
-    public Map<String, String> health() {
-        return Map.of("status", "UP");
     }
 
     @PostMapping("/api/auth/login")

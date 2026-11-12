@@ -27,13 +27,17 @@ import org.junit.jupiter.api.Test;
 @UsePlaywright
 class FirstTest {
 
+    private static final String BASE_URL = System.getProperty("baseUrl", "http://localhost:8080");
+
     @Test
     void loginPageHasTheExpectedTitle(Page page) {
-        page.navigate("http://localhost:8080/login");
+        page.navigate(BASE_URL + "/login");
         assertThat(page).hasTitle("Sign in · Ledgerline");
     }
 }
 ```
+
+`BASE_URL` is `http://localhost:8080` unless you pass `-DbaseUrl=...`; lesson 04 shows a tidier way.
 
 | Parameter | What you get | Lifetime |
 |-----------|--------------|----------|

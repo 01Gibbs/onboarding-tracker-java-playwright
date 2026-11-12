@@ -49,7 +49,7 @@ public class Account {
     private AccountStatus status = AccountStatus.ACTIVE;
 
     @Column(nullable = false)
-    private Instant openedAt = Instant.now();
+    private Instant openedAt;
 
     @Version
     private long version;
@@ -57,10 +57,11 @@ public class Account {
     protected Account() {
     }
 
-    public Account(Customer customer, AccountType type, String nickname) {
+    public Account(Customer customer, AccountType type, String nickname, Instant openedAt) {
         this.customer = customer;
         this.type = type;
         this.nickname = nickname;
+        this.openedAt = openedAt;
     }
 
     void assignAccountNumber() {

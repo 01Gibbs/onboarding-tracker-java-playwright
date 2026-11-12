@@ -6,3 +6,4 @@ playwright/.auth/
 *.iml
 .vscode/
 .DS_Store
+.claude/worktrees/

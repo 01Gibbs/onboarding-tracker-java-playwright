@@ -7,6 +7,7 @@ import dev.upskill.ledger.customer.Customer;
 import dev.upskill.ledger.customer.CustomerStatus;
 import dev.upskill.ledger.ledger.EntryType;
 import dev.upskill.ledger.ledger.LedgerEntry;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -54,12 +55,14 @@ public final class ApiDtos {
     public record AmountRequest(BigDecimal amount, String description) {
     }
 
-    public record TransferRequest(Long fromAccountId, Long toAccountId, BigDecimal amount, String description) {
+    public record TransferRequest(@NotNull(message = "fromAccountId is required") Long fromAccountId,
+                                  @NotNull(message = "toAccountId is required") Long toAccountId,
+                                  BigDecimal amount, String description) {
     }
 
     public record AccountUpdateRequest(String nickname, AccountStatus status) {
     }
 
-    public record StatusRequest(CustomerStatus status) {
+    public record StatusRequest(@NotNull(message = "Status is required") CustomerStatus status) {
     }
 }

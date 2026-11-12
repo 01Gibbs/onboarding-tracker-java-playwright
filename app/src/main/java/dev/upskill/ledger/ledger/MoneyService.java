@@ -5,6 +5,7 @@ import dev.upskill.ledger.account.AccountService;
 import dev.upskill.ledger.common.BusinessRuleException;
 import dev.upskill.ledger.common.Money;
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Limit;
@@ -16,16 +17,16 @@ import org.springframework.util.StringUtils;
 @Transactional
 public class MoneyService {
 
-    private static final BigDecimal MAX_AMOUNT = new BigDecimal("1000000.00");
-
     private final AccountService accounts;
     private final LedgerEntryRepository entries;
     private final Money money;
+    private final Clock clock;
 
-    public MoneyService(AccountService accounts, LedgerEntryRepository entries, Money money) {
+    public MoneyService(AccountService accounts, LedgerEntryRepository entries, Money money, Clock clock) {
         this.accounts = accounts;
         this.entries = entries;
         this.money = money;
+        this.clock = clock;
     }
 
     @Transactional(readOnly = true)
@@ -39,78 +40,47 @@ public class MoneyService {
         return entries.recent(Limit.of(Math.clamp(limit, 1, 50)));
     }
 
-    /** Applies a validated movement form; returns a confirmation message for the user. */
-    public String apply(Long accountId, MovementForm form) {
-        BigDecimal amount = form.getAmount();
-        return switch (form.getType()) {
-            case DEPOSIT -> {
-                deposit(accountId, amount, form.getDescription());
-                yield "Deposit of " + money.format(amount) + " completed";
-            }
-            case WITHDRAWAL -> {
-                withdraw(accountId, amount, form.getDescription());
-                yield "Withdrawal of " + money.format(amount) + " completed";
-            }
-            case TRANSFER -> {
-                if (form.getToAccountId() == null) {
-                    throw new BusinessRuleException("Choose an account to transfer to", "toAccountId");
-                }
-                Account target = transfer(accountId, form.getToAccountId(), amount, form.getDescription());
-                yield "Transfer of " + money.format(amount) + " to " + target.getDisplayName() + " completed";
-            }
-        };
-    }
-
     public LedgerEntry deposit(Long accountId, BigDecimal amount, String description) {
         Account account = accounts.get(accountId);
-        validate(amount);
+        BigDecimal value = Amount.of(amount).value();
         requireActive(account, null);
-        account.credit(amount);
-        return entries.save(new LedgerEntry(account, EntryType.DEPOSIT, amount,
-                describe(description, "Deposit"), null, null));
+        account.credit(value);
+        return entries.save(new LedgerEntry(account, EntryType.DEPOSIT, value,
+                describe(description, "Deposit"), null, null, clock.instant()));
     }
 
     public LedgerEntry withdraw(Long accountId, BigDecimal amount, String description) {
         Account account = accounts.get(accountId);
-        validate(amount);
+        BigDecimal value = Amount.of(amount).value();
         requireActive(account, null);
-        requireFunds(account, amount);
-        account.debit(amount);
-        return entries.save(new LedgerEntry(account, EntryType.WITHDRAWAL, amount,
-                describe(description, "Withdrawal"), null, null));
+        requireFunds(account, value);
+        account.debit(value);
+        return entries.save(new LedgerEntry(account, EntryType.WITHDRAWAL, value,
+                describe(description, "Withdrawal"), null, null, clock.instant()));
     }
 
     /** Moves money between two accounts atomically. Returns the destination account. */
     public Account transfer(Long fromId, Long toId, BigDecimal amount, String description) {
-        if (fromId.equals(toId)) {
+        if (toId == null) {
+            throw new BusinessRuleException("Choose an account to transfer to", "toAccountId");
+        }
+        if (toId.equals(fromId)) {
             throw new BusinessRuleException("Cannot transfer to the same account", "toAccountId");
         }
         Account from = accounts.get(fromId);
         Account to = accounts.get(toId);
-        validate(amount);
+        BigDecimal value = Amount.of(amount).value();
         requireActive(from, null);
         requireActive(to, "toAccountId");
-        requireFunds(from, amount);
+        requireFunds(from, value);
 
         String transferId = UUID.randomUUID().toString();
         String text = describe(description, "Transfer");
-        from.debit(amount);
-        entries.save(new LedgerEntry(from, EntryType.TRANSFER_OUT, amount, text, to.getAccountNumber(), transferId));
-        to.credit(amount);
-        entries.save(new LedgerEntry(to, EntryType.TRANSFER_IN, amount, text, from.getAccountNumber(), transferId));
+        from.debit(value);
+        entries.save(new LedgerEntry(from, EntryType.TRANSFER_OUT, value, text, to.getAccountNumber(), transferId, clock.instant()));
+        to.credit(value);
+        entries.save(new LedgerEntry(to, EntryType.TRANSFER_IN, value, text, from.getAccountNumber(), transferId, clock.instant()));
         return to;
-    }
-
-    private void validate(BigDecimal amount) {
-        if (amount == null || amount.signum() <= 0) {
-            throw new BusinessRuleException("Amount must be greater than zero", "amount");
-        }
-        if (amount.scale() > 2) {
-            throw new BusinessRuleException("Amount can have at most 2 decimal places", "amount");
-        }
-        if (amount.compareTo(MAX_AMOUNT) > 0) {
-            throw new BusinessRuleException("Amount must not exceed 1,000,000.00", "amount");
-        }
     }
 
     private void requireActive(Account account, String field) {

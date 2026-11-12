@@ -12,8 +12,8 @@ import dev.upskill.ledger.customer.CustomerStatus;
 import dev.upskill.ledger.ledger.MoneyService;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -21,9 +21,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Loads a known set of fictional data on start-up and on POST /api/testing/reset.
  * Identity columns are restarted so references (CUS-0001) and account numbers (10000001) are predictable.
+ * Runs as an ApplicationRunner so seeding finishes before the app reports ready (see HealthApi).
  */
 @Component
-public class DataSeeder {
+public class DataSeeder implements ApplicationRunner {
 
     private final JdbcTemplate jdbc;
     private final EntityManager entityManager;
@@ -42,8 +43,8 @@ public class DataSeeder {
         this.transaction = transaction;
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void seedOnStartup() {
+    @Override
+    public void run(ApplicationArguments args) {
         reset();
     }
 

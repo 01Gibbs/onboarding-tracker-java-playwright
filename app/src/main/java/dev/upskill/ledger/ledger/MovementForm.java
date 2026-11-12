@@ -14,7 +14,7 @@ public class MovementForm {
     private MovementType type = MovementType.DEPOSIT;
 
     @NotNull(message = "Amount is required")
-    @DecimalMin(value = "0.01", message = "Amount must be at least 0.01")
+    @DecimalMin(value = "0", inclusive = false, message = "Amount must be greater than zero")
     @DecimalMax(value = "1000000.00", message = "Amount must not exceed 1,000,000.00")
     @Digits(integer = 7, fraction = 2, message = "Amount can have at most 2 decimal places")
     private BigDecimal amount;

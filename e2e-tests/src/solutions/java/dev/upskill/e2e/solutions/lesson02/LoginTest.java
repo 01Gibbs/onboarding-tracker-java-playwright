@@ -12,7 +12,8 @@ import org.junit.jupiter.api.Test;
 @UsePlaywright
 class LoginTest {
 
-    private static final String BASE_URL = "http://localhost:8080";
+    // -DbaseUrl=... points the tests at another environment (lesson 04 tidies this up).
+    private static final String BASE_URL = System.getProperty("baseUrl", "http://localhost:8080");
 
     @Test
     void tellerCanSignIn(Page page) {

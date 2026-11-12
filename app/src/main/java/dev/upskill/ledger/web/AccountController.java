@@ -7,6 +7,7 @@ import dev.upskill.ledger.account.AccountService;
 import dev.upskill.ledger.account.AccountStatus;
 import dev.upskill.ledger.account.AccountType;
 import dev.upskill.ledger.common.BusinessRuleException;
+import dev.upskill.ledger.common.Money;
 import dev.upskill.ledger.customer.CustomerService;
 import dev.upskill.ledger.customer.CustomerStatus;
 import dev.upskill.ledger.ledger.EntryType;
@@ -32,13 +33,15 @@ public class AccountController {
     private final AccountService accounts;
     private final CustomerService customers;
     private final MoneyService money;
+    private final Money format;
     private final LedgerlineProperties properties;
 
     public AccountController(AccountService accounts, CustomerService customers, MoneyService money,
-                             LedgerlineProperties properties) {
+                             Money format, LedgerlineProperties properties) {
         this.accounts = accounts;
         this.customers = customers;
         this.money = money;
+        this.format = format;
         this.properties = properties;
     }
 
@@ -95,7 +98,7 @@ public class AccountController {
             return detailPage(id, null, model);
         }
         try {
-            redirect.addFlashAttribute("success", money.apply(id, movement));
+            redirect.addFlashAttribute("success", applyMovement(id, movement));
             return "redirect:/accounts/" + id;
         } catch (BusinessRuleException e) {
             Forms.reject(result, e);
@@ -146,6 +149,26 @@ public class AccountController {
         model.addAttribute("customers", customers.search(null, CustomerStatus.ACTIVE));
         model.addAttribute("types", AccountType.values());
         return "accounts/form";
+    }
+
+    /** Moves the money and returns the confirmation the user sees. */
+    private String applyMovement(Long id, MovementForm movement) {
+        String amount = format.format(movement.getAmount());
+        return switch (movement.getType()) {
+            case DEPOSIT -> {
+                money.deposit(id, movement.getAmount(), movement.getDescription());
+                yield "Deposit of " + amount + " completed";
+            }
+            case WITHDRAWAL -> {
+                money.withdraw(id, movement.getAmount(), movement.getDescription());
+                yield "Withdrawal of " + amount + " completed";
+            }
+            case TRANSFER -> {
+                Account target = money.transfer(id, movement.getToAccountId(), movement.getAmount(),
+                        movement.getDescription());
+                yield "Transfer of " + amount + " to " + target.getDisplayName() + " completed";
+            }
+        };
     }
 
     private String detailPage(Long id, EntryType entryType, Model model) {

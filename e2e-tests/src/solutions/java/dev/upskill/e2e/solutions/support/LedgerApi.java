@@ -125,7 +125,10 @@ public class LedgerApi implements AutoCloseable {
         return JsonParser.parseString(response.text()).getAsJsonArray();
     }
 
-    /** True when the app exposes /api/testing/*, which `./mvnw -pl app spring-boot:run` turns on. */
+    /**
+     * True when the app exposes /api/testing/*, which `./mvnw -pl app spring-boot:run` turns on.
+     * It asks by disarming a fault on account 0, which never exists: harmless, and 204 only when test support is on.
+     */
     public boolean testSupportEnabled() {
         return request.delete("/api/testing/faults/overdraft?accountId=0").status() == 204;
     }

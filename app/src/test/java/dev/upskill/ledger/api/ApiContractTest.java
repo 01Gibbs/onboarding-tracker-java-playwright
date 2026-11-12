@@ -4,6 +4,7 @@ import static dev.upskill.ledger.api.ApiTestClient.json;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -112,5 +113,7 @@ class ApiContractTest {
                 .andExpect(jsonPath("$.fieldErrors").isMap());
         api.perform(json(put("/api/testing/faults/overdraft"), "{\"accountId\":1}"))
                 .andExpect(status().isNotFound());
+        api.perform(delete("/api/testing/faults/overdraft?accountId=1")).andExpect(status().isNotFound());
+        api.perform(delete("/api/testing/faults")).andExpect(status().isNotFound());
     }
 }

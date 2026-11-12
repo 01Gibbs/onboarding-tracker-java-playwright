@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import com.google.gson.JsonObject;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.junit.UsePlaywright;
@@ -23,7 +24,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 /** Mission B0: one reusable check that the books balance, proven against faults planted in the app. */
 @UsePlaywright(LedgerlineOptions.class)
@@ -79,45 +80,61 @@ class LedgerInvariantsTest {
         invariants.assertBalanced(from, to);
     }
 
-    @ParameterizedTest(name = "{0} breaks {1}")
-    @CsvSource({
-            "stale-balance-after,   RUNNING_BALANCE",
-            "skip-withdrawal-entry, BALANCE_MATCHES_ENTRIES",
-            "transfer-in-short,     TRANSFER_PAIRING",
-            "unpaired-transfer,     TRANSFER_PAIRING",
-            "overdraft,             NO_NEGATIVE_BALANCE",
-    })
-    void eachPlantedFaultIsCaughtAndNamed(String fault, Invariant broken) {
+    /** The app's planted faults: where each one is armed, the movement it corrupts, and the rule it breaks. */
+    enum PlantedFault {
+        STALE_BALANCE_AFTER("stale-balance-after", Target.SOURCE, Invariant.RUNNING_BALANCE,
+                (teller, from, to) -> teller.deposit(from, "10.00")),
+        SKIP_WITHDRAWAL_ENTRY("skip-withdrawal-entry", Target.SOURCE, Invariant.BALANCE_MATCHES_ENTRIES,
+                (teller, from, to) -> teller.withdraw(from, "10.00", "Lost entry")),
+        TRANSFER_IN_SHORT("transfer-in-short", Target.DESTINATION, Invariant.TRANSFER_PAIRING,
+                (teller, from, to) -> teller.transfer(from, to, "10.00")),
+        UNPAIRED_TRANSFER("unpaired-transfer", Target.DESTINATION, Invariant.TRANSFER_PAIRING,
+                (teller, from, to) -> teller.transfer(from, to, "10.00")),
+        OVERDRAFT("overdraft", Target.SOURCE, Invariant.NO_NEGATIVE_BALANCE,
+                (teller, from, to) -> teller.withdraw(from, "150.00", "Too much"));
+
+        enum Target { SOURCE, DESTINATION }
+
+        interface Movement {
+            void make(LedgerApi teller, long from, long to);
+        }
+
+        final String name;
+        final Target target;
+        final Invariant breaks;
+        final Movement movement;
+
+        PlantedFault(String name, Target target, Invariant breaks, Movement movement) {
+            this.name = name;
+            this.target = target;
+            this.breaks = breaks;
+            this.movement = movement;
+        }
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(PlantedFault.class)
+    void eachPlantedFaultIsCaughtAndNamed(PlantedFault fault) {
         assumeTrue(teller.testSupportEnabled(),
                 "Planted faults need the app's dev profile: start it with ./mvnw -pl app spring-boot:run");
         long from = id(teller.accountWithBalance("100.00"));
         long to = id(teller.accountWithBalance("0"));
 
-        breakTheLedger(fault, from, to);
+        long armedOn = fault.target == PlantedFault.Target.SOURCE ? from : to;
+        teller.plantFault(fault.name, armedOn);
+        try {
+            fault.movement.make(teller, from, to);
+        } finally {
+            teller.clearFault(fault.name, armedOn);
+        }
 
         List<Violation> violations = invariants.check(from, to);
-        assertEquals(Set.of(broken), violations.stream().map(Violation::invariant).collect(toSet()),
-                () -> "Expected only " + broken + " to break, but got " + violations);
+        assertEquals(Set.of(fault.breaks), violations.stream().map(Violation::invariant).collect(toSet()),
+                () -> "Expected only " + fault.breaks + " to break, but got " + violations);
         assertThrows(AssertionError.class, () -> invariants.assertBalanced(from, to));
     }
 
-    /** Arms the fault on the account it targets, makes the one movement it corrupts, then disarms it. */
-    private void breakTheLedger(String fault, long from, long to) {
-        long armedOn = fault.contains("transfer") ? to : from;
-        teller.plantFault(fault, armedOn);
-        try {
-            switch (fault) {
-                case "stale-balance-after" -> teller.deposit(from, "10.00");
-                case "skip-withdrawal-entry" -> teller.withdraw(from, "10.00", "Lost entry");
-                case "overdraft" -> teller.withdraw(from, "150.00", "Too much");
-                default -> teller.transfer(from, to, "10.00");
-            }
-        } finally {
-            teller.clearFault(fault, armedOn);
-        }
-    }
-
-    private static long id(com.google.gson.JsonObject json) {
+    private static long id(JsonObject json) {
         return json.get("id").getAsLong();
     }
 }

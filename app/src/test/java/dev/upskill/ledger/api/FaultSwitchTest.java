@@ -58,16 +58,17 @@ class FaultSwitchTest {
 
     @Test
     void resetClearsFaultsBecauseAccountIdsStartAgain() throws Exception {
-        api.perform(json(put("/api/testing/faults/skip-withdrawal-entry"), "{\"accountId\":1}"))
+        // The seed creates 6 accounts, so after a reset the next new account is always id 7.
+        api.perform(json(put("/api/testing/faults/skip-withdrawal-entry"), "{\"accountId\":7}"))
                 .andExpect(status().isOk());
 
         api.perform(post("/api/testing/reset")).andExpect(status().isOk());
 
-        deposit(1, "10");
-        withdraw(1, "5");
-        api.performAs("teller", get("/api/accounts/1/transactions"))
-                .andExpect(jsonPath("$[0].type").value("WITHDRAWAL"))
-                .andExpect(jsonPath("$[0].id").isNumber());
+        int account = api.newAccount();
+        deposit(account, "10");
+        withdraw(account, "5");
+        api.performAs("teller", get("/api/accounts/" + account + "/transactions"))
+                .andExpect(jsonPath("$", hasSize(2)));
     }
 
     @Test

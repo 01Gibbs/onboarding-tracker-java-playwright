@@ -9,11 +9,11 @@ It has two parts:
    test. It manages customers, their accounts, and deposits, withdrawals and transfers, with real
    business rules, roles, validation, dialogs and asynchronous UI. All data is fictional, in memory,
    and re-seeded on start.
-2. **A progressive course** (`lessons/`) of 15 lessons. Each one builds on the last, from a first test
+2. **A progressive course** (`lessons/`) of 15 lessons, then a banking track of missions (B0 so far). Each one builds on the last, from a first test
    to a parallel, CI-ready suite with page objects, API tests, network mocking and traces, then a
    "fix the broken suite" debugging exercise and a capstone. Every lesson has **starter files**, which
    start nearly complete and fade to nothing, plus a **reference solution** that's kept out of the
-   default build. A **banking track** follows, starting with mission B0.
+   default build.
 
 Nothing needs to be installed except a JDK. The Maven Wrapper downloads Maven, and Playwright
 downloads its own browsers.

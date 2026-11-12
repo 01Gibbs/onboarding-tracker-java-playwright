@@ -1,20 +1,16 @@
 # Mission B0: Ledger invariants
 
 **Goal:** write one reusable check that proves the books balance after any test, then prove the check
-works by switching on bugs planted in the app. It's the first mission of the banking track; every later
-mission ends with this check.
+works by switching on bugs planted in the app. A screen can show the right balance while the system has
+recorded something else; a ledger's rules hold no matter what happened (money is only ever moved, never
+created or lost), so checking them catches whole classes of bugs that no single assertion was written for.
+It's the first mission of the banking track; every later mission ends with this check.
 
 **Time:** about 3 hours
 
 **Docs:** [API testing](https://playwright.dev/java/docs/api-testing) · [JUnit `assertAll`](https://docs.junit.org/5.14.0/user-guide/#writing-tests-assertions) · [Parameterized tests](https://docs.junit.org/5.14.0/user-guide/#writing-tests-parameterized-tests)
 
 Background and sources: [`docs/research/b0-ledger-invariants.md`](../docs/research/b0-ledger-invariants.md).
-
-## Why
-
-A screen can show the right balance while the system has recorded something else. A bank's ledger
-has rules that hold no matter what happened: money is never created or lost, only moved. If a test
-checks those rules after it acts, it catches whole classes of bugs that no single assertion was written for.
 
 This is lesson 13 turned around. There, the app was fine and the **tests** had one fault each. Here, the
 tests must be right, and the **app** gets one fault at a time.
@@ -105,9 +101,11 @@ There are no starter tests: you've done enough lessons to set up a test class yo
 
 - Why an explicit call at the end of a test rather than a JUnit extension that runs after every test?
   (Hint: what does `@AfterEach` close, and how would an extension get a logged-in client?)
-- **Stretch:** the whole bank balances too: the sum of all balances = all deposits − all withdrawals. Why
-  can't that check run while the reference suite runs in parallel, even with `@Isolated`? (Hint: once
-  `transfer-in-short` has run, what happened to the penny, and what would bring it back?)
+- **Stretch: the whole bank (I9).** Across *all* accounts, the sum of balances = all deposits − all
+  withdrawals (transfers net to zero). Write it in its own class marked `@Isolated`, so JUnit runs it while
+  nothing else moves money. It still can't live in the reference suite: once `transfer-in-short` has run,
+  a penny has left the books for good, and only restarting the app brings it back. What does that tell you
+  about checks that span data your test didn't create?
 - `skip-withdrawal-entry` returns `201` with `"id": null`. Should a test have caught that from the
   response alone? What does the invariant check give you that the response check doesn't?
 

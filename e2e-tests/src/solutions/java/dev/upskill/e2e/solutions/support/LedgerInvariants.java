@@ -54,6 +54,32 @@ public final class LedgerInvariants {
         }
     }
 
+    /** One ledger entry, read once from the JSON so the checks below can stay readable. */
+    private record Entry(long id, String type, BigDecimal amount, BigDecimal balanceAfter,
+                         String accountNumber, String counterparty, String transferId) {
+
+        static Entry from(JsonObject json) {
+            return new Entry(json.get("id").getAsLong(), json.get("type").getAsString(),
+                    json.get("amount").getAsBigDecimal(), json.get("balanceAfter").getAsBigDecimal(),
+                    json.get("accountNumber").getAsString(), text(json, "counterpartyAccountNumber"),
+                    text(json, "transferId"));
+        }
+
+        /** Deposits and transfers in add; withdrawals and transfers out subtract. */
+        BigDecimal signedAmount() {
+            return type.equals("DEPOSIT") || type.equals("TRANSFER_IN") ? amount : amount.negate();
+        }
+
+        boolean isTransferLeg() {
+            return transferId != null;
+        }
+
+        private static String text(JsonObject json, String field) {
+            JsonElement value = json.get(field);
+            return value == null || value.isJsonNull() ? null : value.getAsString();
+        }
+    }
+
     private final LedgerApi api;
 
     public LedgerInvariants(LedgerApi auditorApi) {
@@ -69,43 +95,38 @@ public final class LedgerInvariants {
     /** Every broken rule for these accounts, and for the other leg of each of their transfers. */
     public List<Violation> check(long... accountIds) {
         List<Violation> violations = new ArrayList<>();
-        Map<String, List<JsonObject>> entriesByAccountNumber = new LinkedHashMap<>();
-        Set<String> transferIds = new LinkedHashSet<>();
+        Map<String, List<Entry>> entriesByAccount = new LinkedHashMap<>();
 
         for (long id : accountIds) {
             JsonObject account = api.getAccount(id);
-            List<JsonObject> entries = entriesOldestFirst(id);
-            entriesByAccountNumber.put(account.get("accountNumber").getAsString(), entries);
+            List<Entry> entries = entriesOldestFirst(id);
+            entriesByAccount.put(account.get("accountNumber").getAsString(), entries);
             checkAccount(account, entries, violations);
-            entries.stream().filter(LedgerInvariants::isTransferLeg)
-                    .forEach(e -> transferIds.add(e.get("transferId").getAsString()));
         }
-        checkTransfers(transferIds, entriesByAccountNumber, violations);
+        checkTransfers(entriesByAccount, violations);
         return violations;
     }
 
-    private void checkAccount(JsonObject account, List<JsonObject> entries, List<Violation> violations) {
+    private void checkAccount(JsonObject account, List<Entry> entries, List<Violation> violations) {
         String number = account.get("accountNumber").getAsString();
         BigDecimal balance = account.get("balance").getAsBigDecimal();
 
         BigDecimal running = BigDecimal.ZERO;
         boolean chainBroken = false;
-        for (JsonObject entry : entries) {
-            BigDecimal amount = entry.get("amount").getAsBigDecimal();
-            BigDecimal balanceAfter = entry.get("balanceAfter").getAsBigDecimal();
-            running = running.add(signed(entry));
-            if (!chainBroken && balanceAfter.compareTo(running) != 0) {
+        for (Entry entry : entries) {
+            running = running.add(entry.signedAmount());
+            if (!chainBroken && entry.balanceAfter().compareTo(running) != 0) {
                 chainBroken = true; // report the first break only; everything after it is off too
-                violations.add(new Violation(Invariant.RUNNING_BALANCE, number,
-                        "entry " + entry.get("id") + " says " + balanceAfter + " but the running total is " + running));
+                violations.add(new Violation(Invariant.RUNNING_BALANCE, number, "entry " + entry.id() + " says "
+                        + entry.balanceAfter() + " but the running total is " + running));
             }
-            if (balanceAfter.signum() < 0) {
+            if (entry.balanceAfter().signum() < 0) {
                 violations.add(new Violation(Invariant.NO_NEGATIVE_BALANCE, number,
-                        "entry " + entry.get("id") + " left the balance at " + balanceAfter));
+                        "entry " + entry.id() + " left the balance at " + entry.balanceAfter()));
             }
-            if (amount.scale() != 2 || balanceAfter.scale() != 2) {
-                violations.add(new Violation(Invariant.AMOUNTS_IN_PENCE, number,
-                        "entry " + entry.get("id") + " has amount " + amount + ", balanceAfter " + balanceAfter));
+            if (entry.amount().scale() != 2 || entry.balanceAfter().scale() != 2) {
+                violations.add(new Violation(Invariant.AMOUNTS_IN_PENCE, number, "entry " + entry.id()
+                        + " has amount " + entry.amount() + ", balanceAfter " + entry.balanceAfter()));
             }
         }
         if (balance.compareTo(running) != 0) {
@@ -123,35 +144,46 @@ public final class LedgerInvariants {
         }
     }
 
-    /** Each transfer id must have exactly one OUT and one IN leg, for the same amount, naming each other. */
-    private void checkTransfers(Set<String> transferIds, Map<String, List<JsonObject>> entriesByAccountNumber,
-                                List<Violation> violations) {
-        Map<String, Long> idByNumber = null;
-        for (String transferId : transferIds) {
-            List<JsonObject> legs = legs(transferId, entriesByAccountNumber);
-            // The other leg may sit on an account we weren't asked about: fetch that account's entries too.
-            for (JsonObject leg : List.copyOf(legs)) {
-                String other = leg.get("counterpartyAccountNumber").getAsString();
-                if (!entriesByAccountNumber.containsKey(other)) {
-                    idByNumber = idByNumber != null ? idByNumber : accountIdsByNumber();
-                    entriesByAccountNumber.put(other, entriesOldestFirst(idByNumber.get(other)));
-                    legs = legs(transferId, entriesByAccountNumber);
+    /** Each transfer must have exactly one OUT and one IN leg, for the same amount, naming each other. */
+    private void checkTransfers(Map<String, List<Entry>> entriesByAccount, List<Violation> violations) {
+        Set<String> transferIds = new LinkedHashSet<>();
+        Set<String> counterparties = new LinkedHashSet<>();
+        for (List<Entry> entries : entriesByAccount.values()) {
+            for (Entry entry : entries) {
+                if (entry.isTransferLeg()) {
+                    transferIds.add(entry.transferId());
+                    counterparties.add(entry.counterparty());
                 }
             }
-            JsonObject out = only(legs, "TRANSFER_OUT");
-            JsonObject in = only(legs, "TRANSFER_IN");
-            String where = legs.getFirst().get("accountNumber").getAsString();
-            if (legs.size() != 2 || out == null || in == null) {
-                violations.add(new Violation(Invariant.TRANSFER_PAIRING, where,
-                        "transfer " + transferId + " has " + legs.size() + " leg(s): " + types(legs)));
+        }
+        // The other leg may sit on an account we weren't asked about: read those accounts' entries too.
+        counterparties.removeAll(entriesByAccount.keySet());
+        if (!counterparties.isEmpty()) {
+            Map<String, Long> idByNumber = accountIdsByNumber();
+            for (String number : counterparties) {
+                Long id = idByNumber.get(number);
+                entriesByAccount.put(number, id == null ? List.of() : entriesOldestFirst(id));
+            }
+        }
+
+        for (String transferId : transferIds) {
+            List<Entry> legs = entriesByAccount.values().stream().flatMap(List::stream)
+                    .filter(e -> transferId.equals(e.transferId())).toList();
+            List<Entry> outs = legs.stream().filter(l -> l.type().equals("TRANSFER_OUT")).toList();
+            List<Entry> ins = legs.stream().filter(l -> l.type().equals("TRANSFER_IN")).toList();
+            String where = legs.getFirst().accountNumber();
+            if (outs.size() != 1 || ins.size() != 1) {
+                violations.add(new Violation(Invariant.TRANSFER_PAIRING, where, "transfer " + transferId
+                        + " has " + outs.size() + " out and " + ins.size() + " in leg(s)"));
                 continue;
             }
-            if (out.get("amount").getAsBigDecimal().compareTo(in.get("amount").getAsBigDecimal()) != 0) {
-                violations.add(new Violation(Invariant.TRANSFER_PAIRING, where, "transfer " + transferId
-                        + " sent " + out.get("amount") + " but received " + in.get("amount")));
+            Entry out = outs.getFirst();
+            Entry in = ins.getFirst();
+            if (out.amount().compareTo(in.amount()) != 0) {
+                violations.add(new Violation(Invariant.TRANSFER_PAIRING, where,
+                        "transfer " + transferId + " sent " + out.amount() + " but received " + in.amount()));
             }
-            if (!out.get("counterpartyAccountNumber").getAsString().equals(in.get("accountNumber").getAsString())
-                    || !in.get("counterpartyAccountNumber").getAsString().equals(out.get("accountNumber").getAsString())) {
+            if (!out.counterparty().equals(in.accountNumber()) || !in.counterparty().equals(out.accountNumber())) {
                 violations.add(new Violation(Invariant.TRANSFER_PAIRING, where,
                         "transfer " + transferId + " legs don't name each other's accounts"));
             }
@@ -159,46 +191,21 @@ public final class LedgerInvariants {
     }
 
     /** The API lists newest first; the running balance has to be replayed oldest first, by id (not time). */
-    private List<JsonObject> entriesOldestFirst(long accountId) {
-        List<JsonObject> entries = new ArrayList<>();
-        for (JsonElement e : api.transactions(accountId)) {
-            entries.add(e.getAsJsonObject());
+    private List<Entry> entriesOldestFirst(long accountId) {
+        List<Entry> entries = new ArrayList<>();
+        for (JsonElement json : api.transactions(accountId)) {
+            entries.add(Entry.from(json.getAsJsonObject()));
         }
-        entries.sort(Comparator.comparingLong(e -> e.get("id").getAsLong()));
+        entries.sort(Comparator.comparingLong(Entry::id));
         return entries;
     }
 
     private Map<String, Long> accountIdsByNumber() {
         Map<String, Long> ids = new HashMap<>();
-        for (JsonElement a : api.allAccounts()) {
-            ids.put(a.getAsJsonObject().get("accountNumber").getAsString(), a.getAsJsonObject().get("id").getAsLong());
+        for (JsonElement json : api.allAccounts()) {
+            JsonObject account = json.getAsJsonObject();
+            ids.put(account.get("accountNumber").getAsString(), account.get("id").getAsLong());
         }
         return ids;
-    }
-
-    private static List<JsonObject> legs(String transferId, Map<String, List<JsonObject>> entriesByAccountNumber) {
-        return entriesByAccountNumber.values().stream().flatMap(List::stream)
-                .filter(e -> isTransferLeg(e) && e.get("transferId").getAsString().equals(transferId))
-                .toList();
-    }
-
-    private static JsonObject only(List<JsonObject> legs, String type) {
-        List<JsonObject> matching = legs.stream().filter(l -> type.equals(l.get("type").getAsString())).toList();
-        return matching.size() == 1 ? matching.getFirst() : null;
-    }
-
-    private static List<String> types(List<JsonObject> legs) {
-        return legs.stream().map(l -> l.get("type").getAsString()).toList();
-    }
-
-    private static boolean isTransferLeg(JsonObject entry) {
-        return entry.has("transferId") && !entry.get("transferId").isJsonNull();
-    }
-
-    /** Deposits and transfers in add; withdrawals and transfers out subtract. */
-    private static BigDecimal signed(JsonObject entry) {
-        BigDecimal amount = entry.get("amount").getAsBigDecimal();
-        String type = entry.get("type").getAsString();
-        return type.equals("DEPOSIT") || type.equals("TRANSFER_IN") ? amount : amount.negate();
     }
 }

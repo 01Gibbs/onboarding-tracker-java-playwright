@@ -94,6 +94,9 @@ A signed-in browser session works too: the dashboard's own `fetch()` uses it.
 | POST | `/api/testing/reset` | none (no auth needed) | `200 {"customers":5,"accounts":6}`. Re-seeds everything |
 | PUT | `/api/testing/clock` | `{"instant":"2030-01-31T16:59:00Z"}` | `200 {"instant":...}`. Pins the server's "now" (not the browser's) |
 | DELETE | `/api/testing/clock` | none | `204`. Back to the real time |
+| PUT | `/api/testing/faults/{name}` | `{"accountId":123}` | `200 {"name","accountId"}`. Arms a planted fault for that account (mission B0). Unknown name → `404` |
+| DELETE | `/api/testing/faults/{name}?accountId=123` | none | `204`. Disarms it (harmless if it wasn't armed) |
+| DELETE | `/api/testing/faults` | none | `204`. Disarms every fault. `POST /api/testing/reset` does this too |
 
 The `/api/testing/*` endpoints only exist with the `dev` profile, which `./mvnw -pl app spring-boot:run` turns on.
 Run the jar with `--spring.profiles.active=dev` to get them there too; otherwise they answer `404`.

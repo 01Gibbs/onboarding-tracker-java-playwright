@@ -433,7 +433,7 @@ lesson 11's mocking into a shorter unit.
 
 | # | Mission | Rule source | Playwright Java focus (1.64) | App change |
 |---|---|---|---|---|
-| B0 | Ledger invariants and money boundaries | ASVS 2.3.3 | `APIRequestContext`, `@ParameterizedTest`, `BigDecimal.compareTo` | Canonical-amount fix + `exponent-amounts` fault |
+| B0 | Ledger invariants and money boundaries | ASVS 2.3.3 | `APIRequestContext`, `@ParameterizedTest`, `BigDecimal.compareTo` | Fault switch (`/api/testing/faults`, five account-scoped faults). The amount fix already shipped in `Amount` |
 | B1 | Double submit and idempotency | ASVS 2.3.4, 2.4.2 | `dblclick`, `reload`, repeated `post` | `Idempotency-Key`; PRG already present |
 | B2 | Concurrent payments | ASVS 2.3.4; WSTG 4.10.4 | One `Playwright` per thread / `HttpClient`; invariant | `lost-update` fault |
 | B3 | Cut-off times and scheduled payments | — (business rule) | Server-clock endpoint; `page.clock()` for JS parts; `setTimezoneId` | `Clock` bean, value dates, scheduler + trigger |

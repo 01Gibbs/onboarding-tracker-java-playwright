@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -109,5 +110,7 @@ class ApiContractTest {
         api.perform(post("/api/testing/reset"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.fieldErrors").isMap());
+        api.perform(json(put("/api/testing/faults/overdraft"), "{\"accountId\":1}"))
+                .andExpect(status().isNotFound());
     }
 }

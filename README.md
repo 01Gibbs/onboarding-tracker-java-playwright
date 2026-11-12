@@ -13,7 +13,7 @@ It has two parts:
    to a parallel, CI-ready suite with page objects, API tests, network mocking and traces, then a
    "fix the broken suite" debugging exercise and a capstone. Every lesson has **starter files**, which
    start nearly complete and fade to nothing, plus a **reference solution** that's kept out of the
-   default build.
+   default build. A **banking track** follows, starting with mission B0.
 
 Nothing needs to be installed except a JDK. The Maven Wrapper downloads Maven, and Playwright
 downloads its own browsers.
@@ -65,6 +65,12 @@ On Windows, use `mvnw.cmd` instead of `./mvnw`.
 | 13 | [Fix the broken suite](lessons/13-fix-the-broken-suite.md) | Diagnosing 10 realistic failures from errors and traces; no band-aids | [Debugging](https://playwright.dev/java/docs/debug) |
 | 14 | [Capstone](lessons/14-capstone.md) | A full journey test, then independently owning a feature area | — |
 
+**Banking track.** Missions that test what a bank cares about, each ending with the ledger check from B0.
+
+| # | Mission | You'll learn | Docs |
+|---|---------|--------------|------|
+| B0 | [Ledger invariants](lessons/B0-ledger-invariants.md) | One reusable check that the books balance (`assertAll`), proven against faults planted in the app | [API testing](https://playwright.dev/java/docs/api-testing) |
+
 Allow roughly **3–4 days** to work through the whole course, or about one lesson per session.
 
 ## Repository layout
@@ -80,6 +86,7 @@ lessons/answers/             answer notes (spoilers)
 docs/
   ledgerline-reference.md    users, seeded data, business rules, UI map, API
   research/playwright-java.md  research notes on Playwright Java 1.64, with sources and docs caveats
+  research/banking-upskill.md  the banking track's research and mission plan (B0 onwards)
 ```
 
 ## Common commands
@@ -101,7 +108,7 @@ The e2e tests need the app running in another terminal.
 
 On a fresh checkout, `./mvnw -pl e2e-tests test` is green: 2 tests pass (the setup check and lesson 01's
 worked example), and every unfinished exercise is reported as *skipped* with a "TODO lesson NN" reason.
-The reference suite has 69 tests and finishes in about 40 seconds against a running app. The broken suite
+The reference suite has 77 tests and finishes in about 45 seconds against a running app. The broken suite
 (`-Pbroken`) should fail 9 of its 11 tests on a freshly started app, and 10 on every run after that,
 until you've fixed them.
 

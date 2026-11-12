@@ -95,6 +95,33 @@ public class LedgerApi implements AutoCloseable {
         throw new UnsupportedOperationException("TODO lesson 08");
     }
 
+    // Mission B0 (lessons/B0-ledger-invariants.md) adds these.
+
+    /** POST /api/transfers. Returns the source account. */
+    public JsonObject transfer(long fromAccountId, long toAccountId, String amount) {
+        throw new UnsupportedOperationException("TODO mission B0");
+    }
+
+    /** GET /api/accounts with no filter, so closed accounts are included too. */
+    public JsonArray allAccounts() {
+        throw new UnsupportedOperationException("TODO mission B0");
+    }
+
+    /** True when the app exposes /api/testing/* (the dev profile, which spring-boot:run turns on). */
+    public boolean testSupportEnabled() {
+        throw new UnsupportedOperationException("TODO mission B0");
+    }
+
+    /** PUT /api/testing/faults/{fault} with {"accountId": ...}. */
+    public void plantFault(String fault, long accountId) {
+        throw new UnsupportedOperationException("TODO mission B0");
+    }
+
+    /** DELETE /api/testing/faults/{fault}?accountId=... */
+    public void clearFault(String fault, long accountId) {
+        throw new UnsupportedOperationException("TODO mission B0");
+    }
+
     @Override
     public void close() {
         request.dispose();

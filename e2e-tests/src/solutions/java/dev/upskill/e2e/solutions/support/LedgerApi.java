@@ -109,6 +109,41 @@ public class LedgerApi implements AutoCloseable {
         return JsonParser.parseString(response.text()).getAsJsonArray();
     }
 
+    /** Moves money between two accounts (mission B0). Returns the source account. */
+    public JsonObject transfer(long fromAccountId, long toAccountId, String amount) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("fromAccountId", fromAccountId);
+        body.put("toAccountId", toAccountId);
+        body.put("amount", new BigDecimal(amount));
+        return created(request.post("/api/transfers", RequestOptions.create().setData(body)));
+    }
+
+    /** Every account, including closed ones (mission B0 uses it to find the other leg of a transfer). */
+    public JsonArray allAccounts() {
+        APIResponse response = request.get("/api/accounts");
+        assertThat(response).isOK();
+        return JsonParser.parseString(response.text()).getAsJsonArray();
+    }
+
+    /** True when the app exposes /api/testing/*, which `./mvnw -pl app spring-boot:run` turns on. */
+    public boolean testSupportEnabled() {
+        return request.delete("/api/testing/faults/overdraft?accountId=0").status() == 204;
+    }
+
+    /** Arms one of the app's planted faults (mission B0) for a single account. Needs test support. */
+    public void plantFault(String fault, long accountId) {
+        APIResponse response = request.put("/api/testing/faults/" + fault,
+                RequestOptions.create().setData(Map.of("accountId", accountId)));
+        assertThat(response).isOK();
+    }
+
+    public void clearFault(String fault, long accountId) {
+        APIResponse response = request.delete("/api/testing/faults/" + fault + "?accountId=" + accountId);
+        if (response.status() != 204) {
+            throw new AssertionError("Could not clear fault " + fault + ": " + response.status() + " " + response.text());
+        }
+    }
+
     @Override
     public void close() {
         request.dispose();

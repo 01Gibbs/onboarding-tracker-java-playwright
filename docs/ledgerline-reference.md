@@ -111,7 +111,7 @@ Errors always have this shape:
 | 400 | Bean validation failed (`fieldErrors` lists each field) or the JSON was malformed |
 | 401 | Missing, invalid or unknown token |
 | 403 | Signed in as auditor and tried to write |
-| 404 | Unknown id or unknown `/api` path |
+| 404 | Unknown id, or an unknown `/api` path (once authenticated; otherwise `401`) |
 | 409 | Conflict with current state (duplicate email, delete with accounts, close with balance…) |
 | 422 | Business rule broken (insufficient funds, frozen account…) |
 

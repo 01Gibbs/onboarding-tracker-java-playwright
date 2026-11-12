@@ -33,15 +33,15 @@ public class AccountController {
     private final AccountService accounts;
     private final CustomerService customers;
     private final MoneyService money;
-    private final Money format;
+    private final Money moneyFormat;
     private final LedgerlineProperties properties;
 
     public AccountController(AccountService accounts, CustomerService customers, MoneyService money,
-                             Money format, LedgerlineProperties properties) {
+                             Money moneyFormat, LedgerlineProperties properties) {
         this.accounts = accounts;
         this.customers = customers;
         this.money = money;
-        this.format = format;
+        this.moneyFormat = moneyFormat;
         this.properties = properties;
     }
 
@@ -153,7 +153,7 @@ public class AccountController {
 
     /** Moves the money and returns the confirmation the user sees. */
     private String applyMovement(Long id, MovementForm movement) {
-        String amount = format.format(movement.getAmount());
+        String amount = moneyFormat.format(movement.getAmount());
         return switch (movement.getType()) {
             case DEPOSIT -> {
                 money.deposit(id, movement.getAmount(), movement.getDescription());

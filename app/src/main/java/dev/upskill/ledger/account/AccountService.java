@@ -22,10 +22,10 @@ public class AccountService {
 
     public AccountService(AccountRepository accounts, LedgerEntryRepository entries, CustomerService customers,
                           Clock clock) {
-        this.clock = clock;
         this.accounts = accounts;
         this.entries = entries;
         this.customers = customers;
+        this.clock = clock;
     }
 
     @Transactional(readOnly = true)
@@ -54,7 +54,8 @@ public class AccountService {
         if (customer.getStatus() != CustomerStatus.ACTIVE) {
             throw new BusinessRuleException("Accounts cannot be opened for a suspended customer", "customerId");
         }
-        Account account = accounts.save(new Account(customer, form.getType(), form.getNickname().trim(), clock.instant()));
+        Account account = accounts.save(
+                new Account(customer, form.getType(), form.getNickname().trim(), clock.instant()));
         account.assignAccountNumber();
         customer.getAccounts().add(account);
         return account;

@@ -15,7 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-/** /api/health is what scripts poll before running tests, so it must only say UP once the data is seeded. */
+/**
+ * /api/health is what scripts poll before running tests, so it must only say UP once the data is seeded.
+ * Readiness is shared by the whole app, so each test restores it.
+ */
 @SpringBootTest
 class HealthApiTest {
 
@@ -30,7 +33,7 @@ class HealthApiTest {
     }
 
     @AfterEach
-    void ready() {
+    void restoreReadiness() {
         AvailabilityChangeEvent.publish(context, ReadinessState.ACCEPTING_TRAFFIC);
     }
 

@@ -35,8 +35,10 @@ public class LedgerClock extends Clock {
         return system.getZone();
     }
 
+    /** A snapshot in another zone: pinned if pinned, otherwise the system clock. */
     @Override
     public Clock withZone(ZoneId zone) {
-        throw new UnsupportedOperationException("LedgerClock always uses the system time zone");
+        Instant fixed = pinned.get();
+        return fixed != null ? Clock.fixed(fixed, zone) : system.withZone(zone);
     }
 }

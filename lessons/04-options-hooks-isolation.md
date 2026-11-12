@@ -11,8 +11,8 @@ for common setup, and understand why every test starts with a clean browser.
 
 ### One shared `OptionsFactory`
 
-Hard-coding `http://localhost:8080` in every test makes it impossible to run the suite against
-another environment. Put the configuration in one class instead, and point every test class at it:
+Repeating `BASE_URL = System.getProperty(...)` and the browser settings in every test class means every
+class changes when the environment does. Put the configuration in one class instead, and point every test class at it:
 
 ```java
 public class LedgerlineOptions implements OptionsFactory {

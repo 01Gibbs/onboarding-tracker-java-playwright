@@ -6,6 +6,7 @@ import dev.upskill.ledger.common.BusinessRuleException;
 import dev.upskill.ledger.common.Money;
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Limit;
@@ -77,9 +78,10 @@ public class MoneyService {
         String transferId = UUID.randomUUID().toString();
         String text = describe(description, "Transfer");
         from.debit(value);
-        entries.save(new LedgerEntry(from, EntryType.TRANSFER_OUT, value, text, to.getAccountNumber(), transferId, clock.instant()));
+        Instant now = clock.instant();
+        entries.save(new LedgerEntry(from, EntryType.TRANSFER_OUT, value, text, to.getAccountNumber(), transferId, now));
         to.credit(value);
-        entries.save(new LedgerEntry(to, EntryType.TRANSFER_IN, value, text, from.getAccountNumber(), transferId, clock.instant()));
+        entries.save(new LedgerEntry(to, EntryType.TRANSFER_IN, value, text, from.getAccountNumber(), transferId, now));
         return to;
     }
 

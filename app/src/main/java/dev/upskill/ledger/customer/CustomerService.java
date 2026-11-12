@@ -2,6 +2,7 @@ package dev.upskill.ledger.customer;
 
 import dev.upskill.ledger.common.BusinessRuleException;
 import dev.upskill.ledger.common.NotFoundException;
+import java.time.Clock;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +13,11 @@ import org.springframework.util.StringUtils;
 public class CustomerService {
 
     private final CustomerRepository customers;
+    private final Clock clock;
 
-    public CustomerService(CustomerRepository customers) {
+    public CustomerService(CustomerRepository customers, Clock clock) {
         this.customers = customers;
+        this.clock = clock;
     }
 
     @Transactional(readOnly = true)
@@ -34,7 +37,7 @@ public class CustomerService {
             throw BusinessRuleException.conflict("A customer with this email already exists", "email");
         }
         return customers.save(new Customer(form.getFirstName().trim(), form.getLastName().trim(), email,
-                blankToNull(form.getPhone())));
+                blankToNull(form.getPhone()), clock.instant()));
     }
 
     public Customer update(Long id, CustomerForm form) {

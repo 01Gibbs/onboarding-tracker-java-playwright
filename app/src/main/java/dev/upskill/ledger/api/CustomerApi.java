@@ -53,7 +53,7 @@ public class CustomerApi {
     }
 
     @PatchMapping("/{id}/status")
-    public CustomerDto changeStatus(@PathVariable Long id, @RequestBody StatusRequest request) {
+    public CustomerDto changeStatus(@PathVariable Long id, @Valid @RequestBody StatusRequest request) {
         return CustomerDto.of(customers.changeStatus(id, request.status()));
     }
 

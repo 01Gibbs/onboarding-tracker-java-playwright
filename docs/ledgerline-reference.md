@@ -74,7 +74,7 @@ A signed-in browser session works too: the dashboard's own `fetch()` uses it.
 | Method | Path | Body / query | Success |
 |--------|------|--------------|---------|
 | POST | `/api/auth/login` | `{"username","password"}` | `200 {"token","username","displayName","role"}` |
-| GET | `/api/health` | none (no auth needed) | `200 {"status":"UP"}` |
+| GET | `/api/health` | none (no auth needed) | `200 {"status":"UP"}` once seeded; `503 {"status":"STARTING"}` before that |
 | GET | `/api/customers` | `?q=&status=ACTIVE\|SUSPENDED` | `200 [Customer]` |
 | GET | `/api/customers/{id}` | none | `200 Customer` |
 | POST | `/api/customers` | `{"firstName","lastName","email","phone"?}` | `201 Customer` + `Location` |
@@ -84,14 +84,19 @@ A signed-in browser session works too: the dashboard's own `fetch()` uses it.
 | GET | `/api/accounts` | `?status=&type=&customerId=` | `200 [Account]` |
 | GET | `/api/accounts/{id}` | none | `200 Account` |
 | POST | `/api/accounts` | `{"customerId","type":"CURRENT\|SAVINGS","nickname"}` | `201 Account` |
-| PATCH | `/api/accounts/{id}` | `{"nickname"?, "status"?:"ACTIVE\|FROZEN\|CLOSED"}` | `200 Account` |
+| PATCH | `/api/accounts/{id}` | `{"nickname"?, "status"?:"ACTIVE\|FROZEN\|CLOSED"}` | `200 Account`. A blank or over-long nickname is a rule (`422`) |
 | DELETE | `/api/accounts/{id}` | none | `204` |
 | GET | `/api/accounts/{id}/transactions` | `?type=DEPOSIT\|WITHDRAWAL\|TRANSFER_IN\|TRANSFER_OUT` | `200 [Entry]` (newest first) |
 | POST | `/api/accounts/{id}/deposits` | `{"amount", "description"?}` | `201 Entry` |
 | POST | `/api/accounts/{id}/withdrawals` | `{"amount", "description"?}` | `201 Entry` |
 | POST | `/api/transfers` | `{"fromAccountId","toAccountId","amount","description"?}` | `201 Account` (the source account) |
-| GET | `/api/activity` | `?limit=8` (1–50) | `200 [Entry]` across all accounts |
+| GET | `/api/activity` | `?limit=8` (values outside 1–50 are clamped) | `200 [Entry]` across all accounts |
 | POST | `/api/testing/reset` | none (no auth needed) | `200 {"customers":5,"accounts":6}`. Re-seeds everything |
+| PUT | `/api/testing/clock` | `{"instant":"2030-01-31T16:59:00Z"}` | `200 {"instant":...}`. Pins the server's "now" (not the browser's) |
+| DELETE | `/api/testing/clock` | none | `204`. Back to the real time |
+
+The `/api/testing/*` endpoints only exist with the `dev` profile, which `./mvnw -pl app spring-boot:run` turns on.
+Run the jar with `--spring.profiles.active=dev` to get them there too; otherwise they answer `404`.
 
 Errors always have this shape:
 
@@ -106,7 +111,7 @@ Errors always have this shape:
 | 400 | Bean validation failed (`fieldErrors` lists each field) or the JSON was malformed |
 | 401 | Missing, invalid or unknown token |
 | 403 | Signed in as auditor and tried to write |
-| 404 | Unknown id |
+| 404 | Unknown id, or an unknown `/api` path (once authenticated; otherwise `401`) |
 | 409 | Conflict with current state (duplicate email, delete with accounts, close with balance…) |
 | 422 | Business rule broken (insufficient funds, frozen account…) |
 

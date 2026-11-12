@@ -1,0 +1,8 @@
+# Local development and the course. ./mvnw -pl app spring-boot:run activates this profile (see app/pom.xml).
+# Run the jar with --spring.profiles.active=dev to get the same behaviour.
+spring:
+  thymeleaf:
+    cache: false
+
+ledgerline:
+  test-support-enabled: true

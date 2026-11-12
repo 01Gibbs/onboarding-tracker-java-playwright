@@ -10,7 +10,6 @@ import dev.upskill.ledger.account.AccountForm;
 import dev.upskill.ledger.account.AccountService;
 import dev.upskill.ledger.account.AccountStatus;
 import dev.upskill.ledger.account.AccountType;
-import dev.upskill.ledger.common.BusinessRuleException;
 import dev.upskill.ledger.ledger.EntryType;
 import dev.upskill.ledger.ledger.MoneyService;
 import jakarta.validation.Valid;
@@ -94,10 +93,7 @@ public class AccountApi {
 
     @PostMapping("/api/transfers")
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountDto transfer(@RequestBody TransferRequest request) {
-        if (request.fromAccountId() == null || request.toAccountId() == null) {
-            throw new BusinessRuleException("fromAccountId and toAccountId are required");
-        }
+    public AccountDto transfer(@Valid @RequestBody TransferRequest request) {
         money.transfer(request.fromAccountId(), request.toAccountId(), request.amount(), request.description());
         return AccountDto.of(accounts.get(request.fromAccountId()));
     }

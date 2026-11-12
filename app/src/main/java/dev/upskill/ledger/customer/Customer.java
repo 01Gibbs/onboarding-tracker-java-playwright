@@ -40,7 +40,7 @@ public class Customer {
     private CustomerStatus status = CustomerStatus.ACTIVE;
 
     @Column(nullable = false)
-    private Instant createdAt = Instant.now();
+    private Instant createdAt;
 
     @OneToMany(mappedBy = "customer")
     @OrderBy("id")
@@ -49,11 +49,12 @@ public class Customer {
     protected Customer() {
     }
 
-    public Customer(String firstName, String lastName, String email, String phone) {
+    public Customer(String firstName, String lastName, String email, String phone, Instant createdAt) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
+        this.createdAt = createdAt;
     }
 
     /** Human-friendly reference shown in the UI, e.g. {@code CUS-0007}. */

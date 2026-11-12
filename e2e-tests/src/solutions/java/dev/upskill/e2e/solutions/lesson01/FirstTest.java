@@ -12,16 +12,19 @@ import org.junit.jupiter.api.Test;
 @UsePlaywright
 class FirstTest {
 
+    // The app's address. -DbaseUrl=... points the tests at another environment.
+    private static final String BASE_URL = System.getProperty("baseUrl", "http://localhost:8080");
+
     @Test
     void loginPageHasTheExpectedTitle(Page page) {
-        page.navigate("http://localhost:8080/login");
+        page.navigate(BASE_URL + "/login");
 
         assertThat(page).hasTitle("Sign in · Ledgerline");
     }
 
     @Test
     void loginPageShowsItsHeading(Page page) {
-        page.navigate("http://localhost:8080/login");
+        page.navigate(BASE_URL + "/login");
 
         assertThat(page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("Sign in to Ledgerline")))
                 .isVisible();
@@ -29,7 +32,7 @@ class FirstTest {
 
     @Test
     void anonymousVisitorsAreSentToTheLoginPage(Page page) {
-        page.navigate("http://localhost:8080/customers");
+        page.navigate(BASE_URL + "/customers");
 
         assertThat(page).hasURL(Pattern.compile(".*/login$"));
     }

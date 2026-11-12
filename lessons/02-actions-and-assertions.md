@@ -44,7 +44,7 @@ Open the starter `workshop/lesson02/LoginTest.java`. The actions for exercise 1 
 and you add the assertions. For exercises 2–4, the comments list the steps and you write the code.
 
 1. **Happy path.** Sign in as `teller` / `teller-pass`. Assert:
-   - the URL is `http://localhost:8080/`
+   - the URL is `BASE_URL + "/"`
    - the "Dashboard" heading is visible
    - `getByTestId("current-user")` contains "Terry Teller"
 2. **Wrong password.** Assert that:

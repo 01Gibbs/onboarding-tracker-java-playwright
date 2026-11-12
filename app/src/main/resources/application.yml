@@ -19,15 +19,14 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: true
-  thymeleaf:
-    cache: false
 
 ledgerline:
   # Artificial delay (ms) applied when money is moved through the UI.
   # Gives the "Processing…" state something to show and makes auto-waiting visible.
   processing-delay-ms: 750
-  # Exposes POST /api/testing/reset. Training app only - never enable in a real system.
-  test-support-enabled: true
+  # Exposes /api/testing/* (reset, clock). Off by default; the "dev" profile (used by spring-boot:run) turns it on.
+  # Training app only - never enable in a real system.
+  test-support-enabled: false
   currency-symbol: "£"
   users:
     - username: teller

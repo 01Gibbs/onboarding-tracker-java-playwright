@@ -6,6 +6,7 @@ import dev.upskill.ledger.customer.Customer;
 import dev.upskill.ledger.customer.CustomerService;
 import dev.upskill.ledger.customer.CustomerStatus;
 import dev.upskill.ledger.ledger.LedgerEntryRepository;
+import java.time.Clock;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +18,14 @@ public class AccountService {
     private final AccountRepository accounts;
     private final LedgerEntryRepository entries;
     private final CustomerService customers;
+    private final Clock clock;
 
-    public AccountService(AccountRepository accounts, LedgerEntryRepository entries, CustomerService customers) {
+    public AccountService(AccountRepository accounts, LedgerEntryRepository entries, CustomerService customers,
+                          Clock clock) {
         this.accounts = accounts;
         this.entries = entries;
         this.customers = customers;
+        this.clock = clock;
     }
 
     @Transactional(readOnly = true)
@@ -50,7 +54,8 @@ public class AccountService {
         if (customer.getStatus() != CustomerStatus.ACTIVE) {
             throw new BusinessRuleException("Accounts cannot be opened for a suspended customer", "customerId");
         }
-        Account account = accounts.save(new Account(customer, form.getType(), form.getNickname().trim()));
+        Account account = accounts.save(
+                new Account(customer, form.getType(), form.getNickname().trim(), clock.instant()));
         account.assignAccountNumber();
         customer.getAccounts().add(account);
         return account;

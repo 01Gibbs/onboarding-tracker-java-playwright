@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice(basePackageClasses = ApiExceptionHandler.class)
 public class ApiExceptionHandler {
@@ -39,6 +40,13 @@ public class ApiExceptionHandler {
     @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
     ResponseEntity<ApiError> unreadable(Exception e) {
         return error(HttpStatus.BAD_REQUEST, "Malformed request", Map.of());
+    }
+
+    /** Auth failures from ApiAuthInterceptor and the disabled testing endpoints. */
+    @ExceptionHandler(ResponseStatusException.class)
+    ResponseEntity<ApiError> status(ResponseStatusException e) {
+        HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
+        return error(status, e.getReason() == null ? status.getReasonPhrase() : e.getReason(), Map.of());
     }
 
     private static ResponseEntity<ApiError> error(HttpStatus status, String message, Map<String, String> fields) {

@@ -14,7 +14,8 @@ import org.junit.jupiter.api.Test;
 @UsePlaywright
 class LocatorsTest {
 
-    private static final String BASE_URL = "http://localhost:8080";
+    // The app's address. -DbaseUrl=... points the tests at another environment.
+    private static final String BASE_URL = System.getProperty("baseUrl", "http://localhost:8080");
 
     @BeforeEach
     void signIn(Page page) {

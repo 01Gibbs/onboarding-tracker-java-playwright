@@ -27,13 +27,17 @@ import org.junit.jupiter.api.Test;
 @UsePlaywright
 class FirstTest {
 
+    private static final String BASE_URL = System.getProperty("baseUrl", "http://localhost:8080");
+
     @Test
     void loginPageHasTheExpectedTitle(Page page) {
-        page.navigate("http://localhost:8080/login");
+        page.navigate(BASE_URL + "/login");
         assertThat(page).hasTitle("Sign in · Ledgerline");
     }
 }
 ```
+
+`BASE_URL` is `http://localhost:8080` unless you pass `-DbaseUrl=...`; lesson 04 shows a tidier way.
 
 | Parameter | What you get | Lifetime |
 |-----------|--------------|----------|
@@ -67,9 +71,9 @@ Open the starter `e2e-tests/src/test/java/dev/upskill/e2e/workshop/lesson01/Firs
 already done as a worked example. Read it line by line, run it, then replace each `abort(...)` line
 for exercises 2 and 3.
 
-1. **Title.** Navigate to `http://localhost:8080/login` and assert that the title is `Sign in · Ledgerline`.
+1. **Title.** Navigate to `BASE_URL + "/login"` and assert that the title is `Sign in · Ledgerline`.
 2. **Heading.** Assert that the heading "Sign in to Ledgerline" is visible.
-3. **Redirect.** Navigate to `http://localhost:8080/customers` while signed out, and assert that you end up
+3. **Redirect.** Navigate to `BASE_URL + "/customers"` while signed out, and assert that you end up
    on the login page: `assertThat(page).hasURL(Pattern.compile(".*/login$"))`.
 4. **Break it.** Change the expected title to something wrong and run again. Read the failure
    message. Notice that the test waited about 5 seconds before failing. Why? Put it back afterwards.

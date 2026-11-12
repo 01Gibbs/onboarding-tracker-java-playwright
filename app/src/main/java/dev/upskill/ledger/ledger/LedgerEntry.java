@@ -48,13 +48,13 @@ public class LedgerEntry {
     private String transferId;
 
     @Column(nullable = false)
-    private Instant createdAt = Instant.now();
+    private Instant createdAt;
 
     protected LedgerEntry() {
     }
 
     LedgerEntry(Account account, EntryType type, BigDecimal amount, String description,
-                String counterpartyAccountNumber, String transferId) {
+                String counterpartyAccountNumber, String transferId, Instant createdAt) {
         this.account = account;
         this.type = type;
         this.amount = amount;
@@ -62,6 +62,7 @@ public class LedgerEntry {
         this.description = description;
         this.counterpartyAccountNumber = counterpartyAccountNumber;
         this.transferId = transferId;
+        this.createdAt = createdAt;
     }
 
     /** Amount with its sign: positive for money in, negative for money out. */

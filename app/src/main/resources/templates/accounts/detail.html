@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head(${account.nickname})}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main>
+    <nav aria-label="Breadcrumb" class="breadcrumb">
+        <a th:href="@{/customers/{id}(id=${account.customer.id})}" th:text="${account.customer.fullName}">Holder</a>
+        / <a th:href="@{/accounts}">Accounts</a>
+    </nav>
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div class="page-header">
+        <div>
+            <h1><span th:text="${account.nickname}">Nickname</span>
+                <span th:replace="~{fragments :: statusBadge(${account.status})}"></span></h1>
+            <p class="muted">
+                <span th:text="${account.type.label}">Current</span> account
+                <span data-testid="account-number" th:text="${account.accountNumber}">10000001</span>
+            </p>
+        </div>
+        <div class="balance">
+            <span class="stat-label">Balance</span>
+            <span class="stat-value" data-testid="account-balance" th:text="${@money.format(account.balance)}">£0.00</span>
+        </div>
+    </div>
+
+    <div class="actions" th:if="${currentUser.canEdit() and account.status.name() != 'CLOSED'}">
+        <form method="post" th:action="@{/accounts/{id}/status(id=${account.id})}">
+            <input type="hidden" name="status" th:value="${account.active} ? 'FROZEN' : 'ACTIVE'">
+            <button type="submit" class="button" th:text="${account.active} ? 'Freeze account' : 'Unfreeze account'">
+                Freeze account</button>
+        </form>
+        <form method="post" th:action="@{/accounts/{id}/status(id=${account.id})}"
+              th:attr="data-confirm='Close account ' + ${account.accountNumber} + '? Closed accounts cannot be reopened.'">
+            <input type="hidden" name="status" value="CLOSED">
+            <button type="submit" class="button">Close account</button>
+        </form>
+        <form th:if="${!hasHistory}" method="post" th:action="@{/accounts/{id}/delete(id=${account.id})}"
+              th:attr="data-confirm='Delete account ' + ${account.accountNumber} + '?'">
+            <button type="submit" class="button danger">Delete account</button>
+        </form>
+    </div>
+
+    <section class="panel" aria-labelledby="move-heading" th:if="${currentUser.canEdit() and account.active}">
+        <h2 id="move-heading">Move money</h2>
+        <form method="post" th:action="@{/accounts/{id}/movements(id=${account.id})}" th:object="${movement}"
+              id="movement-form" novalidate>
+            <div th:if="${#fields.hasGlobalErrors()}" class="flash flash-error" role="alert">
+                <p th:each="err : ${#fields.globalErrors()}" th:text="${err}">Error</p>
+            </div>
+            <fieldset class="field">
+                <legend>Type</legend>
+                <label class="choice" th:each="t : ${movementTypes}">
+                    <input type="radio" th:field="*{type}" th:value="${t}">
+                    <span th:text="${t.label}">Deposit</span>
+                </label>
+            </fieldset>
+            <div class="field">
+                <label for="amount">Amount</label>
+                <input id="amount" type="text" inputmode="decimal" th:field="*{amount}" placeholder="0.00"
+                       th:attr="aria-invalid=${#fields.hasErrors('amount')} ? 'true' : null,
+                                aria-describedby=${#fields.hasErrors('amount')} ? 'amount-error' : null">
+                <p class="field-error" id="amount-error" th:if="${#fields.hasErrors('amount')}"
+                   th:text="${#fields.errors('amount')[0]}">Error</p>
+            </div>
+            <div class="field" id="transfer-target" th:hidden="*{type.name() != 'TRANSFER'}">
+                <label for="toAccountId">To account</label>
+                <select id="toAccountId" th:field="*{toAccountId}"
+                        th:attr="aria-invalid=${#fields.hasErrors('toAccountId')} ? 'true' : null,
+                                 aria-describedby=${#fields.hasErrors('toAccountId')} ? 'toAccountId-error' : null">
+                    <option value="">Choose an account…</option>
+                    <option th:each="t : ${transferTargets}" th:value="${t.id}"
+                            th:text="${t.displayName + ' – ' + t.customer.fullName}">Account</option>
+                </select>
+                <p class="field-error" id="toAccountId-error" th:if="${#fields.hasErrors('toAccountId')}"
+                   th:text="${#fields.errors('toAccountId')[0]}">Error</p>
+            </div>
+            <div class="field">
+                <label for="description">Description (optional)</label>
+                <input id="description" type="text" th:field="*{description}" maxlength="80"
+                       th:attr="aria-invalid=${#fields.hasErrors('description')} ? 'true' : null,
+                                aria-describedby=${#fields.hasErrors('description')} ? 'description-error' : null">
+                <p class="field-error" id="description-error" th:if="${#fields.hasErrors('description')}"
+                   th:text="${#fields.errors('description')[0]}">Error</p>
+            </div>
+            <button type="submit" class="button primary" data-processing-text="Processing…">Submit</button>
+        </form>
+    </section>
+
+    <section class="panel" aria-labelledby="history-heading">
+        <div class="panel-header">
+            <h2 id="history-heading">Transactions</h2>
+            <form method="get" th:action="@{/accounts/{id}(id=${account.id})}" class="inline-filter">
+                <label for="entryType">Show</label>
+                <select id="entryType" name="entryType" data-autosubmit>
+                    <option value="">All transactions</option>
+                    <option th:each="t : ${entryTypes}" th:value="${t}" th:text="${t.label}"
+                            th:selected="${t == entryType}">Deposit</option>
+                </select>
+                <noscript><button type="submit">Apply</button></noscript>
+            </form>
+        </div>
+        <table th:if="${!entries.isEmpty()}" aria-label="Transactions">
+            <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Description</th>
+                <th scope="col" class="num">Amount</th>
+                <th scope="col" class="num">Balance after</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="e : ${entries}" data-testid="transaction-row">
+                <td th:text="${@dates.dateTime(e.createdAt)}">
+                    date</td>
+                <td th:text="${e.type.label}">Deposit</td>
+                <td>
+                    <span th:text="${e.description}">Description</span>
+                    <span class="muted" th:if="${e.counterpartyAccountNumber != null}"
+                          th:text="${(e.type.credit ? 'from ' : 'to ') + e.counterpartyAccountNumber}">to 10000002</span>
+                </td>
+                <td class="num" th:classappend="${e.type.credit} ? 'credit' : 'debit'"
+                    th:text="${(e.type.credit ? '+' : '') + @money.format(e.signedAmount)}">+£0.00</td>
+                <td class="num" th:text="${@money.format(e.balanceAfter)}">£0.00</td>
+            </tr>
+            </tbody>
+        </table>
+        <p th:if="${entries.isEmpty()}" class="empty">No transactions to show.</p>
+    </section>
+</main>
+</body>
+</html>

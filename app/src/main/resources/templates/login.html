@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Sign in')}"></head>
+<body class="login-page">
+<main class="login-card">
+    <h1>Sign in to Ledgerline</h1>
+    <div th:replace="~{fragments :: flash}"></div>
+    <form method="post" th:action="@{/login}" novalidate>
+        <div class="field">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" autocomplete="username" th:value="${username}"
+                   autofocus>
+        </div>
+        <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password">
+        </div>
+        <button type="submit" class="button primary">Sign in</button>
+    </form>
+    <p class="hint">Training environment. All data is fictional and resets on restart.</p>
+</main>
+</body>
+</html>

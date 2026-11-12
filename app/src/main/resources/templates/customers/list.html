@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Customers')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main>
+    <div th:replace="~{fragments :: flash}"></div>
+    <div class="page-header">
+        <h1>Customers</h1>
+        <a th:if="${currentUser.canEdit()}" class="button primary" th:href="@{/customers/new}">New customer</a>
+    </div>
+
+    <form role="search" class="filters" method="get" th:action="@{/customers}">
+        <div class="field">
+            <label for="q">Search customers</label>
+            <input id="q" name="q" type="search" placeholder="Name or email" th:value="${q}">
+        </div>
+        <div class="field">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">All statuses</option>
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}"
+                        th:selected="${s == status}">Active</option>
+            </select>
+        </div>
+        <button type="submit" class="button">Search</button>
+        <a th:if="${q != null or status != null}" th:href="@{/customers}">Clear</a>
+    </form>
+
+    <p class="muted" data-testid="result-count"
+       th:text="${#lists.size(customers) == 1} ? '1 customer' : ${#lists.size(customers)} + ' customers'">0 customers</p>
+
+    <table th:if="${!customers.isEmpty()}" aria-label="Customers">
+        <thead>
+        <tr>
+            <th scope="col">Reference</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Status</th>
+            <th scope="col" class="num">Accounts</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="c : ${customers}" data-testid="customer-row">
+            <td th:text="${c.reference}">CUS-0001</td>
+            <td><a th:href="@{/customers/{id}(id=${c.id})}" th:text="${c.fullName}">Name</a></td>
+            <td th:text="${c.email}">email</td>
+            <td><span th:replace="~{fragments :: statusBadge(${c.status})}"></span></td>
+            <td class="num" th:text="${#lists.size(c.accounts)}">0</td>
+        </tr>
+        </tbody>
+    </table>
+    <p th:if="${customers.isEmpty()}" class="empty">No customers match your search.</p>
+</main>
+</body>
+</html>

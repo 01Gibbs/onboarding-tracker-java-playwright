@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Accounts')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main>
+    <div th:replace="~{fragments :: flash}"></div>
+    <div class="page-header">
+        <h1>Accounts</h1>
+        <a th:if="${currentUser.canEdit()}" class="button primary" th:href="@{/accounts/new}">Open account</a>
+    </div>
+
+    <form class="filters" method="get" th:action="@{/accounts}" aria-label="Filter accounts">
+        <div class="field">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">All statuses</option>
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}"
+                        th:selected="${s == status}">Active</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="type">Type</label>
+            <select id="type" name="type">
+                <option value="">All types</option>
+                <option th:each="t : ${types}" th:value="${t}" th:text="${t.label}"
+                        th:selected="${t == type}">Current</option>
+            </select>
+        </div>
+        <button type="submit" class="button">Apply filters</button>
+    </form>
+
+    <p class="muted" data-testid="result-count"
+       th:text="'Showing ' + ${#lists.size(accounts)} + (${#lists.size(accounts) == 1} ? ' account' : ' accounts')">
+        Showing 0 accounts</p>
+
+    <table th:if="${!accounts.isEmpty()}" aria-label="Accounts">
+        <thead>
+        <tr>
+            <th scope="col">Account number</th>
+            <th scope="col">Holder</th>
+            <th scope="col">Nickname</th>
+            <th scope="col">Type</th>
+            <th scope="col">Status</th>
+            <th scope="col" class="num">Balance</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="a : ${accounts}" data-testid="account-row">
+            <td><a th:href="@{/accounts/{id}(id=${a.id})}" th:text="${a.accountNumber}">10000001</a></td>
+            <td><a th:href="@{/customers/{id}(id=${a.customer.id})}" th:text="${a.customer.fullName}">Name</a></td>
+            <td th:text="${a.nickname}">Nickname</td>
+            <td th:text="${a.type.label}">Current</td>
+            <td><span th:replace="~{fragments :: statusBadge(${a.status})}"></span></td>
+            <td class="num" th:text="${@money.format(a.balance)}">£0.00</td>
+        </tr>
+        </tbody>
+    </table>
+    <p th:if="${accounts.isEmpty()}" class="empty">No accounts match these filters.</p>
+</main>
+</body>
+</html>

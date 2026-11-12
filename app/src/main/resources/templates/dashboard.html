@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main>
+    <div th:replace="~{fragments :: flash}"></div>
+    <h1>Dashboard</h1>
+    <p class="lede">Welcome back, <span th:text="${currentUser.displayName}">Name</span>.</p>
+
+    <section aria-label="Summary" class="stats">
+        <a class="stat" th:href="@{/customers}" data-testid="stat-customers">
+            <span class="stat-label">Customers</span>
+            <span class="stat-value" th:text="${customerCount}">0</span>
+        </a>
+        <a class="stat" th:href="@{/accounts(status='ACTIVE')}" data-testid="stat-active-accounts">
+            <span class="stat-label">Active accounts</span>
+            <span class="stat-value" th:text="${activeAccountCount}">0</span>
+        </a>
+        <div class="stat" data-testid="stat-total-balance">
+            <span class="stat-label">Total balance held</span>
+            <span class="stat-value" th:text="${@money.format(totalBalance)}">£0.00</span>
+        </div>
+    </section>
+
+    <section class="panel" aria-labelledby="activity-heading">
+        <div class="panel-header">
+            <h2 id="activity-heading">Recent activity</h2>
+            <button type="button" class="button" id="refresh-activity">Refresh</button>
+        </div>
+        <div id="activity" data-endpoint="/api/activity?limit=8" th:data-currency-symbol="${currencySymbol}">
+            <p role="status" class="muted">Loading activity…</p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

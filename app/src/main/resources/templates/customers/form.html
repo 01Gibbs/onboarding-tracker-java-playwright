@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head(${customer == null} ? 'New customer' : 'Edit customer')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="narrow">
+    <nav aria-label="Breadcrumb" class="breadcrumb">
+        <a th:href="@{/customers}">Customers</a>
+        <span th:if="${customer != null}"> / <a th:href="@{/customers/{id}(id=${customer.id})}"
+                                                th:text="${customer.fullName}">Name</a></span>
+    </nav>
+    <h1 th:text="${customer == null} ? 'New customer' : 'Edit customer'">New customer</h1>
+
+    <form method="post" novalidate th:object="${form}"
+          th:action="${customer == null} ? @{/customers} : @{/customers/{id}(id=${customer.id})}">
+        <div th:if="${#fields.hasGlobalErrors()}" class="flash flash-error" role="alert">
+            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}">Error</p>
+        </div>
+        <div th:if="${#fields.hasErrors('*')}" class="error-summary" role="alert" data-testid="error-summary">
+            Please fix the highlighted fields.
+        </div>
+
+        <div class="field" th:each="f : ${ {'firstName', 'lastName', 'email', 'phone'} }"
+             th:with="label=${f == 'firstName'} ? 'First name' : (${f == 'lastName'} ? 'Last name' : (${f == 'email'} ? 'Email' : 'Phone (optional)'))">
+            <label th:for="${f}" th:text="${label}">Label</label>
+            <input th:id="${f}" th:name="${f}" th:value="*{__${f}__}"
+                   th:type="${f == 'email'} ? 'email' : (${f == 'phone'} ? 'tel' : 'text')"
+                   th:attr="aria-invalid=${#fields.hasErrors(f)} ? 'true' : null,
+                            aria-describedby=${#fields.hasErrors(f)} ? ${f + '-error'} : null">
+            <p class="field-error" th:if="${#fields.hasErrors(f)}" th:id="${f + '-error'}"
+               th:text="${#fields.errors(f)[0]}">Error</p>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="button primary">Save customer</button>
+            <a th:href="${customer == null} ? @{/customers} : @{/customers/{id}(id=${customer.id})}">Cancel</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Error')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="narrow">
+    <h1 th:text="${status == 404} ? 'Page not found' : (${status == 403} ? 'Access denied' : 'Something went wrong')">
+        Something went wrong</h1>
+    <p data-testid="error-message" th:text="${message}">Details</p>
+    <p><a th:href="@{/}">Back to dashboard</a></p>
+</main>
+</body>
+</html>

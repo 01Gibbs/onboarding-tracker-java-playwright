@@ -1,0 +1,45 @@
+server:
+  port: 8080
+  servlet:
+    session:
+      # Keep session ids out of URLs (no ;jsessionid=...) so URL assertions stay simple.
+      tracking-modes: cookie
+
+spring:
+  application:
+    name: ledgerline
+  web:
+    error:
+      include-message: always
+  datasource:
+    url: jdbc:h2:mem:ledgerline;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: true
+  thymeleaf:
+    cache: false
+
+ledgerline:
+  # Artificial delay (ms) applied when money is moved through the UI.
+  # Gives the "Processing…" state something to show and makes auto-waiting visible.
+  processing-delay-ms: 750
+  # Exposes POST /api/testing/reset. Training app only - never enable in a real system.
+  test-support-enabled: true
+  currency-symbol: "£"
+  users:
+    - username: teller
+      password: teller-pass
+      display-name: Terry Teller
+      role: TELLER
+    - username: auditor
+      password: auditor-pass
+      display-name: Alex Auditor
+      role: AUDITOR
+    - username: locked
+      password: locked-pass
+      display-name: Lee Locked
+      role: TELLER
+      locked: true

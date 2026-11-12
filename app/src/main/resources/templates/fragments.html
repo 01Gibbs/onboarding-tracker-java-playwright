@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · Ledgerline'">Ledgerline</title>
+    <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script th:src="@{/js/app.js}" defer></script>
+</head>
+<body>
+
+<header th:fragment="header" class="topbar">
+    <a class="brand" th:href="@{/}">Ledgerline</a>
+    <nav aria-label="Main" th:if="${currentUser != null}">
+        <ul>
+            <li><a th:href="@{/}" th:attr="aria-current=${currentPath == '/'} ? 'page' : null">Dashboard</a></li>
+            <li><a th:href="@{/customers}"
+                   th:attr="aria-current=${currentPath.startsWith('/customers')} ? 'page' : null">Customers</a></li>
+            <li><a th:href="@{/accounts}"
+                   th:attr="aria-current=${currentPath.startsWith('/accounts')} ? 'page' : null">Accounts</a></li>
+        </ul>
+    </nav>
+    <div class="user-menu" th:if="${currentUser != null}">
+        <span data-testid="current-user">
+            Signed in as <strong th:text="${currentUser.displayName}">Name</strong>
+            (<span th:text="${currentUser.role.label}">Role</span>)
+        </span>
+        <form method="post" th:action="@{/logout}">
+            <button type="submit" class="button-link">Sign out</button>
+        </form>
+    </div>
+</header>
+
+<div th:fragment="flash" class="flash-area">
+    <div th:if="${success}" class="flash flash-success" role="status" data-testid="flash-message"
+         th:text="${success}">Saved</div>
+    <div th:if="${info}" class="flash flash-info" role="status" data-testid="flash-message"
+         th:text="${info}">Info</div>
+    <div th:if="${error}" class="flash flash-error" role="alert" data-testid="flash-message"
+         th:text="${error}">Error</div>
+</div>
+
+<span th:fragment="statusBadge(status)" class="badge" th:classappend="${'badge-' + #strings.toLowerCase(status.name())}"
+      data-testid="status-badge" th:text="${status.label}">Active</span>
+
+</body>
+</html>

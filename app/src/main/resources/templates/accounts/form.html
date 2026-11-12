@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Open account')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="narrow">
+    <nav aria-label="Breadcrumb" class="breadcrumb"><a th:href="@{/accounts}">Accounts</a></nav>
+    <h1>Open account</h1>
+
+    <form method="post" th:action="@{/accounts}" th:object="${form}" novalidate>
+        <div th:if="${#fields.hasErrors('*')}" class="error-summary" role="alert" data-testid="error-summary">
+            Please fix the highlighted fields.
+        </div>
+
+        <div class="field">
+            <label for="customerId">Account holder</label>
+            <select id="customerId" th:field="*{customerId}"
+                    th:attr="aria-invalid=${#fields.hasErrors('customerId')} ? 'true' : null,
+                            aria-describedby=${#fields.hasErrors('customerId')} ? 'customerId-error' : null">
+                <option value="">Choose a customer…</option>
+                <option th:each="c : ${customers}" th:value="${c.id}"
+                        th:text="${c.fullName + ' (' + c.reference + ')'}">Name</option>
+            </select>
+            <p class="field-error" id="customerId-error" th:if="${#fields.hasErrors('customerId')}" th:errors="*{customerId}">Error</p>
+        </div>
+
+        <fieldset class="field" th:attr="aria-describedby=${#fields.hasErrors('type')} ? 'type-error' : null">
+            <legend>Account type</legend>
+            <label class="choice" th:each="t : ${types}">
+                <input type="radio" th:field="*{type}" th:value="${t}">
+                <span th:text="${t.label}">Current</span>
+            </label>
+            <p class="field-error" id="type-error" th:if="${#fields.hasErrors('type')}" th:errors="*{type}">Error</p>
+        </fieldset>
+
+        <div class="field">
+            <label for="nickname">Nickname</label>
+            <input id="nickname" type="text" th:field="*{nickname}" maxlength="40"
+                   th:attr="aria-invalid=${#fields.hasErrors('nickname')} ? 'true' : null,
+                            aria-describedby=${#fields.hasErrors('nickname')} ? 'nickname-error' : null">
+            <p class="field-error" id="nickname-error" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">Error</p>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="button primary">Open account</button>
+            <a th:href="@{/accounts}">Cancel</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

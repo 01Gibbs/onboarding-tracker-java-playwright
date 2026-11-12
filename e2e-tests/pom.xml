@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>dev.upskill</groupId>
+    <artifactId>e2e-tests</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>Ledgerline end-to-end tests</name>
+
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <playwright.version>1.64.0</playwright.version>
+        <junit.version>5.14.4</junit.version>
+        <build-helper.version>3.8.0</build-helper.version>
+
+        <!-- Override on the command line, e.g. -DbaseUrl=http://localhost:9090 -Dheadless=false -->
+        <baseUrl>http://localhost:8080</baseUrl>
+        <headless>true</headless>
+        <!-- Which tests `mvn test` runs. The "solutions" profile switches this to the reference answers. -->
+        <tests.include>**/workshop/**/*Test.java</tests.include>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Playwright already uses Gson internally; we use it to parse API responses. -->
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.14.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.6</version>
+                <configuration>
+                    <includes>
+                        <include>${tests.include}</include>
+                    </includes>
+                    <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+                    <systemPropertyVariables>
+                        <baseUrl>${baseUrl}</baseUrl>
+                        <headless>${headless}</headless>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- Runs the Playwright CLI: codegen, install, show-trace. See lessons/00-setup.md -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <mainClass>com.microsoft.playwright.CLI</mainClass>
+                    <classpathScope>test</classpathScope>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!--
+        Source layout:
+          src/test/java       your workshop code (always compiled)
+          src/solutions/java  reference answers      -> only with -Psolutions
+          src/broken/java     the lesson 13 exercise -> only with -Pbroken (uses the reference pages/support)
+        Keeping the answers out of the default build means they don't show up in your IDE's test tree
+        or completion until you ask for them.
+    -->
+    <profiles>
+        <profile>
+            <id>solutions</id>
+            <properties>
+                <tests.include>**/solutions/**/*Test.java</tests.include>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>${build-helper.version}</version>
+                        <executions>
+                            <execution>
+                                <id>add-solutions</id>
+                                <phase>generate-test-sources</phase>
+                                <goals><goal>add-test-source</goal></goals>
+                                <configuration>
+                                    <sources><source>src/solutions/java</source></sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- The reference solutions are written to be parallel-safe (lesson 12). -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <properties>
+                                <configurationParameters>
+                                    junit.jupiter.execution.parallel.enabled = true
+                                    junit.jupiter.execution.parallel.mode.default = same_thread
+                                    junit.jupiter.execution.parallel.mode.classes.default = concurrent
+                                    junit.jupiter.execution.parallel.config.strategy = fixed
+                                    junit.jupiter.execution.parallel.config.fixed.parallelism = 4
+                                </configurationParameters>
+                            </properties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>broken</id>
+            <properties>
+                <tests.include>**/broken/**/*Test.java</tests.include>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>${build-helper.version}</version>
+                        <executions>
+                            <execution>
+                                <id>add-broken-suite</id>
+                                <phase>generate-test-sources</phase>
+                                <goals><goal>add-test-source</goal></goals>
+                                <configuration>
+                                    <sources>
+                                        <source>src/solutions/java</source>
+                                        <source>src/broken/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

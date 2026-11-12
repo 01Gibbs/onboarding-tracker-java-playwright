@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head(${customer.fullName})}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main>
+    <nav aria-label="Breadcrumb" class="breadcrumb"><a th:href="@{/customers}">Customers</a></nav>
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div class="page-header">
+        <h1><span th:text="${customer.fullName}">Name</span>
+            <span th:replace="~{fragments :: statusBadge(${customer.status})}"></span></h1>
+        <div class="actions" th:if="${currentUser.canEdit()}">
+            <a class="button" th:href="@{/customers/{id}/edit(id=${customer.id})}">Edit</a>
+            <form method="post" th:action="@{/customers/{id}/status(id=${customer.id})}">
+                <input type="hidden" name="status"
+                       th:value="${customer.status.name() == 'ACTIVE'} ? 'SUSPENDED' : 'ACTIVE'">
+                <button type="submit" class="button"
+                        th:text="${customer.status.name() == 'ACTIVE'} ? 'Suspend customer' : 'Reactivate customer'">
+                    Suspend customer</button>
+            </form>
+            <form method="post" th:action="@{/customers/{id}/delete(id=${customer.id})}"
+                  th:attr="data-confirm='Delete customer ' + ${customer.fullName} + '? This cannot be undone.'">
+                <button type="submit" class="button danger">Delete customer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Each term/value pair is a group named by its term: getByRole(GROUP, name "Email").getByRole(DEFINITION) -->
+    <dl class="details" aria-label="Customer details">
+        <div role="group" aria-labelledby="term-reference"><dt id="term-reference">Reference</dt>
+            <dd th:text="${customer.reference}">CUS-0001</dd></div>
+        <div role="group" aria-labelledby="term-email"><dt id="term-email">Email</dt>
+            <dd th:text="${customer.email}">email</dd></div>
+        <div role="group" aria-labelledby="term-phone"><dt id="term-phone">Phone</dt>
+            <dd th:text="${customer.phone ?: 'Not provided'}">phone</dd></div>
+        <div role="group" aria-labelledby="term-since"><dt id="term-since">Customer since</dt>
+            <dd th:text="${@dates.date(customer.createdAt)}">1 Jan 2026</dd></div>
+    </dl>
+
+    <section class="panel" aria-labelledby="accounts-heading">
+        <div class="panel-header">
+            <h2 id="accounts-heading">Accounts</h2>
+            <a th:if="${currentUser.canEdit() and customer.status.name() == 'ACTIVE'}" class="button primary"
+               th:href="@{/accounts/new(customerId=${customer.id})}">Open account</a>
+        </div>
+        <table th:if="${!customer.accounts.isEmpty()}" aria-label="Accounts">
+            <thead>
+            <tr>
+                <th scope="col">Account number</th>
+                <th scope="col">Nickname</th>
+                <th scope="col">Type</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="num">Balance</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="a : ${customer.accounts}" data-testid="account-row">
+                <td><a th:href="@{/accounts/{id}(id=${a.id})}" th:text="${a.accountNumber}">10000001</a></td>
+                <td th:text="${a.nickname}">Nickname</td>
+                <td th:text="${a.type.label}">Current</td>
+                <td><span th:replace="~{fragments :: statusBadge(${a.status})}"></span></td>
+                <td class="num" th:text="${@money.format(a.balance)}">£0.00</td>
+            </tr>
+            </tbody>
+        </table>
+        <p th:if="${customer.accounts.isEmpty()}" class="empty">This customer has no accounts yet.</p>
+    </section>
+</main>
+</body>
+</html>

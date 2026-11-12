@@ -1,0 +1,8 @@
+target/
+test-results/
+playwright/.auth/
+*.log
+.idea/
+*.iml
+.vscode/
+.DS_Store

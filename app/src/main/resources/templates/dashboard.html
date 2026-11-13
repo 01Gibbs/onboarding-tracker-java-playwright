@@ -11,15 +11,15 @@
     <section aria-label="Summary" class="stats">
         <a class="stat" th:href="@{/customers}" data-testid="stat-customers">
             <span class="stat-label">Customers</span>
-            <span class="stat-value" th:text="${customerCount}">0</span>
+            <span class="stat-value" th:text="${summary.customerCount}">0</span>
         </a>
         <a class="stat" th:href="@{/accounts(status='ACTIVE')}" data-testid="stat-active-accounts">
             <span class="stat-label">Active accounts</span>
-            <span class="stat-value" th:text="${activeAccountCount}">0</span>
+            <span class="stat-value" th:text="${summary.activeAccountCount}">0</span>
         </a>
         <div class="stat" data-testid="stat-total-balance">
             <span class="stat-label">Total balance held</span>
-            <span class="stat-value" th:text="${@money.format(totalBalance)}">£0.00</span>
+            <span class="stat-value" th:text="${@money.format(summary.totalBalance)}">£0.00</span>
         </div>
     </section>
 

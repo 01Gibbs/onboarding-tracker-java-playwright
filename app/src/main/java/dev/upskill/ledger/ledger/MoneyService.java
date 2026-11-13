@@ -18,6 +18,8 @@ import org.springframework.util.StringUtils;
 @Transactional
 public class MoneyService {
 
+    public static final int DESCRIPTION_MAX = 80;
+
     private final AccountService accounts;
     private final LedgerEntryRepository entries;
     private final Money money;
@@ -44,20 +46,20 @@ public class MoneyService {
     public LedgerEntry deposit(Long accountId, BigDecimal amount, String description) {
         Account account = accounts.get(accountId);
         BigDecimal value = Amount.of(amount).value();
+        String text = describe(description, "Deposit");
         requireActive(account, null);
         account.credit(value);
-        return entries.save(new LedgerEntry(account, EntryType.DEPOSIT, value,
-                describe(description, "Deposit"), null, null, clock.instant()));
+        return entries.save(new LedgerEntry(account, EntryType.DEPOSIT, value, text, null, null, clock.instant()));
     }
 
     public LedgerEntry withdraw(Long accountId, BigDecimal amount, String description) {
         Account account = accounts.get(accountId);
         BigDecimal value = Amount.of(amount).value();
+        String text = describe(description, "Withdrawal");
         requireActive(account, null);
         requireFunds(account, value);
         account.debit(value);
-        return entries.save(new LedgerEntry(account, EntryType.WITHDRAWAL, value,
-                describe(description, "Withdrawal"), null, null, clock.instant()));
+        return entries.save(new LedgerEntry(account, EntryType.WITHDRAWAL, value, text, null, null, clock.instant()));
     }
 
     /** Moves money between two accounts atomically. Returns the destination account. */
@@ -71,12 +73,12 @@ public class MoneyService {
         Account from = accounts.get(fromId);
         Account to = accounts.get(toId);
         BigDecimal value = Amount.of(amount).value();
+        String text = describe(description, "Transfer");
         requireActive(from, null);
         requireActive(to, "toAccountId");
         requireFunds(from, value);
 
         String transferId = UUID.randomUUID().toString();
-        String text = describe(description, "Transfer");
         from.debit(value);
         Instant now = clock.instant();
         entries.save(new LedgerEntry(from, EntryType.TRANSFER_OUT, value, text, to.getAccountNumber(), transferId, now));
@@ -100,6 +102,13 @@ public class MoneyService {
     }
 
     private static String describe(String description, String fallback) {
-        return StringUtils.hasText(description) ? description.trim() : fallback;
+        if (!StringUtils.hasText(description)) {
+            return fallback;
+        }
+        if (description.trim().length() > DESCRIPTION_MAX) {
+            throw new BusinessRuleException(
+                    "Description must be " + DESCRIPTION_MAX + " characters or fewer", "description");
+        }
+        return description.trim();
     }
 }

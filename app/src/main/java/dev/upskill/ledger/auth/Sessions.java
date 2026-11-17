@@ -11,6 +11,19 @@ public final class Sessions {
     private Sessions() {
     }
 
+    /** Signs {@code user} in on a brand-new session, so a session id seen before sign-in is never reused. */
+    public static void start(HttpServletRequest request, CurrentUser user) {
+        end(request);
+        request.getSession(true).setAttribute(USER_ATTRIBUTE, user);
+    }
+
+    public static void end(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+    }
+
     public static Optional<CurrentUser> currentUser(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         return session == null

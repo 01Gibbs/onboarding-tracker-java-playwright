@@ -18,6 +18,20 @@ It has two parts:
 Nothing needs to be installed except a JDK. The Maven Wrapper downloads Maven, and Playwright
 downloads its own browsers.
 
+## Tracks
+
+Ledgerline has one back end and a front end per track. Each track has its own complete lesson series, and every
+front end keeps the same [UI contract](docs/ui-contract.md), so the same skills apply to each.
+
+| Track | Front end | Tests in | Lessons |
+|-------|-----------|----------|--------|
+| **Java** | Thymeleaf, served by the app on :8080 | Playwright for Java + JUnit 5 (`e2e-tests/`) | [lessons/](lessons/00-setup.md), below |
+| **React** | React 19 + Vite on :5173 (`frontends/react/`) | Playwright Test + TypeScript (`e2e-ts/react/`) | [lessons/react/](lessons/react/README.md): 00–04 and 10 so far |
+| **Angular** | planned | Playwright Test + TypeScript | planned |
+
+The rest of this README is about the Java track. The React track needs Node 22, 24 or 26 as well as the JDK:
+start at [lessons/react/00-setup.md](lessons/react/00-setup.md).
+
 ## Quick start
 
 Requires **JDK 21+**.
@@ -75,10 +89,16 @@ e2e-tests/src/
   test/java/.../workshop/    YOUR code: starter files per lesson, plus pages/ and support/ (run by default)
   solutions/java/.../solutions/  reference answers, same layout (only built with -Psolutions)
   broken/java/.../broken/    lesson 13's deliberately broken suite (only built with -Pbroken)
-lessons/                     the course
+lessons/                     the course (Java track)
 lessons/answers/             answer notes (spoilers)
+lessons/react/               the React track's course
+frontends/react/             the React front end (with its own unit, integration and mutation tests)
+e2e-ts/                      Playwright Test (TypeScript) for the React and Angular tracks
+  react/                     YOUR code for the React track: config and starter files
+  solutions/                 reference answers, run against every front end (the contract check)
 docs/
   ledgerline-reference.md    users, seeded data, business rules, UI map, API
+  ui-contract.md             what every front end keeps identical, so one set of tests fits all
   research/playwright-java.md  research notes on Playwright Java 1.64, with sources and docs caveats
 ```
 
@@ -100,6 +120,17 @@ docs/
 
 The e2e tests need the app running in another terminal.
 
+React track and front-end commands (from the repo root, after `npm install`):
+
+| Task | Command |
+|------|---------|
+| Run the React app | `npm run dev:react` (with the back end running) |
+| Your React-track tests | `npm run test:react`, or `npm run test:react -- lesson03 --headed`, or `-- --ui` |
+| Reference answers on React | `npm run solutions:react` |
+| Contract check: answers on every front end | `npm run contract` |
+| Front-end unit and integration tests | `npm run test:frontends` |
+| Front-end mutation tests (slow) | `npm run mutation:frontends`, report in `frontends/react/reports/mutation/` |
+
 On a fresh checkout, `./mvnw -pl e2e-tests test` is green: 2 tests pass (the setup check and lesson 01's
 worked example), and every unfinished exercise is reported as *skipped* with a "TODO lesson NN" reason.
 The reference suite has 69 tests and finishes in about 40 seconds against a running app. The broken suite
@@ -115,6 +146,9 @@ until you've fixed them.
 | Spring Boot | 4.1.2 |
 | Java | 21+ |
 | Maven (via wrapper) | 3.9.16 |
+| Playwright Test (React track) | 1.65.1 |
+| React / Vite / React Router | 19.3 / 8.3 / 8.5 |
+| Node | 22, 24 or 26 |
 
 See [`docs/research/playwright-java.md`](docs/research/playwright-java.md) for known differences
 between the online docs and 1.64.0. For example, the docs show `setContextOption`, but the method is

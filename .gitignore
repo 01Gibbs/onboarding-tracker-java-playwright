@@ -1,5 +1,7 @@
 target/
 test-results/
+playwright-report/
+node_modules/
 playwright/.auth/
 *.log
 .idea/

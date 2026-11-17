@@ -20,6 +20,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/login", "/api/**", "/css/**", "/js/**", "/favicon.svg", "/error");
         registry.addInterceptor(new ApiAuthInterceptor(tokens))
                 .addPathPatterns("/api/**")
-                .excludePathPatterns("/api/auth/login", "/api/health", "/api/testing/**");
+                .excludePathPatterns("/api/auth/login", "/api/auth/session", "/api/health", "/api/testing/**");
     }
 }

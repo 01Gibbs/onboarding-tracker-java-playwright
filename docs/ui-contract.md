@@ -1,6 +1,6 @@
 # The UI contract
 
-Every Ledgerline front end (Thymeleaf, React, and later Angular) keeps this contract, so the same tests work
+Every Ledgerline front end (Thymeleaf, React and Angular) keeps this contract, so the same tests work
 against all of them, and each track's course teaches the same skills. It is what a test may rely on: URLs,
 roles and accessible names, test ids, and the exact text of messages. Styling and markup beyond that are free.
 

@@ -14,11 +14,13 @@
     "dev:react": "npm run dev -w frontends/react",
     "dev:angular": "npm run dev -w frontends/angular",
     "test:react": "npm run test:react -w e2e-ts --",
+    "test:angular": "npm run test:angular -w e2e-ts --",
     "solutions:react": "npm run solutions:react -w e2e-ts --",
     "solutions:angular": "npm run solutions:angular -w e2e-ts --",
     "contract": "npm run contract -w e2e-ts --",
+    "broken:react": "npm run broken:react -w e2e-ts --",
+    "broken:angular": "npm run broken:angular -w e2e-ts --",
     "test:frontends": "npm test -w frontends/react -w frontends/angular",
-    "mutation:frontends": "npm run mutation -w frontends/react -w frontends/angular",
-    "broken:react": "npm run broken:react -w e2e-ts --"
+    "mutation:frontends": "npm run mutation -w frontends/react -w frontends/angular"
   }
 }

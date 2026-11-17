@@ -80,7 +80,7 @@ jobs:
         with: { node-version: 24, cache: npm }
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:react            # webServer starts the back end and the React app
+      - run: npm run test:react   # webServer starts the back end and the React front end
         env: { CI: true }
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

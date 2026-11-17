@@ -21,7 +21,7 @@ npm run broken:react
 
 - Actions and assertions give up after **5 seconds** in this suite, so failures are quick.
 - Every failing test keeps a **trace**. The HTML report links to each one:
-  `cd e2e-ts && npx playwright show-report playwright-report/broken`
+  `cd e2e-ts && npx playwright show-report playwright-report/broken-react`
 
 > **Run the whole suite at least twice, with the back end running in its own terminal.** One test passes the
 > first time against a freshly started back end and fails afterwards. (If Playwright starts the back end for

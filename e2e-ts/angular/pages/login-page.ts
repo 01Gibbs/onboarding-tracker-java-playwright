@@ -26,10 +26,13 @@ export class LoginPage {
     await this.signInButton.click()
   }
 
-  /** Opens the sign-in page, signs in, and returns the dashboard. */
+  /** Opens the sign-in page, signs in, and returns the dashboard once the user is signed in. */
   async signInAs(user: User): Promise<DashboardPage> {
     await this.open()
     await this.submit(user.username, user.password)
+    // Signing in is a request the page makes in the background: wait for its result, or the test's next
+    // goto() would leave the page before the session exists
+    await this.page.getByTestId('current-user').waitFor()
     return new DashboardPage(this.page)
   }
 }

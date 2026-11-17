@@ -22,6 +22,7 @@ export default defineConfig({
     // ignore ports, so the saved sessions also work when the same answers run against Thymeleaf.
     { name: 'setup', testMatch: /.*\.setup\.ts/, use: { baseURL: frontEnds.react.url } },
     { name: 'react', dependencies: ['setup'], use: { baseURL: frontEnds.react.url } },
-    { name: 'thymeleaf', dependencies: ['setup'], use: { baseURL: frontEnds.thymeleaf.url } },
+    // @spa tests check things only a single-page app does (e.g. "Processing…" while a request runs)
+    { name: 'thymeleaf', dependencies: ['setup'], use: { baseURL: frontEnds.thymeleaf.url }, grepInvert: /@spa/ },
   ],
 })

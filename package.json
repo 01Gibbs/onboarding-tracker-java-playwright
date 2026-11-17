@@ -15,6 +15,7 @@
     "solutions:react": "npm run solutions:react -w e2e-ts --",
     "contract": "npm run contract -w e2e-ts --",
     "test:frontends": "npm test -w frontends/react",
-    "mutation:frontends": "npm run mutation -w frontends/react"
+    "mutation:frontends": "npm run mutation -w frontends/react",
+    "broken:react": "npm run broken:react -w e2e-ts --"
   }
 }

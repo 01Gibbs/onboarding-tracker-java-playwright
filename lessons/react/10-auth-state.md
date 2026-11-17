@@ -110,4 +110,4 @@ On a React page, first wait for something that **is** there (a row, a heading), 
 
 **Reference:** `lesson10/`, `support/auth-state.ts`, and the `setup` project in `solutions/playwright.config.ts`
 
-Next: lessons 11–14 are being written.
+Next: [11: Network interception and mocking](11-network.md)

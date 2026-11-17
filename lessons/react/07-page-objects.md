@@ -29,6 +29,7 @@ export class LoginPage {
     await this.username.fill(user.username)
     await this.password.fill(user.password)
     await this.signInButton.click()
+    await this.page.getByTestId('current-user').waitFor()   // signed in: the page is ready
     return new DashboardPage(this.page)   // navigation methods return the page you land on
   }
 }
@@ -39,7 +40,8 @@ Guidelines that keep page objects healthy:
 - **Methods return the page you land on**, so a test reads as a story: `(await nav.customers()).newCustomer()`.
   In TypeScript every step is `await`ed; one step per line often reads better than a long chain.
 - **Keep assertions in tests.** Page objects expose locators (`flash`, `rows`, `balance`) and tests decide what
-  to expect.
+  to expect. A short "wait until the page is ready" (`locator.waitFor()`) inside a page object is fine: here
+  signing in is a background request, and the next step must not run before it has finished.
 - **Shared parts of the page get their own class** (for example a `NavBar` used by every page).
 - **Don't model every element.** Add methods when a test needs them.
 

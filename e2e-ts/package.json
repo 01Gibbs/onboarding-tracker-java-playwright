@@ -5,6 +5,7 @@
   "scripts": {
     "test:react": "playwright test --config react/playwright.config.ts",
     "solutions:react": "playwright test --config solutions/playwright.config.ts --project=react",
+    "solutions:angular": "playwright test --config solutions/playwright.config.ts --project=angular",
     "contract": "playwright test --config solutions/playwright.config.ts",
     "typecheck": "tsc --noEmit",
     "broken:react": "playwright test --config broken/playwright.config.ts --project=react"

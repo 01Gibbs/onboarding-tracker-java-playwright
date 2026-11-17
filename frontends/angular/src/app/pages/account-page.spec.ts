@@ -2,7 +2,7 @@ import { screen, waitFor, within } from '@testing-library/angular/zoneless'
 import { delay, http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
 import { renderApp } from '../../test/render'
-import { apiError, AUDITOR, capture, EVERYDAY, OPTIONS, RAINY_DAY, SALARY, SAVING, server, TELLER } from '../../test/server'
+import { apiError, AUDITOR, capture, EVERYDAY, OPTIONS, RAINY_DAY, SALARY, SAVING, server, TELLER, heldResponse } from '../../test/server'
 
 const moveMoney = () => screen.findByRole('region', { name: 'Move money' })
 
@@ -365,13 +365,15 @@ describe('keeping the page up to date', () => {
 
   it('waits for the account and its choices before drawing the page', async () => {
     document.title = 'Before'
-    server.use(http.get('/api/options', async () => { await delay(100); return HttpResponse.json(OPTIONS) }))
+    const options = heldResponse(OPTIONS)
+    server.use(http.get('/api/options', options.respond))
     await renderApp('/accounts/1', TELLER)
 
     // The account has loaded (its name is the title) but the choices haven't: still loading, nothing half-drawn
     await waitFor(() => expect(document.title).toBe('Everyday · Ledgerline'))
     expect(screen.getByText('Loading…')).toBeVisible()
     expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument()
+    options.release()
     expect(await screen.findByRole('region', { name: 'Move money' })).toBeVisible()
   })
 })

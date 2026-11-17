@@ -91,3 +91,19 @@ export function capture(method: 'post' | 'put' | 'patch' | 'delete' | 'get', pat
   }))
   return requests
 }
+
+/**
+ * A response held back until release() is called, so a test can look at the page while it waits for the API,
+ * without guessing how long a render takes.
+ */
+export function heldResponse(body: JsonBodyType) {
+  let release: () => void = () => {}
+  const released = new Promise<void>(resolve => { release = resolve })
+  return {
+    release,
+    respond: async () => {
+      await released
+      return HttpResponse.json(body)
+    },
+  }
+}

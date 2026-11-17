@@ -1,8 +1,8 @@
 import { screen, within, waitFor } from '@testing-library/angular/zoneless'
-import { delay, http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { renderApp } from '../../test/render'
-import { apiError, SAVING, SALARY, server, TELLER } from '../../test/server'
+import { apiError, SAVING, SALARY, server, TELLER, heldResponse } from '../../test/server'
 
 describe('the dashboard', () => {
   it('welcomes the user and shows the summary figures as links', async () => {
@@ -51,11 +51,13 @@ describe('the dashboard', () => {
   it('shows the loading message again while Refresh fetches', async () => {
     const { user } = await renderApp('/', TELLER)
     await screen.findByTestId('activity-item')
-    server.use(http.get('/api/activity', async () => { await delay(100); return HttpResponse.json([SAVING]) }))
+    const activity = heldResponse([SAVING])
+    server.use(http.get('/api/activity', activity.respond))
 
     await user.click(screen.getByRole('button', { name: 'Refresh' }))
 
-    expect(screen.getByText('Loading activity…')).toBeVisible()
+    expect(await screen.findByText('Loading activity…')).toBeVisible()
+    activity.release()
     expect(await screen.findByText(/Monthly saving/)).toBeVisible()
   })
 

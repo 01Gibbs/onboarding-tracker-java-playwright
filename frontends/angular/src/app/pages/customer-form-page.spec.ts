@@ -1,8 +1,8 @@
 import { screen, within, waitFor } from '@testing-library/angular/zoneless'
-import { delay, http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { renderApp } from '../../test/render'
-import { ALICE, apiError, capture, server, TELLER } from '../../test/server'
+import { ALICE, apiError, capture, server, TELLER, heldResponse } from '../../test/server'
 
 describe('the new customer form', () => {
   it('creates the customer and opens their page', async () => {
@@ -117,13 +117,14 @@ describe('the edit customer form', () => {
   // The title says "Edit customer" once there is a customer to edit, and no sooner: until then it may yet be an error
   it('keeps the old title while the customer loads', async () => {
     document.title = 'Before'
-    server.use(http.get('/api/customers/:id', async () => { await delay(400); return HttpResponse.json(ALICE) }))
+    const customer = heldResponse(ALICE)
+    server.use(http.get('/api/customers/:id', customer.respond))
     await renderApp('/customers/1/edit', TELLER)
 
     await screen.findByRole('navigation', { name: 'Main' })
-    await delay(100) // the page has drawn its loading state, and the customer is still on its way
-    expect(screen.getByText('Loading…')).toBeVisible()
+    expect(await screen.findByText('Loading…')).toBeVisible() // the customer is still on its way
     expect(document.title).toBe('Before')
+    customer.release()
     expect(await screen.findByLabelText('First name')).toHaveValue('Alice')
     await waitFor(() => expect(document.title).toBe('Edit customer · Ledgerline'))
   })

@@ -221,7 +221,7 @@ export class AccountPage {
   protected readonly account = apiResource<Account>(() => `/api/accounts/${this.id()}`)
   protected readonly entries = apiResource<Entry[]>(() => {
     const type = this.entryType()
-    return `/api/accounts/${this.id()}/transactions${type ? `?type=${type}` : ''}`
+    return `/api/accounts/${this.id()}/transactions${type ? `?${new URLSearchParams({ type })}` : ''}`
   })
   protected readonly options = apiResource<Options>(() => '/api/options')
   protected readonly isCredit = isCredit

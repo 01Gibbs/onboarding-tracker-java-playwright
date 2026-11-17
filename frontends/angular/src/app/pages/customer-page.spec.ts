@@ -1,8 +1,8 @@
 import { screen, waitFor, within } from '@testing-library/angular/zoneless'
-import { delay, http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
 import { renderApp } from '../../test/render'
-import { ALICE, apiError, AUDITOR, capture, DAN, EVERYDAY, RAINY_DAY, server, TELLER } from '../../test/server'
+import { ALICE, apiError, AUDITOR, capture, DAN, EVERYDAY, RAINY_DAY, server, TELLER, heldResponse } from '../../test/server'
 
 const detail = (term: string) => within(screen.getByRole('group', { name: term })).getByRole('definition')
 
@@ -124,23 +124,26 @@ describe('a customer page', () => {
   })
 
   it('waits for the customer and their accounts before drawing the page', async () => {
-    server.use(http.get('/api/accounts', async () => { await delay(100); return HttpResponse.json([EVERYDAY]) }))
+    const accounts = heldResponse([EVERYDAY])
+    server.use(http.get('/api/accounts', accounts.respond))
     await renderApp('/customers/1', TELLER)
 
     await waitFor(() => expect(document.title).toBe('Alice Archer · Ledgerline'))
     expect(screen.getByText('Loading…')).toBeVisible()
+    accounts.release()
     expect(await screen.findByTestId('account-row')).toBeVisible()
   })
 
   it('keeps the old title until it knows the customer\'s name (not "undefined · Ledgerline")', async () => {
     document.title = 'Before'
-    server.use(http.get('/api/customers/:id', async () => { await delay(400); return HttpResponse.json(ALICE) }))
+    const customer = heldResponse(ALICE)
+    server.use(http.get('/api/customers/:id', customer.respond))
     await renderApp('/customers/1', TELLER)
 
     await screen.findByRole('navigation', { name: 'Main' })
-    await delay(100) // the page has drawn its loading state, and the customer is still on its way
-    expect(screen.getByText('Loading…')).toBeVisible()
+    expect(await screen.findByText('Loading…')).toBeVisible() // the customer is still on its way
     expect(document.title).toBe('Before')
+    customer.release()
     await waitFor(() => expect(document.title).toBe('Alice Archer · Ledgerline'))
   })
 

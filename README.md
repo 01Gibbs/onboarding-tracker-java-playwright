@@ -145,7 +145,7 @@ React and Angular track and front-end commands (from the repo root, after `npm i
 On a fresh checkout, `npm run test:react` is green: 2 tests pass (the setup check and lesson 01's worked
 example) and every unfinished exercise is *skipped* with a "TODO lesson NN" reason. Playwright starts the back
 end and the React front end if they aren't running. The reference answers are 70 tests, plus 2 that sign in first (`npm run solutions:react`);
-`npm run contract` runs them against React and Thymeleaf. The broken suite (`npm run broken:react`) fails 9 of its 11 tests against
+`npm run contract` runs them against React, Angular and Thymeleaf. The broken suite (`npm run broken:react`) fails 9 of its 11 tests against
 a freshly started app, and 10 on every later run against the same app, until you've fixed them.
 
 ## Versions

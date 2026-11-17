@@ -36,7 +36,7 @@
             <input type="hidden" name="status" value="CLOSED">
             <button type="submit" class="button">Close account</button>
         </form>
-        <form th:if="${!hasHistory}" method="post" th:action="@{/accounts/{id}/delete(id=${account.id})}"
+        <form th:if="${canDelete}" method="post" th:action="@{/accounts/{id}/delete(id=${account.id})}"
               th:attr="data-confirm='Delete account ' + ${account.accountNumber} + '?'">
             <button type="submit" class="button danger">Delete account</button>
         </form>
@@ -122,7 +122,7 @@
                           th:text="${(e.type.credit ? 'from ' : 'to ') + e.counterpartyAccountNumber}">to 10000002</span>
                 </td>
                 <td class="num" th:classappend="${e.type.credit} ? 'credit' : 'debit'"
-                    th:text="${(e.type.credit ? '+' : '') + @money.format(e.signedAmount)}">+£0.00</td>
+                    th:text="${@money.formatChange(e.signedAmount)}">+£0.00</td>
                 <td class="num" th:text="${@money.format(e.balanceAfter)}">£0.00</td>
             </tr>
             </tbody>

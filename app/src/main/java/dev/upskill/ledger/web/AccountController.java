@@ -1,19 +1,18 @@
 package dev.upskill.ledger.web;
 
-import dev.upskill.ledger.LedgerlineProperties;
 import dev.upskill.ledger.account.Account;
 import dev.upskill.ledger.account.AccountForm;
 import dev.upskill.ledger.account.AccountService;
 import dev.upskill.ledger.account.AccountStatus;
 import dev.upskill.ledger.account.AccountType;
 import dev.upskill.ledger.common.BusinessRuleException;
-import dev.upskill.ledger.common.Money;
 import dev.upskill.ledger.customer.CustomerService;
 import dev.upskill.ledger.customer.CustomerStatus;
 import dev.upskill.ledger.ledger.EntryType;
 import dev.upskill.ledger.ledger.MoneyService;
 import dev.upskill.ledger.ledger.MovementForm;
 import dev.upskill.ledger.ledger.MovementType;
+import dev.upskill.ledger.ledger.Movements;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,16 +32,14 @@ public class AccountController {
     private final AccountService accounts;
     private final CustomerService customers;
     private final MoneyService money;
-    private final Money moneyFormat;
-    private final LedgerlineProperties properties;
+    private final Movements movements;
 
     public AccountController(AccountService accounts, CustomerService customers, MoneyService money,
-                             Money moneyFormat, LedgerlineProperties properties) {
+                             Movements movements) {
         this.accounts = accounts;
         this.customers = customers;
         this.money = money;
-        this.moneyFormat = moneyFormat;
-        this.properties = properties;
+        this.movements = movements;
     }
 
     @GetMapping
@@ -84,21 +81,21 @@ public class AccountController {
     public String detail(@PathVariable Long id, @RequestParam(required = false) EntryType entryType,
                          Model model) {
         if (!model.containsAttribute("movement")) {
-            model.addAttribute("movement", new MovementForm());
+            MovementForm movement = new MovementForm();
+            movement.setType(MovementType.DEPOSIT);
+            model.addAttribute("movement", movement);
         }
         return detailPage(id, entryType, model);
     }
 
     @PostMapping("/{id}/movements")
     public String move(@PathVariable Long id, @Valid @ModelAttribute("movement") MovementForm movement,
-                       BindingResult result, Model model, RedirectAttributes redirect) throws InterruptedException {
-        // Simulates a slow downstream system so the "Processing…" state is visible.
-        Thread.sleep(properties.processingDelayMs());
+                       BindingResult result, Model model, RedirectAttributes redirect) {
         if (result.hasErrors()) {
             return detailPage(id, null, model);
         }
         try {
-            redirect.addFlashAttribute("success", applyMovement(id, movement));
+            redirect.addFlashAttribute("success", movements.move(id, movement).message());
             return "redirect:/accounts/" + id;
         } catch (BusinessRuleException e) {
             Forms.reject(result, e);
@@ -151,34 +148,15 @@ public class AccountController {
         return "accounts/form";
     }
 
-    /** Moves the money and returns the confirmation the user sees. */
-    private String applyMovement(Long id, MovementForm movement) {
-        String amount = moneyFormat.format(movement.getAmount());
-        return switch (movement.getType()) {
-            case DEPOSIT -> {
-                money.deposit(id, movement.getAmount(), movement.getDescription());
-                yield "Deposit of " + amount + " completed";
-            }
-            case WITHDRAWAL -> {
-                money.withdraw(id, movement.getAmount(), movement.getDescription());
-                yield "Withdrawal of " + amount + " completed";
-            }
-            case TRANSFER -> {
-                Account target = money.transfer(id, movement.getToAccountId(), movement.getAmount(),
-                        movement.getDescription());
-                yield "Transfer of " + amount + " to " + target.getDisplayName() + " completed";
-            }
-        };
-    }
-
     private String detailPage(Long id, EntryType entryType, Model model) {
-        model.addAttribute("account", accounts.get(id));
+        Account account = accounts.get(id);
+        model.addAttribute("account", account);
         model.addAttribute("entries", money.history(id, entryType));
         model.addAttribute("entryType", entryType);
         model.addAttribute("entryTypes", EntryType.values());
         model.addAttribute("movementTypes", MovementType.values());
         model.addAttribute("transferTargets", accounts.transferTargets(id));
-        model.addAttribute("hasHistory", accounts.hasHistory(id));
+        model.addAttribute("canDelete", accounts.canDelete(account));
         return "accounts/detail";
     }
 }

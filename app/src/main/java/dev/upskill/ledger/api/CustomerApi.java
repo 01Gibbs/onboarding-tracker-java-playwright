@@ -25,36 +25,38 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerApi {
 
     private final CustomerService customers;
+    private final ApiViews views;
 
-    public CustomerApi(CustomerService customers) {
+    public CustomerApi(CustomerService customers, ApiViews views) {
         this.customers = customers;
+        this.views = views;
     }
 
     @GetMapping
     public List<CustomerDto> list(@RequestParam(required = false) String q,
                                   @RequestParam(required = false) CustomerStatus status) {
-        return customers.search(q, status).stream().map(CustomerDto::of).toList();
+        return customers.search(q, status).stream().map(views::customer).toList();
     }
 
     @GetMapping("/{id}")
     public CustomerDto get(@PathVariable Long id) {
-        return CustomerDto.of(customers.get(id));
+        return views.customer(customers.get(id));
     }
 
     @PostMapping
     public ResponseEntity<CustomerDto> create(@Valid @RequestBody CustomerForm form) {
-        CustomerDto created = CustomerDto.of(customers.create(form));
+        CustomerDto created = views.customer(customers.create(form));
         return ResponseEntity.created(URI.create("/api/customers/" + created.id())).body(created);
     }
 
     @PutMapping("/{id}")
     public CustomerDto update(@PathVariable Long id, @Valid @RequestBody CustomerForm form) {
-        return CustomerDto.of(customers.update(id, form));
+        return views.customer(customers.update(id, form));
     }
 
     @PatchMapping("/{id}/status")
     public CustomerDto changeStatus(@PathVariable Long id, @Valid @RequestBody StatusRequest request) {
-        return CustomerDto.of(customers.changeStatus(id, request.status()));
+        return views.customer(customers.changeStatus(id, request.status()));
     }
 
     @DeleteMapping("/{id}")

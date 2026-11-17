@@ -6,6 +6,7 @@ import dev.upskill.ledger.customer.Customer;
 import dev.upskill.ledger.customer.CustomerService;
 import dev.upskill.ledger.customer.CustomerStatus;
 import dev.upskill.ledger.ledger.LedgerEntryRepository;
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -44,9 +45,26 @@ public class AccountService {
         return accounts.findByStatusAndIdNotOrderByAccountNumber(AccountStatus.ACTIVE, accountId);
     }
 
+    public record Summary(int customerCount, long activeAccountCount, BigDecimal totalBalance) {
+    }
+
+    /** The dashboard's figures. Closed accounts hold no money, so they are left out of the total. */
     @Transactional(readOnly = true)
-    public boolean hasHistory(Long accountId) {
-        return entries.existsByAccountId(accountId);
+    public Summary summary() {
+        List<Account> all = accounts.search(null, null, null);
+        return new Summary(
+                customers.search(null, null).size(),
+                all.stream().filter(Account::isActive).count(),
+                all.stream()
+                        .filter(a -> a.getStatus() != AccountStatus.CLOSED)
+                        .map(Account::getBalance)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add));
+    }
+
+    /** Only an account that has never been used can be deleted; anything else must be closed instead. */
+    @Transactional(readOnly = true)
+    public boolean canDelete(Account account) {
+        return !entries.existsByAccountId(account.getId()) && account.getBalance().signum() == 0;
     }
 
     public Account open(AccountForm form) {
@@ -61,8 +79,20 @@ public class AccountService {
         return account;
     }
 
-    public Account rename(Long id, String nickname) {
+    /** A rename and a status change together, as PATCH /api/accounts/{id} asks: if either is refused, neither happens. */
+    public Account update(Long id, String nickname, AccountStatus status) {
         Account account = get(id);
+        if (nickname != null) {
+            rename(id, nickname);
+        }
+        if (status != null && status != account.getStatus()) {
+            changeStatus(id, status);
+        }
+        return account;
+    }
+
+    public Account rename(Long id, String nickname) {
+        Account account = changeable(id);
         if (nickname == null || nickname.isBlank() || nickname.trim().length() > 40) {
             throw new BusinessRuleException("Nickname must be between 1 and 40 characters", "nickname");
         }
@@ -71,10 +101,7 @@ public class AccountService {
     }
 
     public Account changeStatus(Long id, AccountStatus target) {
-        Account account = get(id);
-        if (account.getStatus() == AccountStatus.CLOSED) {
-            throw BusinessRuleException.conflict("Closed accounts cannot be changed", "status");
-        }
+        Account account = changeable(id);
         if (target == AccountStatus.CLOSED && account.getBalance().signum() != 0) {
             throw BusinessRuleException.conflict(
                     "Account balance must be zero before it can be closed", "status");
@@ -83,9 +110,18 @@ public class AccountService {
         return account;
     }
 
+    /** Closed is final: a closed account keeps its nickname and status for good. */
+    private Account changeable(Long id) {
+        Account account = get(id);
+        if (account.getStatus() == AccountStatus.CLOSED) {
+            throw BusinessRuleException.conflict("Closed accounts cannot be changed", "status");
+        }
+        return account;
+    }
+
     public void delete(Long id) {
         Account account = get(id);
-        if (entries.existsByAccountId(id) || account.getBalance().signum() != 0) {
+        if (!canDelete(account)) {
             throw BusinessRuleException.conflict(
                     "Account has transaction history and cannot be deleted. Close it instead.", null);
         }

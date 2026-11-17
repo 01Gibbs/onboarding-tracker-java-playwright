@@ -94,7 +94,8 @@ docs/
 | Task | Command |
 |------|---------|
 | Run the app | `./mvnw -pl app spring-boot:run` |
-| App unit tests | `./mvnw -pl app test` |
+| App unit and API tests | `./mvnw -pl app test` |
+| App mutation tests (slow) | `./mvnw -pl app -Pmutation test-compile org.pitest:pitest-maven:mutationCoverage`, report in `app/target/pit-reports/` |
 | Your workshop tests | `./mvnw -pl e2e-tests test` |
 | One lesson's tests | `./mvnw -pl e2e-tests test -Dtest='**/workshop/lesson03/*'` |
 | Watch the browser | `./mvnw -pl e2e-tests test -Dheadless=false` |

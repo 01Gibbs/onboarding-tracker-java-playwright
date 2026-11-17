@@ -30,4 +30,9 @@ public class Money {
         String digits = format.format(amount.abs().setScale(2, RoundingMode.HALF_UP));
         return (amount.signum() < 0 ? "-" : "") + symbol + digits;
     }
+
+    /** A change to a balance, always signed: {@code +£25.50} or {@code -£5.00}. */
+    public String formatChange(BigDecimal signedAmount) {
+        return (signedAmount.signum() > 0 ? "+" : "") + format(signedAmount);
+    }
 }

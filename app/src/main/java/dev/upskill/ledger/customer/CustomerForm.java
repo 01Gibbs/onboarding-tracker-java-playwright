@@ -21,7 +21,8 @@ public class CustomerForm {
     @Size(max = 120, message = "Email must be 120 characters or fewer")
     private String email;
 
-    @Pattern(regexp = "^$|^\\+?[0-9 ]{7,20}$", message = "Phone must contain 7-20 digits and may start with +")
+    // Digits may be grouped by single spaces, so "+44 7700 900001" is fine; the spaces are not counted.
+    @Pattern(regexp = "^$|^\\+?[0-9]( ?[0-9]){6,19}$", message = "Phone must contain 7-20 digits and may start with +")
     private String phone;
 
     public static CustomerForm from(Customer customer) {

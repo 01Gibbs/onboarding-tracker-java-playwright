@@ -22,7 +22,7 @@ public class CustomerService {
 
     @Transactional(readOnly = true)
     public List<Customer> search(String query, CustomerStatus status) {
-        String q = StringUtils.hasText(query) ? query.trim() : null;
+        String q = StringUtils.hasText(query) ? likeLiteral(query.trim()) : null;
         return customers.search(q, status);
     }
 
@@ -66,6 +66,11 @@ public class CustomerService {
                     "Customer cannot be deleted while they have accounts", null);
         }
         customers.delete(customer);
+    }
+
+    /** Searches match what was typed, so "_" finds an underscore rather than every customer. */
+    private static String likeLiteral(String text) {
+        return text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
 
     private static String blankToNull(String value) {

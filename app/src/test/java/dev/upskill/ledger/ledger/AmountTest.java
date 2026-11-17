@@ -27,7 +27,7 @@ class AmountTest {
 
     @ParameterizedTest
     @CsvSource(nullValues = "null", value = {
-            "null,        Amount must be greater than zero",
+            "null,        Amount is required",
             "0,           Amount must be greater than zero",
             "-5.00,       Amount must be greater than zero",
             "1000000.01,  'Amount must not exceed 1,000,000.00'",

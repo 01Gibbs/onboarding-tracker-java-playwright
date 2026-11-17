@@ -10,7 +10,10 @@ public record Amount(BigDecimal value) {
 
     /** Validates {@code raw} and normalises it, or throws a rule broken against the {@code amount} field. */
     public static Amount of(BigDecimal raw) {
-        if (raw == null || raw.signum() <= 0) {
+        if (raw == null) {
+            throw new BusinessRuleException("Amount is required", "amount");
+        }
+        if (raw.signum() <= 0) {
             throw new BusinessRuleException("Amount must be greater than zero", "amount");
         }
         if (raw.compareTo(MAX) > 0) {

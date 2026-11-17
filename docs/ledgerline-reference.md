@@ -36,6 +36,7 @@ These references and account numbers are predictable because ids restart on ever
 | Rule | UI behaviour | API behaviour |
 |------|--------------|---------------|
 | Customer email must be unique (case-insensitive) | Error under Email | `409` |
+| Phone is optional; otherwise 7–20 digits, single spaces between them, optional leading `+` | Error under Phone | `400` |
 | Customers with accounts cannot be deleted | Red flash message | `409` |
 | Suspended customers cannot open accounts | "Open account" hidden; form error | `422` |
 | Amount is required, must be > 0, ≤ 1,000,000, max 2 decimals | Error under Amount | `422` |
@@ -43,7 +44,7 @@ These references and account numbers are predictable because ids restart on ever
 | No withdrawal/transfer beyond the balance | "Insufficient funds. Available balance is £X" | `422` |
 | Frozen/closed accounts cannot send or receive money | "Move money" hidden | `422` |
 | Cannot transfer to the same account | Error under To account | `422` |
-| Only zero-balance accounts can be closed; closed is final | Red flash message | `409` |
+| Only zero-balance accounts can be closed; closed is final (no status change or rename) | Red flash message | `409` |
 | Accounts with history cannot be deleted (close them instead) | "Delete account" hidden | `409` |
 | Auditors cannot change anything | Controls hidden; direct POST → 403 page | `403` |
 
@@ -77,7 +78,7 @@ A signed-in browser session works too: the dashboard's own `fetch()` uses it.
 |--------|------|--------------|---------|
 | POST | `/api/auth/login` | `{"username","password"}` | `200 {"token","username","displayName","role"}` |
 | GET | `/api/health` | none (no auth needed) | `200 {"status":"UP"}` once seeded; `503 {"status":"STARTING"}` before that |
-| GET | `/api/customers` | `?q=&status=ACTIVE\|SUSPENDED` | `200 [Customer]` |
+| GET | `/api/customers` | `?q=&status=ACTIVE\|SUSPENDED` | `200 [Customer]`. `q` matches name or email as typed (`%` and `_` are not wildcards) |
 | GET | `/api/customers/{id}` | none | `200 Customer` |
 | POST | `/api/customers` | `{"firstName","lastName","email","phone"?}` | `201 Customer` + `Location` |
 | PUT | `/api/customers/{id}` | same as POST | `200 Customer` |
@@ -86,7 +87,7 @@ A signed-in browser session works too: the dashboard's own `fetch()` uses it.
 | GET | `/api/accounts` | `?status=&type=&customerId=` | `200 [Account]` |
 | GET | `/api/accounts/{id}` | none | `200 Account` |
 | POST | `/api/accounts` | `{"customerId","type":"CURRENT\|SAVINGS","nickname"}` | `201 Account` |
-| PATCH | `/api/accounts/{id}` | `{"nickname"?, "status"?:"ACTIVE\|FROZEN\|CLOSED"}` | `200 Account`. A blank or over-long nickname is a rule (`422`) |
+| PATCH | `/api/accounts/{id}` | `{"nickname"?, "status"?:"ACTIVE\|FROZEN\|CLOSED"}` | `200 Account`. A blank or over-long nickname is a rule (`422`). All or nothing: if either change is refused, neither is made |
 | DELETE | `/api/accounts/{id}` | none | `204` |
 | GET | `/api/accounts/{id}/transactions` | `?type=DEPOSIT\|WITHDRAWAL\|TRANSFER_IN\|TRANSFER_OUT` | `200 [Entry]` (newest first) |
 | POST | `/api/accounts/{id}/deposits` | `{"amount", "description"?}` | `201 Entry` |
@@ -98,7 +99,7 @@ A signed-in browser session works too: the dashboard's own `fetch()` uses it.
 | GET | `/api/dashboard` | none | `200 {"customerCount","activeAccountCount","totalBalance","totalBalanceDisplay"}` |
 | GET | `/api/options` | none | `200` every filter and radio choice as `{"value","label"}`, in page order |
 | POST | `/api/testing/reset` | none (no auth needed) | `200 {"customers":5,"accounts":6}`. Re-seeds everything |
-| PUT | `/api/testing/clock` | `{"instant":"2030-01-31T16:59:00Z"}` | `200 {"instant":...}`. Pins the server's "now" (not the browser's) |
+| PUT | `/api/testing/clock` | `{"instant":"2030-01-31T16:59:00Z"}` | `200 {"instant":...}`. Pins the server's "now" (not the browser's). No `instant` is a `400` |
 | DELETE | `/api/testing/clock` | none | `204`. Back to the real time |
 
 Responses carry the text the pages show, so a front end never formats money, dates or labels itself:
@@ -126,6 +127,7 @@ Errors always have this shape:
 | 403 | Signed in as auditor and tried to write |
 | 404 | Unknown id, or an unknown `/api` path (once authenticated; otherwise `401`) |
 | 409 | Conflict with current state (duplicate email, delete with accounts, close with balance…) |
+| 415 | The body is not `application/json` |
 | 422 | Business rule broken (insufficient funds, frozen account…) |
 
 ## Configuration

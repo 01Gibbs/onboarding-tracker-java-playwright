@@ -79,8 +79,20 @@ public class AccountService {
         return account;
     }
 
-    public Account rename(Long id, String nickname) {
+    /** A rename and a status change together, as PATCH /api/accounts/{id} asks: if either is refused, neither happens. */
+    public Account update(Long id, String nickname, AccountStatus status) {
         Account account = get(id);
+        if (nickname != null) {
+            rename(id, nickname);
+        }
+        if (status != null && status != account.getStatus()) {
+            changeStatus(id, status);
+        }
+        return account;
+    }
+
+    public Account rename(Long id, String nickname) {
+        Account account = changeable(id);
         if (nickname == null || nickname.isBlank() || nickname.trim().length() > 40) {
             throw new BusinessRuleException("Nickname must be between 1 and 40 characters", "nickname");
         }
@@ -89,15 +101,21 @@ public class AccountService {
     }
 
     public Account changeStatus(Long id, AccountStatus target) {
-        Account account = get(id);
-        if (account.getStatus() == AccountStatus.CLOSED) {
-            throw BusinessRuleException.conflict("Closed accounts cannot be changed", "status");
-        }
+        Account account = changeable(id);
         if (target == AccountStatus.CLOSED && account.getBalance().signum() != 0) {
             throw BusinessRuleException.conflict(
                     "Account balance must be zero before it can be closed", "status");
         }
         account.setStatus(target);
+        return account;
+    }
+
+    /** Closed is final: a closed account keeps its nickname and status for good. */
+    private Account changeable(Long id) {
+        Account account = get(id);
+        if (account.getStatus() == AccountStatus.CLOSED) {
+            throw BusinessRuleException.conflict("Closed accounts cannot be changed", "status");
+        }
         return account;
     }
 

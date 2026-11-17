@@ -7,7 +7,6 @@ import dev.upskill.ledger.api.ApiDtos.DashboardDto;
 import dev.upskill.ledger.api.ApiDtos.EntryDto;
 import dev.upskill.ledger.api.ApiDtos.ReceiptDto;
 import dev.upskill.ledger.api.ApiDtos.TransferRequest;
-import dev.upskill.ledger.account.Account;
 import dev.upskill.ledger.account.AccountForm;
 import dev.upskill.ledger.account.AccountService;
 import dev.upskill.ledger.account.AccountStatus;
@@ -66,14 +65,7 @@ public class AccountApi {
 
     @PatchMapping("/api/accounts/{id}")
     public AccountDto update(@PathVariable Long id, @RequestBody AccountUpdateRequest request) {
-        Account account = accounts.get(id);
-        if (request.nickname() != null) {
-            account = accounts.rename(id, request.nickname());
-        }
-        if (request.status() != null && request.status() != account.getStatus()) {
-            account = accounts.changeStatus(id, request.status());
-        }
-        return views.account(account);
+        return views.account(accounts.update(id, request.nickname(), request.status()));
     }
 
     @DeleteMapping("/api/accounts/{id}")

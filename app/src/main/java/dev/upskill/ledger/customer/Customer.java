@@ -32,7 +32,8 @@ public class Customer {
     @Column(nullable = false, unique = true, length = 120)
     private String email;
 
-    @Column(length = 20)
+    /** Up to 40 characters: "+", 20 digits and a space between each (see CustomerForm). */
+    @Column(length = 40)
     private String phone;
 
     @Enumerated(EnumType.STRING)

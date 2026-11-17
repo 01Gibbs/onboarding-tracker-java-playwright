@@ -7,6 +7,8 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,11 +44,15 @@ public class ApiExceptionHandler {
         return error(HttpStatus.BAD_REQUEST, "Malformed request", Map.of());
     }
 
-    /** Auth failures from ApiAuthInterceptor and the disabled testing endpoints. */
-    @ExceptionHandler(ResponseStatusException.class)
-    ResponseEntity<ApiError> status(ResponseStatusException e) {
+    /**
+     * Auth failures from ApiAuthInterceptor, and Spring's own request errors
+     * (a body that is not JSON), which would otherwise answer without the ApiError body.
+     */
+    @ExceptionHandler({ResponseStatusException.class, HttpMediaTypeNotSupportedException.class})
+    ResponseEntity<ApiError> status(ErrorResponse e) {
         HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
-        return error(status, e.getReason() == null ? status.getReasonPhrase() : e.getReason(), Map.of());
+        String detail = e.getBody().getDetail();
+        return error(status, detail == null ? status.getReasonPhrase() : detail, Map.of());
     }
 
     private static ResponseEntity<ApiError> error(HttpStatus status, String message, Map<String, String> fields) {

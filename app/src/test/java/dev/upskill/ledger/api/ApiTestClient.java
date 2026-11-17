@@ -1,5 +1,6 @@
 package dev.upskill.ledger.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -7,6 +8,7 @@ import com.jayway.jsonpath.JsonPath;
 import java.util.UUID;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -51,6 +53,18 @@ final class ApiTestClient {
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(body, "$.id");
+    }
+
+    /** One field of a GET response, e.g. {@code read("/api/accounts/7", "$.customerId")}. */
+    <T> T read(String path, String field) throws Exception {
+        return JsonPath.read(performAs("teller", get(path)).andReturn().getResponse().getContentAsString(), field);
+    }
+
+    /** Signs in through the login page, as a browser does; the session then authenticates API calls too. */
+    MockHttpSession signIn(String username) throws Exception {
+        return (MockHttpSession) mvc.perform(post("/login").param("username", username).param("password", username + "-pass"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn().getRequest().getSession(false);
     }
 
     static MockHttpServletRequestBuilder json(MockHttpServletRequestBuilder request, String body) {

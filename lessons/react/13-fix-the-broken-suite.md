@@ -25,8 +25,8 @@ npm run broken:react
 
 > **Run the whole suite at least twice, with the back end running in its own terminal.** One test passes the
 > first time against a freshly started back end and fails afterwards. (If Playwright starts the back end for
-> you, it starts a fresh one every run, which hides that fault.) Another can occasionally pass on a fast
-> machine, but it's still broken. "It passed once" is not evidence that a test is correct.
+> you, it starts a fresh one every run, which hides that fault.) "It passed once" is not evidence that a test is
+> correct.
 
 ## The rules
 
@@ -47,7 +47,7 @@ npm run broken:react
 | `Expected: … Received: …` | The expectation is wrong, or the app really is. Read both values carefully, including their types (`"90.00"` vs `90`) |
 | `strict mode violation … resolved to 2 elements` | The locator is ambiguous; the message lists every match |
 | `Timeout … waiting for …` and a call log | An action waited for something that never became possible. The call log says what it waited *for* |
-| `expect(received).toBeGreaterThan(…)` on a count | A value read once, right now, instead of a retrying assertion |
+| A plain `expect(await locator.count())` or `allTextContents()` | A value read once, right now, instead of a retrying assertion |
 | `TypeError: Cannot read properties of undefined` | Look at where that value was supposed to come from, and when |
 | A route that never seems to apply | Its pattern doesn't match the real URL, or it was added too late |
 | Passes once, fails on the next run | Leftover data from the previous run |

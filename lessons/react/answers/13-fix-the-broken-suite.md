@@ -72,17 +72,19 @@ Every fix below was checked by running the corrected suite twice.
 - **Fix:** `page.route('**/api/activity*', ...)`.
 - **Principle:** lesson 11. (The other classic: registering the route *after* the request has been made.)
 
-### Case 08: `refreshing shows recent activity`
+### Case 08: `refreshing shows the latest activity`
 
-- **Symptom:** `expected some recent activity`: `expect(received).toBeGreaterThan(0)`, received `0`. It can
-  occasionally pass on a fast machine, but it's still broken.
-- **Evidence:** `count()` returns *immediately*. The trace shows the count happened while the panel said
-  "Loading activity…", just after Refresh was clicked.
-- **Root cause:** a **non-retrying** check of something that changes asynchronously, on a page that redraws
-  after its request returns.
-- **Fix:** `await expect(dashboard.activityItems.first()).toBeVisible()`, or
-  `await expect(dashboard.activityItems).not.toHaveCount(0)`.
-- **Principle:** use web-first assertions, never `expect(await locator.count())` (lesson 02).
+- **Symptom:** `expected the new deposit`: `expect(received).toContainEqual(expected)`, where `received` is the
+  list from *before* the refresh, or an empty one.
+- **Evidence:** `allTextContents()` reads the list **once, right now**. The trace shows it was read while the panel
+  still said "Loading activity…" (the activity API takes a second here), and only afterwards did the new entry
+  arrive.
+- **Root cause:** a **non-retrying** check of something that changes asynchronously, after a request the page
+  makes in the background.
+- **Fix:** a web-first assertion that retries until it's true:
+  `await expect(dashboard.activityItems.filter({ hasText: description })).toBeVisible()`.
+- **Principle:** use web-first assertions, never `expect(await locator.allTextContents())` or
+  `expect(await locator.count())` on a changing page (lesson 02).
 
 ### Case 09: `deposit into the account`
 

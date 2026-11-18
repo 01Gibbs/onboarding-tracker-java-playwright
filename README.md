@@ -18,6 +18,21 @@ It has two parts:
 Nothing needs to be installed except a JDK. The Maven Wrapper downloads Maven, and Playwright
 downloads its own browsers.
 
+## Tracks
+
+Ledgerline has one back end and a front end per track. Each track has its own complete lesson series, and every
+front end keeps the same [UI contract](docs/ui-contract.md), so the same skills apply to each.
+
+| Track | Front end | Tests in | Lessons |
+|-------|-----------|----------|--------|
+| **Java** | Thymeleaf, served by the app on :8080 | Playwright for Java + JUnit 5 (`e2e-tests/`) | [lessons/](lessons/00-setup.md), below |
+| **React** | React 19 + Vite on :5173 (`frontends/react/`) | Playwright Test + TypeScript (`e2e-ts/react/`) | [lessons/react/](lessons/react/README.md): 00–14 |
+| **Angular** | Angular 22 on :4200 (`frontends/angular/`) | Playwright Test + TypeScript (`e2e-ts/angular/`) | [lessons/angular/](lessons/angular/README.md): 00–14 |
+
+The rest of this README is about the Java track. The React and Angular tracks need Node 22, 24 or 26 as well as
+the JDK: start at [lessons/react/00-setup.md](lessons/react/00-setup.md) or
+[lessons/angular/00-setup.md](lessons/angular/00-setup.md).
+
 ## Quick start
 
 Requires **JDK 21+**.
@@ -81,10 +96,21 @@ e2e-tests/src/
   test/java/.../workshop/    YOUR code: starter files per lesson, plus pages/ and support/ (run by default)
   solutions/java/.../solutions/  reference answers, same layout (only built with -Psolutions)
   broken/java/.../broken/    lesson 13's deliberately broken suite (only built with -Pbroken)
-lessons/                     the course
+lessons/                     the course (Java track)
 lessons/answers/             answer notes (spoilers)
+lessons/react/               the React track's lessons
+lessons/angular/             the Angular track's lessons
+frontends/react/             the React front end (with its own unit, integration and mutation tests)
+frontends/angular/           the Angular front end (the same contract; its own unit, integration and mutation tests)
+e2e-ts/                      Playwright Test (TypeScript) for the React and Angular tracks
+  react/                     YOUR code for the React track: config and starter files
+  angular/                   YOUR code for the Angular track: config and starter files
+  solutions/                 reference answers: per track, and against every front end (the contract check)
+  suites.ts                  the shared config behind solutions/ and broken/
+  broken/                    lesson 13's deliberately broken suite (TypeScript edition)
 docs/
   ledgerline-reference.md    users, seeded data, business rules, UI map, API
+  ui-contract.md             what every front end keeps identical, so one set of tests fits all
   research/playwright-java.md  research notes on Playwright Java 1.64, with sources and docs caveats
   research/banking-upskill.md  the banking track's research and mission plan (B0 onwards)
 ```
@@ -113,6 +139,28 @@ The reference suite has 77 tests and finishes in about 45 seconds against a runn
 (`-Pbroken`) should fail 9 of its 11 tests on a freshly started app, and 10 on every run after that,
 until you've fixed them.
 
+React and Angular track and front-end commands (from the repo root, after `npm install`):
+
+| Task | Command |
+|------|---------|
+| Run the React app | `npm run dev:react` (with the back end running) |
+| Run the Angular app | `npm run dev:angular` (with the back end running) |
+| Your React-track tests | `npm run test:react`, or `npm run test:react -- lesson03 --headed`, or `-- --ui` |
+| Your Angular-track tests | `npm run test:angular` (the same options) |
+| Reference answers on React | `npm run solutions:react` |
+| Reference answers on Angular | `npm run solutions:angular` |
+| Contract check: answers on every front end | `npm run contract` |
+| Lesson 13 broken suite | `npm run broken:react`, `npm run broken:angular` |
+| Front-end unit and integration tests | `npm run test:frontends` (React and Angular) |
+| Front-end mutation tests (slow) | `npm run mutation:frontends`, reports in `frontends/react/reports/mutation/` and `frontends/angular/reports/mutation/` |
+
+On a fresh checkout, `npm run test:react` and `npm run test:angular` are green: 2 tests pass in each (the setup
+check and lesson 01's worked example) and every unfinished exercise is *skipped* with a "TODO lesson NN" reason.
+Playwright starts the back end and that track's front end if they aren't running. The reference answers are 70
+tests, plus 2 that sign in first (`npm run solutions:react`, `npm run solutions:angular`); `npm run contract` runs
+them against React, Angular and Thymeleaf. Each track's broken suite fails 9 of its 11 tests against a freshly
+started back end, and 10 on every later run against the same one, until you've fixed them.
+
 ## Versions
 
 | Component | Version |
@@ -122,6 +170,10 @@ until you've fixed them.
 | Spring Boot | 4.1.2 |
 | Java | 21+ |
 | Maven (via wrapper) | 3.9.16 |
+| Playwright Test (React and Angular tracks) | 1.65.1 |
+| React / Vite / React Router | 19.3 / 8.3 / 8.5 |
+| Angular / Angular CLI | 22.2 / 22.2, with TypeScript 6.0 (Angular 22 doesn't support TypeScript 7 yet) |
+| Node | 22, 24 or 26 |
 
 See [`docs/research/playwright-java.md`](docs/research/playwright-java.md) for known differences
 between the online docs and 1.64.0. For example, the docs show `setContextOption`, but the method is

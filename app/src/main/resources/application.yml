@@ -4,6 +4,10 @@ server:
     session:
       # Keep session ids out of URLs (no ;jsessionid=...) so URL assertions stay simple.
       tracking-modes: cookie
+      # The React and Angular front ends sign in with this cookie too (POST /api/auth/session). Lax keeps other
+      # sites from sending it on their forms; the API also refuses non-JSON bodies (415).
+      cookie:
+        same-site: lax
 
 spring:
   application:

@@ -72,11 +72,15 @@ Flash messages after an action use `data-testid="flash-message"`. Success messag
 ## JSON API
 
 Authenticate with `POST /api/auth/login` and send `Authorization: Bearer <token>` on later requests.
-A signed-in browser session works too: the dashboard's own `fetch()` uses it.
+A signed-in browser session works too: the dashboard's own `fetch()` uses it, and the React and Angular front
+ends sign in with `POST /api/auth/session` to get one. The session cookie is `SameSite=Lax`.
 
 | Method | Path | Body / query | Success |
 |--------|------|--------------|---------|
 | POST | `/api/auth/login` | `{"username","password"}` | `200 {"token","username","displayName","role"}` |
+| POST | `/api/auth/session` | `{"username","password"}` (no auth needed) | `200 {"username","displayName","role","roleLabel","canEdit"}` and a session cookie, the same one the sign-in page sets. Wrong or locked: `401` with the sign-in page's message. What the React and Angular front ends use |
+| GET | `/api/auth/me` | none | `200` the signed-in user (same shape), by session or token; `401` if nobody is |
+| DELETE | `/api/auth/session` | none (no auth needed) | `204`. Signs out |
 | GET | `/api/health` | none (no auth needed) | `200 {"status":"UP"}` once seeded; `503 {"status":"STARTING"}` before that |
 | GET | `/api/customers` | `?q=&status=ACTIVE\|SUSPENDED` | `200 [Customer]`. `q` matches name or email as typed (`%` and `_` are not wildcards) |
 | GET | `/api/customers/{id}` | none | `200 Customer` |

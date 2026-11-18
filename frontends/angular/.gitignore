@@ -1,0 +1,19 @@
+# Build output and caches
+/dist
+/tmp
+/out-tsc
+/.angular/
+node_modules
+
+# Test and mutation reports
+/coverage/
+/reports/
+/.stryker-tmp/
+__screenshots__/
+
+# Logs, editors, system files
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store

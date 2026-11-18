@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "Mutation testing: npm run mutation. Changes the app's code in small ways and checks a test fails each time. Report: reports/mutation/mutation.html",
+  "testRunner": "vitest",
+  "mutate": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "!src/**/*.test.ts",
+    "!src/**/*.test.tsx",
+    "!src/test/**",
+    "!src/main.tsx"
+  ],
+  "coverageAnalysis": "perTest",
+  "reporters": [
+    "clear-text",
+    "progress",
+    "html"
+  ],
+  "htmlReporter": {
+    "fileName": "reports/mutation/mutation.html"
+  },
+  "thresholds": {
+    "high": 90,
+    "low": 80,
+    "break": 80
+  },
+  "concurrency": 4,
+  "tempDirName": ".stryker-tmp",
+  "_comment_tsconfig": "Stryker rewrites tsconfig paths for its sandbox with TypeScript's JS API, which TypeScript 7 no longer has. This app's tsconfigs only refer to files inside this folder, which the sandbox copies whole, so the rewrite is skipped by naming a file that does not exist.",
+  "tsconfigFile": "no-tsconfig-rewrite-needed.json"
+}

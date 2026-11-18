@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -17,13 +16,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import dev.upskill.ledger.account.Account;
+import dev.upskill.ledger.account.AccountService.Summary;
 import dev.upskill.ledger.account.AccountStatus;
+import dev.upskill.ledger.account.AccountType;
 import dev.upskill.ledger.customer.Customer;
+import dev.upskill.ledger.customer.CustomerStatus;
 import dev.upskill.ledger.ledger.EntryType;
-import dev.upskill.ledger.ledger.MovementForm;
 import dev.upskill.ledger.ledger.MovementType;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,8 +46,6 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest
 class PageFlowTest {
 
-    private static final AtomicInteger UNIQUE = new AtomicInteger();
-
     @Autowired
     WebApplicationContext context;
 
@@ -62,13 +61,33 @@ class PageFlowTest {
     }
 
     @Nested
-    class SigningInAndOut {
+    class EveryPage {
 
         @Test
         void theDashboardShowsTheBankSummary() throws Exception {
-            mvc.perform(get("/").session(teller))
-                    .andExpect(view().name("dashboard"))
-                    .andExpect(model().attributeExists("summary"));
+            MvcResult result = mvc.perform(get("/").session(teller)).andExpect(view().name("dashboard")).andReturn();
+            Summary summary = (Summary) result.getModelAndView().getModel().get("summary");
+            assertThat(summary.customerCount()).isGreaterThanOrEqualTo(5);   // the seeded five, plus any made by tests
+            assertThat(summary.activeAccountCount()).isPositive();
+        }
+
+        @Test
+        void everyPageKnowsWhereItIsAndTheCurrency() throws Exception {
+            // currentPath marks the nav link for this page (aria-current), currencySymbol labels amounts
+            mvc.perform(get("/customers").session(teller))
+                    .andExpect(model().attribute("currentPath", "/customers"))
+                    .andExpect(model().attribute("currencySymbol", "£"))
+                    .andExpect(content().string(containsString("aria-current=\"page\"")));
+        }
+    }
+
+    @Nested
+    class SigningInAndOut {
+
+        @Test
+        void spacesAroundTheUsernameDoNotStopASignIn() throws Exception {
+            mvc.perform(post("/login").param("username", " teller ").param("password", "teller-pass"))
+                    .andExpect(redirectedUrl("/"));
         }
 
         @Test
@@ -201,6 +220,18 @@ class PageFlowTest {
                     .andReturn();
             assertThat(PageFlowTest.<Customer>listOf(result, "customers")).extracting(Customer::getId).containsExactly(id);
         }
+
+        @Test
+        void theListFiltersByStatus() throws Exception {
+            long id = createCustomer(uniqueEmail());
+            suspend(id);
+            MvcResult result = mvc.perform(get("/customers").param("status", "SUSPENDED").session(teller))
+                    .andExpect(model().attribute("status", CustomerStatus.SUSPENDED))
+                    .andReturn();
+            List<Customer> customers = listOf(result, "customers");
+            assertThat(customers).extracting(Customer::getId).contains(id);
+            assertThat(customers).allSatisfy(c -> assertThat(c.getStatus()).isEqualTo(CustomerStatus.SUSPENDED));
+        }
     }
 
     @Nested
@@ -213,10 +244,14 @@ class PageFlowTest {
                     .andExpect(view().name("accounts/form"))
                     .andExpect(model().attribute("form", hasProperty("customerId", is(customerId))))
                     .andExpect(model().attributeExists("customers", "types"));
-            long id = openAccount(customerId, "Spending");
-            mvc.perform(get("/accounts/" + id).session(teller))
-                    .andExpect(view().name("accounts/detail"))
-                    .andExpect(model().attribute("canDelete", true));
+            MvcResult opened = mvc.perform(post("/accounts").param("customerId", String.valueOf(customerId))
+                            .param("type", "SAVINGS").param("nickname", "Goals").session(teller))
+                    .andExpect(redirectedUrlPattern("/accounts/{id}"))
+                    .andReturn();
+            Account account = account(idFrom(opened));
+            assertThat(opened.getFlashMap().get("success")).isEqualTo("Account " + account.getAccountNumber() + " opened");
+            assertThat(account.getNickname()).isEqualTo("Goals");
+            assertThat(account.getType()).isEqualTo(AccountType.SAVINGS);
         }
 
         @Test
@@ -231,7 +266,7 @@ class PageFlowTest {
         @Test
         void aSuspendedCustomerCannotOpenAnAccount() throws Exception {
             long customerId = createCustomer(uniqueEmail());
-            mvc.perform(post("/customers/" + customerId + "/status").param("status", "SUSPENDED").session(teller));
+            suspend(customerId);
             MvcResult result = mvc.perform(post("/accounts").param("customerId", String.valueOf(customerId))
                             .param("type", "CURRENT").param("nickname", "Spending").session(teller))
                     .andExpect(view().name("accounts/form"))
@@ -286,14 +321,13 @@ class PageFlowTest {
         @Test
         void theDetailPageStartsWithADepositAndCanFilterHistory() throws Exception {
             long id = openAccount(createCustomer(uniqueEmail()), "Spending");
-            mvc.perform(move(id, "DEPOSIT", "5.00"));
+            deposit(id, "5.00");
             MvcResult result = mvc.perform(get("/accounts/" + id).param("entryType", "WITHDRAWAL").session(teller))
                     .andExpect(model().attribute("entryType", EntryType.WITHDRAWAL))
                     .andExpect(model().attribute("canDelete", false))
+                    .andExpect(model().attribute("movement", hasProperty("type", is(MovementType.DEPOSIT))))
                     .andReturn();
             assertThat(listOf(result, "entries")).isEmpty();
-            assertThat(((MovementForm) result.getModelAndView().getModel().get("movement")).getType())
-                    .isEqualTo(MovementType.DEPOSIT);
         }
 
         @Test
@@ -319,7 +353,7 @@ class PageFlowTest {
         @Test
         void anAccountWithMoneyCannotBeClosed() throws Exception {
             long id = openAccount(createCustomer(uniqueEmail()), "Spending");
-            mvc.perform(move(id, "DEPOSIT", "1.00"));
+            deposit(id, "1.00");
             mvc.perform(post("/accounts/" + id + "/status").param("status", "CLOSED").session(teller))
                     .andExpect(redirectedUrl("/accounts/" + id))
                     .andExpect(flash().attribute("error", "Account balance must be zero before it can be closed"));
@@ -339,7 +373,7 @@ class PageFlowTest {
         @Test
         void anAccountWithHistoryCannotBeDeleted() throws Exception {
             long id = openAccount(createCustomer(uniqueEmail()), "Spending");
-            mvc.perform(move(id, "DEPOSIT", "1.00"));
+            deposit(id, "1.00");
             mvc.perform(post("/accounts/" + id + "/delete").session(teller))
                     .andExpect(redirectedUrl("/accounts/" + id))
                     .andExpect(flash().attribute("error",
@@ -349,32 +383,47 @@ class PageFlowTest {
         @Test
         void theListFiltersByStatusAndType() throws Exception {
             long id = openAccount(createCustomer(uniqueEmail()), "Spending");
-            mvc.perform(post("/accounts/" + id + "/status").param("status", "FROZEN").session(teller));
+            mvc.perform(post("/accounts/" + id + "/status").param("status", "FROZEN").session(teller))
+                    .andExpect(flash().attributeExists("success"));
             MvcResult result = mvc.perform(get("/accounts").param("status", "FROZEN").param("type", "CURRENT").session(teller))
                     .andExpect(view().name("accounts/list"))
                     .andExpect(model().attribute("status", AccountStatus.FROZEN))
                     .andReturn();
             List<Account> accounts = listOf(result, "accounts");
             assertThat(accounts).extracting(Account::getId).contains(id);
-            assertThat(accounts).allSatisfy(a -> assertThat(a.getStatus()).isEqualTo(AccountStatus.FROZEN));
+            assertThat(accounts).allSatisfy(a -> {
+                assertThat(a.getStatus()).isEqualTo(AccountStatus.FROZEN);
+                assertThat(a.getType()).isEqualTo(AccountType.CURRENT);
+            });
         }
     }
 
     // --- helpers: arrange through the pages, read back through the pages ---
 
     private long createCustomer(String email) throws Exception {
-        String location = mvc.perform(customerForm(post("/customers"), "Grace", uniqueName(), email))
+        return idFrom(mvc.perform(customerForm(post("/customers"), "Grace", uniqueName(), email))
                 .andExpect(redirectedUrlPattern("/customers/{id}"))
-                .andReturn().getResponse().getRedirectedUrl();
-        return Long.parseLong(location.substring(location.lastIndexOf('/') + 1));
+                .andReturn());
     }
 
     private long openAccount(long customerId, String nickname) throws Exception {
-        String location = mvc.perform(post("/accounts").param("customerId", String.valueOf(customerId))
+        return idFrom(mvc.perform(post("/accounts").param("customerId", String.valueOf(customerId))
                         .param("type", "CURRENT").param("nickname", nickname).session(teller))
                 .andExpect(redirectedUrlPattern("/accounts/{id}"))
-                .andExpect(flash().attribute("success", matchesPattern("Account \\d{8} opened")))
-                .andReturn().getResponse().getRedirectedUrl();
+                .andReturn());
+    }
+
+    private void suspend(long customerId) throws Exception {
+        mvc.perform(post("/customers/" + customerId + "/status").param("status", "SUSPENDED").session(teller))
+                .andExpect(flash().attributeExists("success"));
+    }
+
+    private void deposit(long accountId, String amount) throws Exception {
+        mvc.perform(move(accountId, "DEPOSIT", amount)).andExpect(flash().attributeExists("success"));
+    }
+
+    private static long idFrom(MvcResult redirect) {
+        String location = redirect.getResponse().getRedirectedUrl();
         return Long.parseLong(location.substring(location.lastIndexOf('/') + 1));
     }
 
@@ -402,6 +451,7 @@ class PageFlowTest {
     private static String fieldError(MvcResult result, String form, String field) {
         BindingResult errors = (BindingResult) result.getModelAndView().getModel()
                 .get(BindingResult.MODEL_KEY_PREFIX + form);
+        assertThat(errors.getFieldError(field)).as("an error on " + field).isNotNull();
         return errors.getFieldError(field).getDefaultMessage();
     }
 
@@ -410,11 +460,12 @@ class PageFlowTest {
         return (List<T>) result.getModelAndView().getModel().get(name);
     }
 
+    /** Letters only, and all the same length, so no name is part of another (searches match substrings). */
     private static String uniqueName() {
-        return "Page" + UNIQUE.incrementAndGet() + System.nanoTime() % 100000;
+        return "Page" + UUID.randomUUID().toString().replaceAll("[^a-f]", "").substring(0, 6);
     }
 
     private static String uniqueEmail() {
-        return "page." + UNIQUE.incrementAndGet() + "." + System.nanoTime() + "@example.test";
+        return UUID.randomUUID() + "@example.test";
     }
 }

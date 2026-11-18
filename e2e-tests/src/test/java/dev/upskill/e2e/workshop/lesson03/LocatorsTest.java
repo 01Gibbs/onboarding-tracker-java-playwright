@@ -31,7 +31,7 @@ class LocatorsTest {
     }
 
     @Test
-    void searchForACustomerByLabelAndPlaceholder(Page page) {
+    void searchForACustomerByPlaceholder(Page page) {
         abort("TODO lesson 03, exercise 2");
     }
 

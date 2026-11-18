@@ -9,7 +9,7 @@ fix it properly, working from the failure output and the trace. Don't guess.
 
 ## The set-up
 
-`e2e-ts/broken/` holds ten cases (11 tests): `case01…` to `case10…`. Each has **exactly one** realistic fault planted in
+`e2e-ts/broken/` holds ten cases (11 tests): `case01…` to `case10…`. The runner also lists two sign-in set-up steps, which pass. Each has **exactly one** realistic fault planted in
 it. Ledgerline is fine; the tests are wrong. They use the reference page objects, fixtures and API client, which
 do work.
 

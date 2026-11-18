@@ -37,7 +37,7 @@ class LocatorsTest {
     }
 
     @Test
-    void searchForACustomerByLabelAndPlaceholder(Page page) {
+    void searchForACustomerByPlaceholder(Page page) {
         page.navigate(BASE_URL + "/customers");
 
         page.getByPlaceholder("Name or email").fill("archer");

@@ -12,7 +12,7 @@ every test starts with a clean browser.
 ### `playwright.config.ts`
 
 Open `e2e-ts/angular/playwright.config.ts`. Everything that would otherwise be repeated in every test lives here
-(shown without its reporter settings):
+(shown without its reporter and output settings):
 
 ```ts
 export default defineConfig({

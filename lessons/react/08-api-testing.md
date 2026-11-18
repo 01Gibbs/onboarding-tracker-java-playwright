@@ -96,6 +96,8 @@ Then complete `e2e-ts/react/lesson08/account-api.spec.ts` using it (sign in in `
 8. Deposit 100, withdraw 40.25 → balance `59.75`, 2 transactions, newest first.
 9. Withdraw 10.01 from 10.00 → `422` with the exact message, and the balance is unchanged.
 10. Transfer 75 between two new accounts → both balances are right, and both entries share a `transferId`.
+    `LedgerApi` has no transfer method yet (that comes in mission B0), so post to `/api/transfers` with
+    `api.raw` (body: `fromAccountId`, `toAccountId`, `amount`).
 11. A frozen account refuses deposits (`422`).
 12. An account with money can't be closed (`409`).
 

@@ -158,7 +158,7 @@ On a fresh checkout, `npm run test:react` and `npm run test:angular` are green: 
 check and lesson 01's worked example) and every unfinished exercise is *skipped* with a "TODO lesson NN" reason.
 Playwright starts the back end and that track's front end if they aren't running. The reference answers are 70
 tests, plus 2 that sign in first (`npm run solutions:react`, `npm run solutions:angular`); `npm run contract` runs
-them against React, Angular and Thymeleaf. Each track's broken suite fails 9 of its 11 tests against a freshly
+them against React, Angular and Thymeleaf. Each track's broken suite fails 9 of its 11 tests (the TypeScript runs also list 2 passing sign-in set-up steps) against a freshly
 started back end, and 10 on every later run against the same one, until you've fixed them.
 
 ## Versions

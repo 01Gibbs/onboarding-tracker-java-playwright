@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test'
-import { AUDITOR } from '../support/auth-state.ts'
+import { AUDITOR_STATE } from '../support/auth-state.ts'
 
 // Lesson 10: every test in this file starts signed in as the auditor, from the state auth.setup.ts saved.
-test.use({ storageState: AUDITOR })
+test.use({ storageState: AUDITOR_STATE })
 
 test('the auditor lands on the dashboard without signing in', async ({ page }) => {
   await page.goto('/')

@@ -93,4 +93,4 @@ fight this. Tests that depend on each other's state are the second biggest sourc
 
 **Reference:** `lesson04/`
 
-Next: lessons 05–09 are being written. Continue with [10: Auth state and roles](10-auth-state.md).
+Next: [05: Codegen](05-codegen.md)

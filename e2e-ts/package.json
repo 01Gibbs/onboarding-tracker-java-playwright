@@ -6,7 +6,8 @@
     "test:react": "playwright test --config react/playwright.config.ts",
     "solutions:react": "playwright test --config solutions/playwright.config.ts --project=react",
     "contract": "playwright test --config solutions/playwright.config.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "broken:react": "playwright test --config broken/playwright.config.ts --project=react"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.1",

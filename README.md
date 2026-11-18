@@ -26,7 +26,7 @@ front end keeps the same [UI contract](docs/ui-contract.md), so the same skills 
 | Track | Front end | Tests in | Lessons |
 |-------|-----------|----------|--------|
 | **Java** | Thymeleaf, served by the app on :8080 | Playwright for Java + JUnit 5 (`e2e-tests/`) | [lessons/](lessons/00-setup.md), below |
-| **React** | React 19 + Vite on :5173 (`frontends/react/`) | Playwright Test + TypeScript (`e2e-ts/react/`) | [lessons/react/](lessons/react/README.md): 00–04 and 10 so far |
+| **React** | React 19 + Vite on :5173 (`frontends/react/`) | Playwright Test + TypeScript (`e2e-ts/react/`) | [lessons/react/](lessons/react/README.md): 00–14 |
 | **Angular** | planned | Playwright Test + TypeScript | planned |
 
 The rest of this README is about the Java track. The React track needs Node 22, 24 or 26 as well as the JDK:
@@ -91,11 +91,12 @@ e2e-tests/src/
   broken/java/.../broken/    lesson 13's deliberately broken suite (only built with -Pbroken)
 lessons/                     the course (Java track)
 lessons/answers/             answer notes (spoilers)
-lessons/react/               the React track's course
+lessons/react/               the React track's lessons
 frontends/react/             the React front end (with its own unit, integration and mutation tests)
 e2e-ts/                      Playwright Test (TypeScript) for the React and Angular tracks
   react/                     YOUR code for the React track: config and starter files
   solutions/                 reference answers, run against every front end (the contract check)
+  broken/                    lesson 13's deliberately broken suite (TypeScript edition)
 docs/
   ledgerline-reference.md    users, seeded data, business rules, UI map, API
   ui-contract.md             what every front end keeps identical, so one set of tests fits all
@@ -120,6 +121,12 @@ docs/
 
 The e2e tests need the app running in another terminal.
 
+On a fresh checkout, `./mvnw -pl e2e-tests test` is green: 2 tests pass (the setup check and lesson 01's
+worked example), and every unfinished exercise is reported as *skipped* with a "TODO lesson NN" reason.
+The reference suite has 69 tests and finishes in about 40 seconds against a running app. The broken suite
+(`-Pbroken`) should fail 9 of its 11 tests on a freshly started app, and 10 on every run after that,
+until you've fixed them.
+
 React track and front-end commands (from the repo root, after `npm install`):
 
 | Task | Command |
@@ -128,14 +135,15 @@ React track and front-end commands (from the repo root, after `npm install`):
 | Your React-track tests | `npm run test:react`, or `npm run test:react -- lesson03 --headed`, or `-- --ui` |
 | Reference answers on React | `npm run solutions:react` |
 | Contract check: answers on every front end | `npm run contract` |
+| React lesson 13 broken suite | `npm run broken:react` |
 | Front-end unit and integration tests | `npm run test:frontends` |
 | Front-end mutation tests (slow) | `npm run mutation:frontends`, report in `frontends/react/reports/mutation/` |
 
-On a fresh checkout, `./mvnw -pl e2e-tests test` is green: 2 tests pass (the setup check and lesson 01's
-worked example), and every unfinished exercise is reported as *skipped* with a "TODO lesson NN" reason.
-The reference suite has 69 tests and finishes in about 40 seconds against a running app. The broken suite
-(`-Pbroken`) should fail 9 of its 11 tests on a freshly started app, and 10 on every run after that,
-until you've fixed them.
+On a fresh checkout, `npm run test:react` is green: 2 tests pass (the setup check and lesson 01's worked
+example) and every unfinished exercise is *skipped* with a "TODO lesson NN" reason. Playwright starts the back
+end and the React front end if they aren't running. The reference answers are 70 tests, plus 2 that sign in first (`npm run solutions:react`);
+`npm run contract` runs them against React and Thymeleaf. The broken suite (`npm run broken:react`) fails 9 of its 11 tests against
+a freshly started app, and 10 on every later run against the same app, until you've fixed them.
 
 ## Versions
 

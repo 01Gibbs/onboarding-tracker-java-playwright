@@ -53,16 +53,20 @@ await expect(row.getByTestId('status-badge')).toHaveText('Suspended')
 ### Lists that are still loading
 
 An Angular page shows its frame first and fills it in when the API answers. After you click "Search", the
-**old** rows stay on screen until the new ones arrive. Two consequences:
+rows **disappear** while the new ones load (for a moment the old ones may still show). Two consequences:
 
 - `toHaveCount`, `toHaveText` and friends retry, so they wait for the new rows. Good.
-- `await rows.all()` takes a **snapshot**, right now. Loop over it and you may be checking the old rows.
+- `await rows.all()` takes a **snapshot**, right now. Loop over it and you may be checking no rows at all, so the
+  loop passes without checking anything, or the old rows.
 
 So to check every row, describe the rows that would be wrong, and expect there to be none:
 
 ```ts
 await expect(rows.filter({ hasNot: page.getByText('Frozen', { exact: true }) })).toHaveCount(0)
 ```
+
+"None" is also true of an empty table, such as a list that is still loading. So check it again once a row you
+expect is on screen. The reference answer for exercise 5 shows the pattern.
 
 ### Finding a locator interactively
 
@@ -71,7 +75,7 @@ suggests a locator for whatever you click.
 
 ## Exercise
 
-Open the starter `e2e-ts/angular/lesson03/locators.spec.ts`. The `beforeEach` sign-in is provided, and each test
+Open the starter `e2e-angular/lesson03/locators.spec.ts`. The `beforeEach` sign-in is provided, and each test
 is just a name. Its goal is below.
 
 1. **Navigation.** Click "Customers" *inside the Main navigation*, and expect the "Customers" heading to be
@@ -83,7 +87,7 @@ is just a name. Its goal is below.
    "1 customer".
 3. **Table rows.** On `/customers`, find Dan Evans's row **inside the "Customers" table**. Expect its status
    badge to say "Suspended", and its first cell to say "CUS-0004".
-4. **Text.** Expect `getByText('alice.archer@')` to be visible (substring match), and `getByText('Erin
+4. **Text.** On `/customers`, expect `getByText('alice.archer@')` to be visible (substring match), and `getByText('Erin
    Foster', { exact: true })` too.
 5. **Every row.** On `/accounts`, choose Status = Frozen and click "Apply filters". Expect the "Holiday Fund"
    row to be visible, and **no** row to have a badge other than "Frozen". (Try a loop over `.all()` first, run
@@ -100,7 +104,7 @@ is just a name. Its goal is below.
 
 ## Checkpoint
 
-- [ ] 6 passing tests in `e2e-ts/angular/lesson03`
+- [ ] 6 passing tests in `e2e-angular/lesson03`
 - [ ] You triggered and fixed at least one strict mode violation
 - [ ] You used "Pick locator" at least once
 

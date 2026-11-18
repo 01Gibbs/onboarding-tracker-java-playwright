@@ -7,7 +7,7 @@ a feature area by yourself.
 
 ## Part 1: The customer journey (guided)
 
-Create `e2e-ts/react/lesson14/customer-journey.spec.ts` as **one** test, driven through the UI with your page
+Create `e2e-react/lesson14/customer-journey.spec.ts` as **one** test, driven through the UI with your page
 objects and fixtures. Add what your page objects don't have yet: an `OpenAccountPage` for `/accounts/new`, and on
 `CustomerDetailPage` an `openAccount()` method and `status` and `accountRows` locators. Group the test into `test.step`s so
 the report and trace read as the story:
@@ -44,7 +44,8 @@ at which level, and why), then build it. Ideas:
 - **Error pages:** `/accounts/999999` shows "Page not found"; a page whose API call fails shows "Something went
   wrong" (mock it with `page.route`).
 - **Cross-browser:** add `firefox` and `webkit` projects to your config (`devices['Desktop Firefox']`,
-  `devices['Desktop Safari']`) and run the smoke tests on all three.
+  `devices['Desktop Safari']`), install those browsers (`npx playwright install firefox webkit`), and run the
+  smoke tests on all three.
 - **Visual check:** `await expect(page).toHaveScreenshot()` on a page with fixed data. What makes it flaky,
   and how do `mask` and mocked data help?
 

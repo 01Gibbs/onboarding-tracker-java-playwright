@@ -1,7 +1,7 @@
 # Mission B0: ledger invariants (design research)
 
 - **Date researched:** 2026-11-12
-- **Question:** what can a reusable "ledger invariant" check in `e2e-tests/` actually assert about Ledgerline,
+- **Question:** what can a reusable "ledger invariant" check in `e2e-java/` actually assert about Ledgerline,
   how should learners attach it to their tests, and how should a planted fault prove that it works?
 - **Builds on:** [`banking-upskill.md`](banking-upskill.md) §3 R1 and §4 (B0 is the base the other missions
   build on), [`playwright-java.md`](playwright-java.md) §2 and §6, and
@@ -103,9 +103,9 @@ holding, the one transfer (`Monthly saving`, 1,000.00, 10000001 → 10000002) co
 
 `LedgerApi` (e2e side) needs one small addition. Neither the workshop nor the solutions `LedgerApi` has
 `transfer(...)`. Lesson 08's reference posts `/api/transfers` by hand
-(`e2e-tests/src/solutions/java/dev/upskill/e2e/solutions/lesson08/AccountApiTest.java:82`). B0 should add
+(`e2e-java/src/solutions/java/dev/upskill/e2e/solutions/lesson08/AccountApiTest.java:82`). B0 should add
 `transfer(long from, long to, String amount)` and `allAccounts()`. The broken suite compiles against
-`src/solutions` (`e2e-tests/pom.xml:155-158`), so only **add** methods: don't change existing signatures.
+`src/solutions` (`e2e-java/pom.xml:155-158`), so only **add** methods: don't change existing signatures.
 
 ---
 
@@ -143,7 +143,7 @@ Use a **read-only auditor client** for the check (`User.AUDITOR`). Writes from t
 
 | Option | How | Pros | Cons |
 |---|---|---|---|
-| **A. Explicit call** (recommended) | Last line of each money test: `invariants.assertBalanced(from, to);` | Visible in the test and in the trace. Uses the test's own client and the accounts it actually touched. Fits lesson 09's "belt and braces" (`lessons/09-hybrid-tests.md:47-50`). No new JUnit concepts | Learners can forget it. Code review (lesson 14's definition of done) has to catch that |
+| **A. Explicit call** (recommended) | Last line of each money test: `invariants.assertBalanced(from, to);` | Visible in the test and in the trace. Uses the test's own client and the accounts it actually touched. Fits lesson 09's "belt and braces" (`lessons/java/09-hybrid-tests.md:47-50`). No new JUnit concepts | Learners can forget it. Code review (lesson 14's definition of done) has to catch that |
 | B. `@AfterEach` in a base class or interface default method | Tests register touched ids; the base `@AfterEach` checks them | One place | JUnit runs superclass and interface `@AfterEach` **after** the subclass's (User Guide §5.18.2). The lesson 08/09 pattern of `api.close()` in the test's own `@AfterEach` would close the client first. Inheritance also hides behaviour |
 | C. Extension (`AfterEachCallback`) | `@ExtendWith(LedgerInvariantsExtension.class)`; the test class implements e.g. `LedgerAware { LedgerApi ledger(); Set<Long> touched(); }`, read through `ExtensionContext.getRequiredTestInstance()` | Can't be forgotten once registered. JUnit fails the test if an extension throws (User Guide §2.7.1) | Ordering trap: in the User Guide §5.18.1 table, `@AfterEach` runs **before** `AfterEachCallback`, so the test's client is already closed. Work-arounds are to use `AfterTestExecutionCallback`, which runs before `@AfterEach` (§5.10.1), or to close the client with `@AutoClose` (closed via `TestInstancePreDestroyCallback`, §2.23.2). Each is one more concept. See §4.3 for getting a `Playwright` |
 
@@ -169,7 +169,7 @@ with the check" a rule, C is a natural refactor. Teach it with `AfterTestExecuti
   ([`APIRequestContextExtension.java:28-68`](https://github.com/microsoft/playwright-java/blob/v1.64.0/playwright/src/main/java/com/microsoft/playwright/impl/junit/APIRequestContextExtension.java)).
   Two catches:
   - It's built only from `Options.apiRequestOptions`, which `LedgerlineOptions` sets to just the base URL
-    (`e2e-tests/src/solutions/.../support/LedgerlineOptions.java:22`). It has no bearer token, so every
+    (`e2e-java/src/solutions/.../support/LedgerlineOptions.java:22`). It has no bearer token, so every
     Ledgerline API call through it gets 401 (`auth/ApiAuthInterceptor.java:26-29`).
   - The extension never calls `dispose()` on it; it only drops the reference (lines 32-39).
 - **Conclusion:** an extension *can* reach the same `Playwright` (and from it, `LedgerApi.loginAs(playwright,
@@ -179,10 +179,10 @@ with the check" a rule, C is a natural refactor. Teach it with `AfterTestExecuti
 ### 4.4 Parallel runs and the system-wide total (I9)
 
 - The reference suite runs **classes concurrently and methods within a class sequentially**, with fixed
-  parallelism 4 (`e2e-tests/pom.xml:121-133`). Lesson 12 teaches the same mode with the `dynamic` strategy
-  (`lessons/12-debugging-and-scale.md:58-70`).
+  parallelism 4 (`e2e-java/pom.xml:121-133`). Lesson 12 teaches the same mode with the `dynamic` strategy
+  (`lessons/java/12-debugging-and-scale.md:58-70`).
 - **Per-account checks (I1–I8) are parallel-safe with no locks**, because each test checks only accounts it
-  created. This is the "own your data" rule from lesson 06 onwards (`lessons/12-debugging-and-scale.md:72-74`;
+  created. This is the "own your data" rule from lesson 06 onwards (`lessons/java/12-debugging-and-scale.md:72-74`;
   `docs/ledgerline-reference.md:31-32`).
 - **I9 is not.** Each transfer commits atomically, but the check reads accounts one request at a time.
   Suppose account A is read, then a parallel test transfers B → A, then B is read. The OUT leg is counted
@@ -201,7 +201,7 @@ with the check" a rule, C is a natural refactor. Teach it with `AfterTestExecuti
   Explain that `@Isolated` only isolates from **other test classes in the same JVM**. It doesn't protect
   against a second Maven run, a learner clicking in the UI, or a shared app instance. Also, I9 stays broken
   after any fault that changes the total (§5) until the app restarts. `POST /api/testing/reset` would fix
-  it, but it wipes other tests' data mid-run (`lessons/12-debugging-and-scale.md:73-74`). Keep I9 out of the
+  it, but it wipes other tests' data mid-run (`lessons/java/12-debugging-and-scale.md:73-74`). Keep I9 out of the
   default `-Psolutions` run, or run it alone with `-Dtest=…`. **[Inference]**
 
 ---
@@ -227,7 +227,7 @@ with the check" a rule, C is a natural refactor. Teach it with `AfterTestExecuti
   `faults.isArmed(Fault.X, account.getId())`.
 - **Scope to one account, not the app.** Three reasons:
   1. Parallel safety. Only the arming test's own account misbehaves, so no `@Isolated` is needed.
-  2. It keeps lesson 13 honest ("The app is fine; the tests are wrong", `lessons/13-fix-the-broken-suite.md:13`).
+  2. It keeps lesson 13 honest ("The app is fine; the tests are wrong", `lessons/java/13-fix-the-broken-suite.md:13`).
      Every broken-suite case creates its own accounts (e.g. `Case01DepositTest.java:21`,
      `Case05TransferTest.java:22-23`), so a leftover fault can't reach them.
   3. It matches the reference doc's rule that seeded data is read-only.
@@ -276,31 +276,31 @@ case has "exactly one realistic fault" carries over as "each fault breaks exactl
 **Template that existing lessons follow** (07, 08, 09, 13, 14):
 
 1. `# Lesson NN: Title`, then the `**Goal:**`, `**Time:**` and `**Docs:**` lines. The Docs line is
-   playwright.dev/java links joined with ` · ` (`lessons/08-api-testing.md:1-8`, `lessons/09-hybrid-tests.md:1-8`).
+   playwright.dev/java links joined with ` · ` (`lessons/java/08-api-testing.md:1-8`, `lessons/java/09-hybrid-tests.md:1-8`).
 2. `## Concepts` with short, compilable Java snippets, plus `> **Docs gotcha:**` call-outs where the docs
-   are wrong (`lessons/07-page-objects.md:47`).
+   are wrong (`lessons/java/07-page-objects.md:47`).
 3. `## Exercise`, numbered, naming the starter file and the **test names** to implement
-   (`lessons/09-hybrid-tests.md:52-72`).
+   (`lessons/java/09-hybrid-tests.md:52-72`).
 4. `## Discussion` with 2–3 questions.
 5. `## Checkpoint` with `- [ ]` items. Lesson 14 calls this "Definition of done"; no lesson uses the phrase
-   "Done when" (`lessons/14-capstone.md:46-52`).
-6. `**Reference:** solutions/...` and `Next: [..](..)` (`lessons/09-hybrid-tests.md:84-86`).
+   "Done when" (`lessons/java/14-capstone.md:46-52`).
+6. `**Reference:** solutions/...` and `Next: [..](..)` (`lessons/java/09-hybrid-tests.md:84-86`).
 
 **Starters and fading:**
 
 - Starter tests are `@UsePlaywright(LedgerlineOptions.class)` classes whose methods call
   `abort("TODO lesson NN, exercise N")`, which JUnit reports as *skipped*
-  (`e2e-tests/src/test/java/dev/upskill/e2e/workshop/lesson09/MoveMoneyTest.java:3,16`).
+  (`e2e-java/src/test/java/dev/upskill/e2e/workshop/lesson09/MoveMoneyTest.java:3,16`).
 - Support starters throw `UnsupportedOperationException("TODO lesson 08")`
-  (`e2e-tests/src/test/java/dev/upskill/e2e/workshop/support/LedgerApi.java:61-95`).
+  (`e2e-java/src/test/java/dev/upskill/e2e/workshop/support/LedgerApi.java:61-95`).
 - Fading reaches zero at lesson 12: "From this lesson on there are no starter files"
-  (`lessons/12-debugging-and-scale.md:133`).
+  (`lessons/java/12-debugging-and-scale.md:133`).
 - B0 comes after lesson 14, so the faded format applies: **no test starters**. One exception is worth
   making: a `workshop/support/LedgerInvariants.java` skeleton with the method signatures from §4.1, throwing
   `UnsupportedOperationException("TODO mission B0")`. B1–B9 call it, so its contract must be stable.
   **[Inference]**
 
-**Suggested B0 lesson outline** (file `lessons/B0-ledger-invariants.md` or similar):
+**Suggested B0 lesson outline** (file `lessons/java/B0-ledger-invariants.md` or similar):
 
 - **Goal** and **motivation**: OWASP ASVS 5.0 2.3.3, see §7.
 - **Concepts:** the invariant table from §2, cut down to I1, I2, I3, I5, I6 and I8; `assertAll` nesting;
@@ -323,7 +323,7 @@ case has "exactly one realistic fault" carries over as "each fault breaks exactl
 |---|---|---|
 | Default suite | 2 pass, 62 skipped (62 = the sum of `abort("TODO` calls across `workshop/`; checked by counting) | **Unchanged** if B0 adds no test starters, as recommended. Each starter test with an `abort` would add 1 skipped |
 | `-Psolutions` | 69 tests (69 `@Test` methods in `src/solutions`; checked by counting) | 69 + M. A `@ParameterizedTest` counts once per invocation. For example, 4 invariant tests + 5 fault cases → **78** (illustrative) |
-| `-Pbroken` | fails 9 of 11 on a fresh app, then 10 | **Unchanged**, as long as nothing is added to `src/broken` and `solutions/support` changes are additive (the broken profile compiles `src/solutions`, `e2e-tests/pom.xml:155-158`) and faults are account-scoped |
+| `-Pbroken` | fails 9 of 11 on a fresh app, then 10 | **Unchanged**, as long as nothing is added to `src/broken` and `solutions/support` changes are additive (the broken profile compiles `src/solutions`, `e2e-java/pom.xml:155-158`) and faults are account-scoped |
 | "15 lessons" and the course table | 00–14 | Add a "Banking track" row or table, and update the wording |
 | Layout block | lists `docs/research/playwright-java.md` | Optionally list this note |
 
@@ -359,7 +359,7 @@ Also update:
   `common/LedgerClock.java`, `seed/DataSeeder.java`
 - `app/src/main/resources/application.yml`, `application-dev.yml`
 - `app/src/test/java/dev/upskill/ledger/{MoneyServiceTest,ledger/AmountTest,api/ApiContractTest}.java`
-- `e2e-tests/pom.xml`; `e2e-tests/src/{test,solutions,broken}/java/...`
+- `e2e-java/pom.xml`; `e2e-java/src/{test,solutions,broken}/java/...`
 - `lessons/07, 08, 09, 12, 13, 14`, `lessons/answers/13-fix-the-broken-suite.md`, `README.md`,
   `docs/ledgerline-reference.md`, `docs/research/{banking-upskill,playwright-java}.md`
 

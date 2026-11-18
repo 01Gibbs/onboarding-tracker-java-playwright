@@ -16,7 +16,7 @@ local storage: being signed in is the server's `JSESSIONID` cookie. Playwright c
 start new contexts from it.
 
 > Storage state files contain live session cookies, so treat them as **secrets**. They go in
-> `e2e-ts/playwright/.auth/`, which is git-ignored.
+> `e2e-angular/playwright/.auth/`, which is git-ignored.
 
 ### A setup project
 
@@ -81,18 +81,18 @@ On an Angular page, first wait for something that **is** there (a row, a heading
 
 ## Exercise
 
-1. Add a `setup` project to `e2e-ts/angular/playwright.config.ts` (the TODO there) and make `chromium` depend
-   on it. Create `e2e-ts/angular/lesson10/auth.setup.ts` that signs in as **auditor** through the UI and saves
+1. Add a `setup` project to `e2e-angular/playwright.config.ts` (the TODO there) and make `chromium` depend
+   on it. Create `e2e-angular/lesson10/auth.setup.ts` that signs in as **auditor** through the UI and saves
    the state.
-2. In `e2e-ts/angular/lesson10/auditor-role.spec.ts`, start every test from that state with `test.use`. Then:
+2. In `e2e-angular/lesson10/auditor-role.spec.ts`, start every test from that state with `test.use`. Then:
    `/` shows "Alex Auditor (Auditor)", with no sign-in step.
 3. No "New customer" link; no "Delete customer" button on Alice Archer; no "Move money" region on account `1`,
    but its transaction rows **are** visible. Wait for something present before each "not there" check.
 4. `page.request.patch('/api/accounts/1', ...)` to freeze the account → `403`.
 5. Add a second setup that signs in as **teller** through the API only (`request`, no page), and a new spec
    file that uses it: `/customers` shows "Terry Teller (Teller)".
-6. **Stretch:** save state with codegen, from the `e2e-ts` folder so the file lands next to the others:
-   `cd e2e-ts && npx playwright codegen --save-storage=playwright/.auth/manual.json http://localhost:4200/login`.
+6. **Stretch:** save state with codegen, from the `e2e-angular` folder so the file lands next to the others:
+   `cd e2e-angular && npx playwright codegen --save-storage=playwright/.auth/manual.json http://localhost:4200/login`.
    Then load it in a test.
 
 ## Discussion
@@ -108,6 +108,6 @@ On an Angular page, first wait for something that **is** there (a row, a heading
 - [ ] The auditor tests pass without signing in per test
 - [ ] `playwright/.auth/` is git-ignored (`git status` shows nothing there)
 
-**Reference:** `lesson10/`, `support/auth-state.ts`, and the `setup` project in `suites.ts`
+**Reference:** `lesson10/`, `support/auth-state.ts`, and the `setup` project in `solutions/playwright.config.ts`
 
 Next: [11: Network interception and mocking](11-network.md)

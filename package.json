@@ -1,11 +1,12 @@
 {
   "name": "ledgerline-tracks",
   "private": true,
-  "description": "The React and Angular tracks: front ends over Ledgerline's JSON API, and their Playwright Test suites",
+  "description": "The React and Angular tracks: front ends over Ledgerline's JSON API, and each track's Playwright Test project",
   "workspaces": [
     "frontends/react",
     "frontends/angular",
-    "e2e-ts"
+    "e2e-react",
+    "e2e-angular"
   ],
   "engines": {
     "node": "^22.22.3 || ^24.15.0 || >=26"
@@ -13,13 +14,14 @@
   "scripts": {
     "dev:react": "npm run dev -w frontends/react",
     "dev:angular": "npm run dev -w frontends/angular",
-    "test:react": "npm run test:react -w e2e-ts --",
-    "test:angular": "npm run test:angular -w e2e-ts --",
-    "solutions:react": "npm run solutions:react -w e2e-ts --",
-    "solutions:angular": "npm run solutions:angular -w e2e-ts --",
-    "contract": "npm run contract -w e2e-ts --",
-    "broken:react": "npm run broken:react -w e2e-ts --",
-    "broken:angular": "npm run broken:angular -w e2e-ts --",
+    "test:react": "npm test -w e2e-react --",
+    "test:angular": "npm test -w e2e-angular --",
+    "solutions:react": "npm run solutions -w e2e-react --",
+    "solutions:angular": "npm run solutions -w e2e-angular --",
+    "broken:react": "npm run broken -w e2e-react --",
+    "broken:angular": "npm run broken -w e2e-angular --",
+    "contract": "npm run contract -w e2e-react -w e2e-angular --",
+    "typecheck": "npm run typecheck -w e2e-react -w e2e-angular",
     "test:frontends": "npm test -w frontends/react -w frontends/angular",
     "mutation:frontends": "npm run mutation -w frontends/react -w frontends/angular"
   }

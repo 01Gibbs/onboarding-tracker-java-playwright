@@ -13,7 +13,7 @@ that uses the best locators it can find. It's excellent for discovering locators
 quickly. **It is not the finished test.**
 
 ```bash
-cd e2e-ts
+cd e2e-react
 npx playwright codegen http://localhost:5173/login
 ```
 
@@ -30,14 +30,14 @@ value". In VS Code, the Playwright extension's "Record new" does the same inside
 1. Start codegen and record this flow: sign in as teller → **Customers** (in the top nav) → **New customer** →
    fill in first name, last name and email → **Save customer**. Use the toolbar to add an "assert text" on the
    green flash message.
-2. Paste the generated test body into the starter `e2e-ts/react/lesson05/create-customer-recorded.spec.ts`.
+2. Paste the generated test body into the starter `e2e-react/lesson05/create-customer-recorded.spec.ts`.
 3. Run it **twice**. The second run fails. Why? (Look at the business rules in
    [the reference](../../docs/ledgerline-reference.md).)
 4. Clean it up:
    - [ ] Relative URLs (`page.goto('/login')`): the base URL is in `playwright.config.ts`
    - [ ] Delete redundant actions. `fill()` doesn't need a `click()` first, and you don't need `press('Tab')`
    - [ ] Generate **unique** data so the test can be repeated: implement the three functions in the starter
-     `e2e-ts/react/support/test-data.ts` (a short `randomUUID()` fragment is enough)
+     `e2e-react/support/test-data.ts` (a short `randomUUID()` fragment is enough)
    - [ ] Look at how codegen located the "Customers" link. It probably added `exact: true`. Why? (Go to the
      dashboard: what else is called "Customers…"?) Replace it with a locator that says what you mean: the link
      **inside the Main navigation**

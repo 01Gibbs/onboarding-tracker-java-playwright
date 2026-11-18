@@ -59,7 +59,7 @@ reference](../../docs/ledgerline-reference.md#json-api) lists every endpoint and
 
 ## Exercise
 
-### Part 1: raw requests (starter: `e2e-ts/react/lesson08/customer-api.spec.ts`)
+### Part 1: raw requests (starter: `e2e-react/lesson08/customer-api.spec.ts`)
 
 Get a token in `beforeEach`.
 
@@ -71,7 +71,7 @@ Get a token in `beforeEach`.
 5. Duplicate email → `409`.
 6. Sign in as **auditor**. `GET` works, but `POST` → `403`.
 
-### Part 2: a typed client (`e2e-ts/react/support/ledger-api.ts`)
+### Part 2: a typed client (`e2e-react/support/ledger-api.ts`)
 
 Complete the starter. `signIn`, `raw` and `createCustomer` are done for you as worked examples; follow the same
 pattern for the rest:
@@ -89,13 +89,15 @@ const funded   = await api.accountWithBalance('250.00')            // customer +
 await api.dispose()
 ```
 
-Then complete `e2e-ts/react/lesson08/account-api.spec.ts` using it (sign in in `beforeEach`, dispose in
+Then complete `e2e-react/lesson08/account-api.spec.ts` using it (sign in in `beforeEach`, dispose in
 `afterEach`):
 
 7. A new account is `ACTIVE`, with a zero balance and an 8-digit account number.
 8. Deposit 100, withdraw 40.25 → balance `59.75`, 2 transactions, newest first.
 9. Withdraw 10.01 from 10.00 → `422` with the exact message, and the balance is unchanged.
 10. Transfer 75 between two new accounts → both balances are right, and both entries share a `transferId`.
+    `LedgerApi` has no transfer method, so post to `/api/transfers` with
+    `api.raw` (body: `fromAccountId`, `toAccountId`, `amount`).
 11. A frozen account refuses deposits (`422`).
 12. An account with money can't be closed (`409`).
 

@@ -4,7 +4,7 @@ Every Ledgerline front end (Thymeleaf, React and Angular) keeps this contract, s
 against all of them, and each track's course teaches the same skills. It is what a test may rely on: URLs,
 roles and accessible names, test ids, and the exact text of messages. Styling and markup beyond that are free.
 
-**How it is checked.** The TypeScript reference answers (`e2e-ts/solutions/`) run against every front end:
+**How it is checked.** Each TypeScript track's reference answers (`e2e-react/solutions/`, `e2e-angular/solutions/`) run against every front end:
 `npm run contract`. A front end that fails them breaks the contract, even if its own tests pass.
 
 ## Pages and URLs

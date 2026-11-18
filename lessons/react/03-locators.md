@@ -63,6 +63,9 @@ So to check every row, describe the rows that would be wrong, and expect there t
 await expect(rows.filter({ hasNot: page.getByText('Frozen', { exact: true }) })).toHaveCount(0)
 ```
 
+"None" is also true of an empty table, such as a list that is still loading. So check it again once a row you
+expect is on screen. The reference answer for exercise 5 shows the pattern.
+
 ### Finding a locator interactively
 
 Run `npm run test:react -- --ui`, or put `await page.pause()` in a test and run it `--headed`. "Pick locator"
@@ -70,7 +73,7 @@ suggests a locator for whatever you click.
 
 ## Exercise
 
-Open the starter `e2e-ts/react/lesson03/locators.spec.ts`. The `beforeEach` sign-in is provided, and each test
+Open the starter `e2e-react/lesson03/locators.spec.ts`. The `beforeEach` sign-in is provided, and each test
 is just a name. Its goal is below.
 
 1. **Navigation.** Click "Customers" *inside the Main navigation*, and expect the "Customers" heading to be
@@ -82,7 +85,7 @@ is just a name. Its goal is below.
    "1 customer".
 3. **Table rows.** On `/customers`, find Dan Evans's row **inside the "Customers" table**. Expect its status
    badge to say "Suspended", and its first cell to say "CUS-0004".
-4. **Text.** Expect `getByText('alice.archer@')` to be visible (substring match), and `getByText('Erin
+4. **Text.** On `/customers`, expect `getByText('alice.archer@')` to be visible (substring match), and `getByText('Erin
    Foster', { exact: true })` too.
 5. **Every row.** On `/accounts`, choose Status = Frozen and click "Apply filters". Expect the "Holiday Fund"
    row to be visible, and **no** row to have a badge other than "Frozen". (Try a loop over `.all()` first, run
@@ -99,7 +102,7 @@ is just a name. Its goal is below.
 
 ## Checkpoint
 
-- [ ] 6 passing tests in `e2e-ts/react/lesson03`
+- [ ] 6 passing tests in `e2e-react/lesson03`
 - [ ] You triggered and fixed at least one strict mode violation
 - [ ] You used "Pick locator" at least once
 

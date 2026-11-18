@@ -47,9 +47,9 @@ Guidelines that keep page objects healthy:
 
 ## Exercise
 
-1. Look at `e2e-ts/react/support/users.ts` (provided): `TELLER`, `AUDITOR` and `LOCKED`.
-2. Study `e2e-ts/react/pages/login-page.ts`. It's a complete worked example of the pattern. Then complete the
-   other starters in `e2e-ts/react/pages/`, whose method signatures are already there:
+1. Look at `e2e-react/support/users.ts` (provided): `TELLER`, `AUDITOR` and `LOCKED`.
+2. Study `e2e-react/pages/login-page.ts`. It's a complete worked example of the pattern. Then complete the
+   other starters in `e2e-react/pages/`, whose method signatures are already there:
    - `NavBar`: `customers()` → `CustomersPage`, `accounts()`, `signOut()`, `currentUser`
    - `CustomersPage`: `open()`, `search(text)`, `newCustomer()` → `CustomerFormPage`, `rows`,
      `openCustomer(fullName)` → `CustomerDetailPage`, `emptyMessage`
@@ -57,8 +57,8 @@ Guidelines that keep page objects healthy:
      → itself, `errorSummary`. Its fields are public, so tests can
      `await expect(form.email).toHaveAccessibleDescription('…')`
    - `CustomerDetailPage`: `open(id)`, `nav`, `heading`, `flash`, `detail(term)`, `deleteAndConfirm()`
-3. Complete `e2e-ts/react/lesson07/customer-pages.spec.ts`:
-   - Create a customer via the nav, search for them, open them, and check that Phone shows "Not provided"
+3. Complete `e2e-react/lesson07/customer-pages.spec.ts`:
+   - Create a customer from the customers page, search for them, open them, and check that Phone shows "Not provided"
    - Delete a customer, then check that a search finds nothing
    - Validation errors (empty first name, bad email)
    - Search for something that doesn't exist

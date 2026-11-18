@@ -24,7 +24,7 @@ npm install
 npx playwright install chromium
 ```
 
-`npm install` installs the React app and the test project together (they are npm workspaces). Playwright
+`npm install` installs the front ends and the test project together (they are npm workspaces). Playwright
 drives a real browser build that it downloads itself; add `--with-deps` on Linux.
 
 ## 3. Start Ledgerline
@@ -58,7 +58,7 @@ through its `/api`, which Vite passes on to port 8080.
 npm run test:react
 ```
 
-This runs everything in `e2e-ts/react/`, which is where **your** tests live. You should see 2 passed (the setup
+This runs everything in `e2e-react/`, which is where **your** tests live. You should see 2 passed (the setup
 check, and lesson 01's worked example) and the rest **skipped**: those are the exercises still to do.
 
 > If the setup check fails with "Ledgerline is not answering", the back end isn't running: start it (step 3).
@@ -83,11 +83,13 @@ Keep notes. Each of these behaviours becomes a test later in the course.
 
 ```
 lessons/react/NN-*.md            ← what to learn and do
-e2e-ts/
-  ├─ react/                      ← YOUR code: playwright.config.ts and the starter files
-  │    └─ lessonNN/*.spec.ts     ← one folder per lesson
+e2e-react/                      ← everything you run and write for this track
+  ├─ playwright.config.ts        ← YOUR configuration (lesson 04)
+  ├─ lessonNN/*.spec.ts          ← YOUR tests: starter files, one folder per lesson
+  ├─ pages/, support/            ← YOUR page objects and helpers (lessons 07–09)
+  ├─ servers.ts                  ← where the back end and the React app run
   ├─ solutions/                  ← reference answers (npm run solutions:react)
-  └─ frontends.ts                ← where each front end runs
+  └─ broken/                     ← lesson 13's broken suite
 frontends/react/                 ← the React app you are testing
 ```
 
@@ -102,7 +104,7 @@ your code.
 
 ### Reference answers
 
-Every "**Reference:**" path in the lessons is relative to `e2e-ts/solutions/`. **Try first; compare after.**
+Every "**Reference:**" path in the lessons is relative to `e2e-react/solutions/`. **Try first; compare after.**
 To run them against the React app:
 
 ```bash

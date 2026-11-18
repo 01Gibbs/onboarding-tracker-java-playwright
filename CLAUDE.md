@@ -1,7 +1,9 @@
 # CLAUDE.md
 
-Playwright for Java training kit: `app/` is Ledgerline (the Spring Boot system under test), `e2e-tests/` holds the
-workshop, solution and broken suites, and `lessons/` is the course. See `README.md` for commands.
+Playwright training kit with three tracks. `app/` is Ledgerline (the Spring Boot system under test, with the
+Thymeleaf front end); `frontends/react/` and `frontends/angular/` are the other front ends over the same JSON API.
+Each track has its lessons in `lessons/<track>/` and its tests in `e2e-<track>/` (starters, `solutions/`, `broken/`).
+See `README.md` for commands.
 
 ## Agent skills
 

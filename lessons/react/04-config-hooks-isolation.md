@@ -11,17 +11,20 @@ every test starts with a clean browser.
 
 ### `playwright.config.ts`
 
-Open `e2e-ts/react/playwright.config.ts`. Everything that would otherwise be repeated in every test lives here:
+Open `e2e-react/playwright.config.ts`. Everything that would otherwise be repeated in every test lives here
+(shown without its reporter setting):
 
 ```ts
 export default defineConfig({
   testDir: '.',
+  testIgnore: ['**/solutions/**', '**/broken/**'],   // the answers and lesson 13 have their own configs
   fullyParallel: true,
   use: {
-    baseURL: process.env.BASE_URL ?? frontEnds.react.url,   // page.goto('/customers') → :5173/customers
+    baseURL: process.env.BASE_URL ?? frontEnd.url,         // page.goto('/customers') → :5173/customers
     trace: 'retain-on-failure',
   },
-  webServer: [backEnd, frontEnds.react.webServer],
+  // No servers to start when BASE_URL points at an environment that's already running
+  webServer: process.env.BASE_URL ? undefined : [backEnd, frontEnd.webServer],
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 })
 ```
@@ -29,7 +32,7 @@ export default defineConfig({
 - **`use`** sets options for every test: the base URL, the browser's viewport, locale, timezone, and more.
   `test.use({ ... })` at the top of a file overrides them for that file.
 - **`webServer`** starts the back end and the React app before the tests, waits until their URLs answer, and
-  stops them afterwards. `reuseExistingServer: true` (in `e2e-ts/frontends.ts`) means: if you already started
+  stops them afterwards. `reuseExistingServer: true` (in `e2e-react/servers.ts`) means: if you already started
   one in a terminal, use that. So tests work whether or not you started Ledgerline yourself.
 - **`projects`** run the same tests with different settings (browsers, devices, signed-in roles). Lesson 10
   adds one.
@@ -61,12 +64,12 @@ fight this. Tests that depend on each other's state are the second biggest sourc
 
 ## Exercise
 
-1. Complete `e2e-ts/react/lesson04/options-and-hooks.spec.ts`:
+1. Complete `e2e-react/lesson04/options-and-hooks.spec.ts`:
    - `test.beforeEach` signs in as teller using relative URLs only, and expects `current-user` to be visible.
    - Test 1: the three dashboard stat cards (`stat-customers`, `stat-active-accounts`, `stat-total-balance`)
      contain their labels ("Customers", "Active accounts", and a "£").
    - Test 2: `/accounts` shows a link named `10000001`.
-2. Complete `e2e-ts/react/lesson04/isolation.spec.ts` to *prove* isolation:
+2. Complete `e2e-react/lesson04/isolation.spec.ts` to *prove* isolation:
    - Make the two tests run in order with `test.describe.configure({ mode: 'default' })` (only for this demo:
      the config otherwise runs them in parallel).
    - Test 1 signs in and expects `await context.cookies()` to include a cookie named `JSESSIONID`.

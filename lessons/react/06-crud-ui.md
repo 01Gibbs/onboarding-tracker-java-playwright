@@ -58,7 +58,7 @@ only for its tests, after the file's own `beforeEach`.
 
 ## Exercise
 
-Open the starter `e2e-ts/react/lesson06/customer-crud.spec.ts`. Fill in the `beforeEach` sign-in first, then the
+Open the starter `e2e-react/lesson06/customer-crud.spec.ts`. Fill in the `beforeEach` sign-in first, then the
 helper `createCustomer(page, firstName)`. It fills in and saves the "New customer" form with unique data, and
 returns the full name.
 

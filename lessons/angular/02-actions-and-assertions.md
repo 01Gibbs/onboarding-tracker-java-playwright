@@ -44,7 +44,7 @@ ones: `toContainText`, `toHaveValue`, `toBeEmpty`, `toHaveAttribute`, `toHaveCou
 
 ## Exercise
 
-Open the starter `e2e-ts/angular/lesson02/login.spec.ts`. The actions for exercise 1 are written for you, and
+Open the starter `e2e-angular/lesson02/login.spec.ts`. The actions for exercise 1 are written for you, and
 you add the assertions. For exercises 2–4 the comments list the steps and you write the code.
 
 1. **Happy path.** Sign in as `teller` / `teller-pass`. Expect:
@@ -70,7 +70,7 @@ removes it.
 
 ## Checkpoint
 
-- [ ] 4 passing tests in `e2e-ts/angular/lesson02`
+- [ ] 4 passing tests in `e2e-angular/lesson02`
 - [ ] No `waitForTimeout`, and no `expect(await locator.isVisible())`
 
 **Reference:** `lesson02/login.spec.ts`

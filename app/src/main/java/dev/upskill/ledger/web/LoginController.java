@@ -4,7 +4,6 @@ import dev.upskill.ledger.auth.Sessions;
 import dev.upskill.ledger.auth.UserDirectory;
 import dev.upskill.ledger.auth.UserDirectory.LoginResult;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,20 +35,13 @@ public class LoginController {
             model.addAttribute("username", username);
             return "login";
         }
-        HttpSession old = request.getSession(false);
-        if (old != null) {
-            old.invalidate();
-        }
-        request.getSession(true).setAttribute(Sessions.USER_ATTRIBUTE, ((LoginResult.Success) result).user());
+        Sessions.start(request, ((LoginResult.Success) result).user());
         return "redirect:/";
     }
 
     @PostMapping("/logout")
     public String logout(HttpServletRequest request, RedirectAttributes redirect) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
+        Sessions.end(request);
         redirect.addFlashAttribute("info", "You have been signed out");
         return "redirect:/login";
     }

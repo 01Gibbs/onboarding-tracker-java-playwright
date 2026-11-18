@@ -1,0 +1,20 @@
+{
+  "name": "ledgerline-tracks",
+  "private": true,
+  "description": "The React and Angular tracks: front ends over Ledgerline's JSON API, and their Playwright Test suites",
+  "workspaces": [
+    "frontends/react",
+    "e2e-ts"
+  ],
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26"
+  },
+  "scripts": {
+    "dev:react": "npm run dev -w frontends/react",
+    "test:react": "npm run test:react -w e2e-ts --",
+    "solutions:react": "npm run solutions:react -w e2e-ts --",
+    "contract": "npm run contract -w e2e-ts --",
+    "test:frontends": "npm test -w frontends/react",
+    "mutation:frontends": "npm run mutation -w frontends/react"
+  }
+}

@@ -48,6 +48,11 @@ public final class ApiDtos {
     public record LoginResponse(String token, String username, String displayName, String role) {
     }
 
+    /** Who is signed in, with what the pages show and whether edit controls appear. */
+    public record SessionUserDto(String username, String displayName, String role, String roleLabel,
+                                 boolean canEdit) {
+    }
+
     public record AmountRequest(BigDecimal amount, String description) {
     }
 

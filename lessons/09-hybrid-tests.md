@@ -51,7 +51,7 @@ catches cases where the UI shows one thing but the system recorded another.
 
 ## Exercise
 
-1. Complete the starter `workshop/pages/AccountPage.java`: `open(id)`, `balance`, `amount`, `toAccount`, `submit`,
+1. Complete the starter `workshop/pages/AccountPage.java` (`open(id)` is done): `balance`, `amount`, `toAccount`, `submit`,
    `chooseType(label)`, `deposit(v)`, `withdraw(v)`, `transfer(v, toId)`, `flash()`, `status()`,
    `transactionRows()`, `moveMoneySection()`, `filterTransactions(label)`,
    `click(name)` and `clickAndConfirm(name)`.

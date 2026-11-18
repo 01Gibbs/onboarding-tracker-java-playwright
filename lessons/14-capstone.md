@@ -42,7 +42,8 @@ bullet points: what, at which level, and why), then implement it. Ideas:
   run in parallel?
 - **Error pages:** `/accounts/999999` shows "Page not found"; the auditor's direct POST shows "Access denied".
 - **Cross-browser:** run the smoke suite on Firefox and WebKit using `Options.setBrowserName(...)`, driven
-  by a `-Dbrowser=` system property.
+  by a `-Dbrowser=` system property. Install those browsers first:
+  `./mvnw -pl e2e-tests test-compile exec:java -Dexec.args="install firefox webkit"`.
 
 ### Definition of done
 

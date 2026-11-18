@@ -13,51 +13,51 @@ class MoveMoneyTest {
 
     @Test
     void depositIncreasesTheBalance() {
-        abort("TODO lesson 09, exercise 1");
+        abort("TODO lesson 09, exercise 2 (test 1)");
     }
 
     @Test
     void actionsWaitForTheServerBeforeContinuing() {
-        abort("TODO lesson 09, exercise 2");
+        abort("TODO lesson 09, exercise 2 (test 2)");
     }
 
     @Test
     void withdrawingTooMuchShowsAnErrorAndChangesNothing() {
-        abort("TODO lesson 09, exercise 3");
+        abort("TODO lesson 09, exercise 2 (test 3)");
     }
 
     @Test
     void amountsAreValidated() {
-        abort("TODO lesson 09, exercise 4");
+        abort("TODO lesson 09, exercise 2 (test 4)");
     }
 
     @Test
     void transferFieldOnlyAppearsForTransfers() {
-        abort("TODO lesson 09, exercise 5");
+        abort("TODO lesson 09, exercise 2 (test 5)");
     }
 
     @Test
     void transferUpdatesBothAccounts(Page page) {
-        abort("TODO lesson 09, exercise 6");
+        abort("TODO lesson 09, exercise 2 (test 6)");
     }
 
     @Test
     void transferRequiresADestination() {
-        abort("TODO lesson 09, exercise 7");
+        abort("TODO lesson 09, exercise 2 (test 7)");
     }
 
     @Test
     void frozenAccountsCannotMoveMoney() {
-        abort("TODO lesson 09, exercise 8");
+        abort("TODO lesson 09, exercise 2 (test 8)");
     }
 
     @Test
     void freezeAndCloseThroughTheUi() {
-        abort("TODO lesson 09, exercise 9");
+        abort("TODO lesson 09, exercise 2 (test 9)");
     }
 
     @Test
     void filterTheTransactionHistory() {
-        abort("TODO lesson 09, exercise 10");
+        abort("TODO lesson 09, exercise 2 (test 10)");
     }
 }

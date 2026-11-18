@@ -65,8 +65,8 @@ So to check every row, describe the rows that would be wrong, and expect there t
 await expect(rows.filter({ hasNot: page.getByText('Frozen', { exact: true }) })).toHaveCount(0)
 ```
 
-"None" is also true of an empty table, so first wait for the filtered list itself: the URL to change
-(`toHaveURL(/status=FROZEN/)`) and a row you know should be there.
+"None" is also true of an empty table, such as a list that is still loading. So check it again once a row you
+expect is on screen. The reference answer for exercise 5 shows the pattern.
 
 ### Finding a locator interactively
 
@@ -87,7 +87,7 @@ is just a name. Its goal is below.
    "1 customer".
 3. **Table rows.** On `/customers`, find Dan Evans's row **inside the "Customers" table**. Expect its status
    badge to say "Suspended", and its first cell to say "CUS-0004".
-4. **Text.** Expect `getByText('alice.archer@')` to be visible (substring match), and `getByText('Erin
+4. **Text.** On `/customers`, expect `getByText('alice.archer@')` to be visible (substring match), and `getByText('Erin
    Foster', { exact: true })` too.
 5. **Every row.** On `/accounts`, choose Status = Frozen and click "Apply filters". Expect the "Holiday Fund"
    row to be visible, and **no** row to have a badge other than "Frozen". (Try a loop over `.all()` first, run

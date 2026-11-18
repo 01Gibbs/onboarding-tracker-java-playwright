@@ -57,14 +57,15 @@ test('every frozen account shows a frozen badge', async ({ page }) => {
   await page.getByLabel('Status').selectOption('Frozen')
   await page.getByRole('button', { name: 'Apply filters' }).click()
 
-  // Wait for the filter to apply: until then the page shows the unfiltered list (React), or no list while the
-  // filtered one loads (Angular), and "no row that isn't Frozen" would pass on an empty table.
-  await expect(page).toHaveURL(/status=FROZEN/)
   const rows = page.getByTestId('account-row')
-  await expect(rows.filter({ hasText: 'Holiday Fund' })).toBeVisible()
+  const notFrozen = rows.filter({ hasNot: page.getByText('Frozen', { exact: true }) })
   // Retried until true. A loop over rows.all() would check a snapshot, which on a single-page app can still be
-  // the unfiltered list from before the click, or an empty one.
-  await expect(rows.filter({ hasNot: page.getByText('Frozen', { exact: true }) })).toHaveCount(0)
+  // the unfiltered list from before the click (React), or no list while the filtered one loads (Angular).
+  // "No row that isn't Frozen" is also true of that empty moment, so check it again once the filtered list is
+  // on screen: the unfiltered list always has an active account, so it can't pass the first check.
+  await expect(notFrozen).toHaveCount(0)
+  await expect(rows.filter({ hasText: 'Holiday Fund' })).toBeVisible()
+  await expect(notFrozen).toHaveCount(0)
 })
 
 test('open an account from the customer page', async ({ page }) => {

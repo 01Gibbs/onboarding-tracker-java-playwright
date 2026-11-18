@@ -3,7 +3,7 @@ import { uniqueEmail, uniqueLastName } from '../support/test-data.ts'
 
 // Lesson 05: a test that started as a codegen recording, then was tidied up. The raw recording was roughly:
 //
-//   await page.goto('http://localhost:5173/login (or :4200 on the Angular track)');
+//   await page.goto('http://localhost:5173/login');      (:4200 on the Angular track)
 //   await page.getByLabel('Username').click();
 //   await page.getByLabel('Username').fill('teller');
 //   await page.getByLabel('Username').press('Tab');

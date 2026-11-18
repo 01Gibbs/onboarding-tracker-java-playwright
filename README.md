@@ -27,7 +27,7 @@ front end keeps the same [UI contract](docs/ui-contract.md), so the same skills 
 |-------|-----------|----------|--------|
 | **Java** | Thymeleaf, served by the app on :8080 | Playwright for Java + JUnit 5 (`e2e-tests/`) | [lessons/](lessons/00-setup.md), below |
 | **React** | React 19 + Vite on :5173 (`frontends/react/`) | Playwright Test + TypeScript (`e2e-ts/react/`) | [lessons/react/](lessons/react/README.md): 00–14 |
-| **Angular** | planned | Playwright Test + TypeScript | planned |
+| **Angular** | Angular 22 on :4200 (`frontends/angular/`) | Playwright Test + TypeScript | planned |
 
 The rest of this README is about the Java track. The React track needs Node 22, 24 or 26 as well as the JDK:
 start at [lessons/react/00-setup.md](lessons/react/00-setup.md).
@@ -93,6 +93,7 @@ lessons/                     the course (Java track)
 lessons/answers/             answer notes (spoilers)
 lessons/react/               the React track's lessons
 frontends/react/             the React front end (with its own unit, integration and mutation tests)
+frontends/angular/           the Angular front end (the same contract; its own unit, integration and mutation tests)
 e2e-ts/                      Playwright Test (TypeScript) for the React and Angular tracks
   react/                     YOUR code for the React track: config and starter files
   solutions/                 reference answers, run against every front end (the contract check)
@@ -127,22 +128,24 @@ The reference suite has 69 tests and finishes in about 40 seconds against a runn
 (`-Pbroken`) should fail 9 of its 11 tests on a freshly started app, and 10 on every run after that,
 until you've fixed them.
 
-React track and front-end commands (from the repo root, after `npm install`):
+React and Angular track and front-end commands (from the repo root, after `npm install`):
 
 | Task | Command |
 |------|---------|
 | Run the React app | `npm run dev:react` (with the back end running) |
+| Run the Angular app | `npm run dev:angular` (with the back end running) |
 | Your React-track tests | `npm run test:react`, or `npm run test:react -- lesson03 --headed`, or `-- --ui` |
 | Reference answers on React | `npm run solutions:react` |
+| Reference answers on Angular | `npm run solutions:angular` |
 | Contract check: answers on every front end | `npm run contract` |
 | React lesson 13 broken suite | `npm run broken:react` |
-| Front-end unit and integration tests | `npm run test:frontends` |
-| Front-end mutation tests (slow) | `npm run mutation:frontends`, report in `frontends/react/reports/mutation/` |
+| Front-end unit and integration tests | `npm run test:frontends` (React and Angular) |
+| Front-end mutation tests (slow) | `npm run mutation:frontends`, reports in `frontends/react/reports/mutation/` and `frontends/angular/reports/mutation/` |
 
 On a fresh checkout, `npm run test:react` is green: 2 tests pass (the setup check and lesson 01's worked
 example) and every unfinished exercise is *skipped* with a "TODO lesson NN" reason. Playwright starts the back
 end and the React front end if they aren't running. The reference answers are 70 tests, plus 2 that sign in first (`npm run solutions:react`);
-`npm run contract` runs them against React and Thymeleaf. The broken suite (`npm run broken:react`) fails 9 of its 11 tests against
+`npm run contract` runs them against React, Angular and Thymeleaf. The broken suite (`npm run broken:react`) fails 9 of its 11 tests against
 a freshly started app, and 10 on every later run against the same app, until you've fixed them.
 
 ## Versions
@@ -154,8 +157,9 @@ a freshly started app, and 10 on every later run against the same app, until you
 | Spring Boot | 4.1.2 |
 | Java | 21+ |
 | Maven (via wrapper) | 3.9.16 |
-| Playwright Test (React track) | 1.65.1 |
+| Playwright Test (React and Angular tracks) | 1.65.1 |
 | React / Vite / React Router | 19.3 / 8.3 / 8.5 |
+| Angular / Angular CLI | 22.2 / 22.2, with TypeScript 6.0 (Angular 22 doesn't support TypeScript 7 yet) |
 | Node | 22, 24 or 26 |
 
 See [`docs/research/playwright-java.md`](docs/research/playwright-java.md) for known differences

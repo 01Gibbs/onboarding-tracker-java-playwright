@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "Mutation testing: npm run mutation. Changes the app's code in small ways and checks a test fails each time. Report: reports/mutation/mutation.html",
+  "testRunner": "vitest",
+  "vitest": {
+    "configFile": "vite.config.ts"
+  },
+  "mutate": [
+    "src/**/*.ts",
+    "!src/**/*.spec.ts",
+    "!src/test/**",
+    "!src/main.ts"
+  ],
+  "coverageAnalysis": "perTest",
+  "reporters": [
+    "clear-text",
+    "progress",
+    "html"
+  ],
+  "htmlReporter": {
+    "fileName": "reports/mutation/mutation.html"
+  },
+  "thresholds": {
+    "high": 90,
+    "low": 80,
+    "break": 80
+  },
+  "concurrency": 4,
+  "tempDirName": ".stryker-tmp",
+  "_comment_tsconfig": "Stryker rewrites tsconfig paths for its sandbox with TypeScript's JS API. npm hoists Stryker to the repo root, where it finds the React app's TypeScript 7, which no longer has that API (this app pins TypeScript 6.0 for Angular 22). This app's tsconfigs only refer to files inside this folder, which the sandbox copies whole, so the rewrite is skipped by naming a file that does not exist.",
+  "tsconfigFile": "no-tsconfig-rewrite-needed.json",
+  "_comment_survivors": [
+    "Known equivalent mutants (they change nothing a user or test can see):",
+    "account-page EMPTY.toAccountId and open-account holderId fallback '' -> 'Stryker was here!': no option matches, so the select still shows its first option, and Number('...') is NaN, which JSON sends as null, as for ''.",
+    "login-page navigateByUrl('/') -> '': both are the root URL. session anonymous guard createUrlTree(['/']) -> [] or ['']: the same.",
+    "app.ts the dashboard's pathMatch 'full' -> '': an empty-path leaf route only matches an empty remainder either way.",
+    "session canEdit ?. -> .: the user is only null on a signed-in page between sign-out and the navigation to /login, which completes before the next render.",
+    "ui.ts pageFlash's NavigationEnd check -> true: earlier events of a navigation read the same history state, and NavigationEnd sets the final value."
+  ]
+}

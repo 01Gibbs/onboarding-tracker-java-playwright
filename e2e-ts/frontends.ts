@@ -28,6 +28,16 @@ export const frontEnds = {
       reuseExistingServer: true,
     } satisfies WebServer,
   },
+  angular: {
+    url: 'http://localhost:4200',
+    webServer: {
+      command: 'npm run dev -w frontends/angular',
+      cwd: repoRoot,
+      url: 'http://localhost:4200',
+      reuseExistingServer: true,
+      timeout: 120_000, // ng serve compiles the whole app before it answers
+    } satisfies WebServer,
+  },
   thymeleaf: {
     url: 'http://localhost:8080',
     webServer: undefined,

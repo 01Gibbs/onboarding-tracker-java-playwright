@@ -169,6 +169,10 @@ class ApiContractTest {
         api.perform(post("/api/testing/reset"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.fieldErrors").isMap());
+        api.perform(json(put("/api/testing/faults/overdraft"), "{\"accountId\":1}"))
+                .andExpect(status().isNotFound());
+        api.perform(delete("/api/testing/faults/overdraft?accountId=1")).andExpect(status().isNotFound());
+        api.perform(delete("/api/testing/faults")).andExpect(status().isNotFound());
         api.perform(json(put("/api/testing/clock"), "{\"instant\":\"2030-01-31T16:59:00Z\"}"))
                 .andExpect(status().isNotFound());
         api.perform(delete("/api/testing/clock"))

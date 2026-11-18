@@ -105,6 +105,9 @@ ends sign in with `POST /api/auth/session` to get one. The session cookie is `Sa
 | POST | `/api/testing/reset` | none (no auth needed) | `200 {"customers":5,"accounts":6}`. Re-seeds everything |
 | PUT | `/api/testing/clock` | `{"instant":"2030-01-31T16:59:00Z"}` | `200 {"instant":...}`. Pins the server's "now" (not the browser's). No `instant` is a `400` |
 | DELETE | `/api/testing/clock` | none | `204`. Back to the real time |
+| PUT | `/api/testing/faults/{name}` | `{"accountId":123}` | `200 {"name","accountId"}`. Arms a planted fault for that account (mission B0). Unknown name → `404` |
+| DELETE | `/api/testing/faults/{name}?accountId=123` | none | `204`. Disarms it (harmless if it wasn't armed) |
+| DELETE | `/api/testing/faults` | none | `204`. Disarms every fault. `POST /api/testing/reset` does this too |
 
 Responses carry the text the pages show, so a front end never formats money, dates or labels itself:
 `Account` has `displayName`, `balanceDisplay`, `typeLabel`, `statusLabel` and `canDelete`; `Entry` has `typeLabel`,

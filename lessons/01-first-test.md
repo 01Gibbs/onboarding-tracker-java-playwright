@@ -84,7 +84,7 @@ Run only your class:
 ./mvnw -pl e2e-tests test -Dtest='**/workshop/lesson01/*'
 ```
 
-(Use a path pattern. `-Dtest=FirstTest` would also pick up the reference solution of the same name.)
+(Use a path pattern. With `-Psolutions`, `-Dtest=FirstTest` would also pick up the reference solution of the same name.)
 
 ### Watch it run
 

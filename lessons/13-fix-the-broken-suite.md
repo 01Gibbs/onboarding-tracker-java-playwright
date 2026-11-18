@@ -9,7 +9,7 @@ why and fix it properly, working from the failure output and the trace. Don't gu
 
 ## The set-up
 
-`e2e-tests/src/broken/java/dev/upskill/e2e/broken/` contains ten tests: `Case01…` to `Case10…`.
+`e2e-tests/src/broken/java/dev/upskill/e2e/broken/` contains ten cases (11 tests): `Case01…` to `Case10…`.
 Each one has **exactly one** realistic fault planted in it. The app is fine; the tests are wrong.
 They use the reference page objects and support code, which do work.
 

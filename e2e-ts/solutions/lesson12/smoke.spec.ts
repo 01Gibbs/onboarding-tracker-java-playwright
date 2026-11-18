@@ -1,7 +1,7 @@
 import { expect, test } from '../support/fixtures.ts'
 
 // Lesson 12: a small, fast smoke suite. The tag lets it run on its own:
-//   npm run solutions:react -- --grep @smoke
+//   npm run solutions:react -- --grep @smoke     (or solutions:angular)
 test.describe('smoke', { tag: '@smoke' }, () => {
   test('a teller can sign in and see the dashboard', async ({ signedIn }) => {
     await expect(signedIn.heading).toBeVisible()

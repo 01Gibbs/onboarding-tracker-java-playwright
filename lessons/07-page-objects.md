@@ -50,9 +50,9 @@ Guidelines that keep page objects healthy:
 ## Exercise
 
 1. Look at `workshop/support/User.java` (provided): a record with `TELLER`, `AUDITOR` and `LOCKED`.
-2. Study `workshop/pages/LoginPage.java`. It's a complete worked example of the pattern. Then complete
-   the other starters in `workshop/pages/`, whose method signatures are already there:
-   - `LoginPage`: `open()`, `submit(user, pass)`, `loginAs(User)` → `DashboardPage`, `error()`
+2. Study `workshop/pages/LoginPage.java`. It's a complete worked example of the pattern: `open()`,
+   `submit(user, pass)`, `loginAs(User)` → `DashboardPage`, `error()`. Then complete the other starters in
+   `workshop/pages/`, whose method signatures are already there:
    - `NavBar`: `customers()` → `CustomersPage`, `accounts()`, `signOut()`, `currentUser()`
    - `DashboardPage`: `nav`, `heading()`
    - `CustomersPage`: `open()`, `search(text)`, `newCustomer()` → `CustomerFormPage`, `rows()`,

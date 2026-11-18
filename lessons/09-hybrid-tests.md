@@ -68,7 +68,8 @@ catches cases where the UI shows one thing but the system recorded another.
       source £180.00; newest row "to <number>"; destination £120.00 (open it in the UI) and through the API.
    7. **Transfer with no destination** → "To account" is still visible and marked invalid.
    8. **Frozen account** (freeze it through the API) → badge "Frozen", no "Move money" section.
-   9. **Freeze → unfreeze → close** through the buttons (closing needs a confirm dialog).
+   9. **Freeze → unfreeze → close** through the buttons (closing needs a confirm dialog). Open the account with a
+      zero balance: an account that holds money can't be closed.
    10. **Filter history.** Deposit + withdrawal (API) → 2 rows → filter "Withdrawal" → 1 row.
 
 ## Discussion

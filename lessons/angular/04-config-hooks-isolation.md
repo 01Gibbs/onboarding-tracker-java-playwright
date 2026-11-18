@@ -11,7 +11,8 @@ every test starts with a clean browser.
 
 ### `playwright.config.ts`
 
-Open `e2e-ts/angular/playwright.config.ts`. Everything that would otherwise be repeated in every test lives here:
+Open `e2e-ts/angular/playwright.config.ts`. Everything that would otherwise be repeated in every test lives here
+(shown without its reporter settings):
 
 ```ts
 export default defineConfig({
@@ -21,7 +22,8 @@ export default defineConfig({
     baseURL: process.env.BASE_URL ?? frontEnds.angular.url,   // page.goto('/customers') → :4200/customers
     trace: 'retain-on-failure',
   },
-  webServer: [backEnd, frontEnds.angular.webServer],
+  // No servers to start when BASE_URL points at an environment that's already running
+  webServer: process.env.BASE_URL ? undefined : [backEnd, frontEnds.angular.webServer],
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 })
 ```

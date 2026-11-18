@@ -58,7 +58,7 @@ Guidelines that keep page objects healthy:
      `await expect(form.email).toHaveAccessibleDescription('…')`
    - `CustomerDetailPage`: `open(id)`, `nav`, `heading`, `flash`, `detail(term)`, `deleteAndConfirm()`
 3. Complete `e2e-ts/react/lesson07/customer-pages.spec.ts`:
-   - Create a customer via the nav, search for them, open them, and check that Phone shows "Not provided"
+   - Create a customer from the customers page, search for them, open them, and check that Phone shows "Not provided"
    - Delete a customer, then check that a search finds nothing
    - Validation errors (empty first name, bad email)
    - Search for something that doesn't exist

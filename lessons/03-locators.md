@@ -63,9 +63,9 @@ test is just a name. Its goal is below.
    that `result-count` says "1 customer".
 3. **Table rows.** On `/customers`, find Dan Evans's row **inside the "Customers" table**. Assert
    that its status badge says "Suspended" and that its first cell says "CUS-0004".
-4. **Text.** Assert that `getByText("alice.archer@")` is visible (substring match), and that
+4. **Text.** On `/customers`, assert that `getByText("alice.archer@")` is visible (substring match), and that
    `getByText("Erin Foster")` with `setExact(true)` is visible.
-5. **Every row.** On `/accounts`, filter Status = Frozen. Assert that the "Holiday Fund" row is visible,
+5. **Every row.** On `/accounts`, choose Status = Frozen and click "Apply filters". Assert that the "Holiday Fund" row is visible,
    and that **every** row's status badge says "Frozen". Hint: loop over `.all()`.
 6. **`has` filter.** From Alice Archer's customer page, click the account link in the row of the
    "Accounts" table that **has** a cell with exactly the text "Savings". Assert that the h1 contains

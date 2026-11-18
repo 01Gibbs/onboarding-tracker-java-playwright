@@ -57,7 +57,7 @@ that shows one thing while the system recorded another.
 
 1. Complete the fixtures in `e2e-ts/react/support/fixtures.ts`: `api` is done; add `signedIn` (signs in as the
    teller and gives the test a `DashboardPage`) and `accountPage`.
-2. Complete `e2e-ts/react/pages/account-page.ts`: `open(id)`, `status`, `flash`, `moveMoney` (the region),
+2. Complete `e2e-ts/react/pages/account-page.ts` (`open(id)` is done): `status`, `flash`, `moveMoney` (the region),
    `amount`, `toAccount`, `submit`, `transactionRows`, `chooseType(label)`, `deposit(v)`, `withdraw(v)`,
    `transfer(v, toId)`, `filterTransactions(label)`, `click(name)` and `clickAndConfirm(name)`.
    Tip: `toAccount.selectOption(String(id))` selects by option *value*.
@@ -74,7 +74,8 @@ that shows one thing while the system recorded another.
       £180.00; newest row "to <number>"; destination £120.00 (open it in the UI) and through the API.
    8. **Transfer with no destination** → "To account" is still visible and marked invalid.
    9. **Frozen account** (freeze it through the API) → badge "Frozen", no "Move money" section.
-   10. **Freeze → unfreeze → close** through the buttons (closing needs a confirm dialog).
+   10. **Freeze → unfreeze → close** through the buttons (closing needs a confirm dialog). Open the account with a
+       zero balance: an account that holds money can't be closed.
    11. **Filter history.** Deposit + withdrawal (API) → 2 rows → filter "Withdrawal" → 1 row.
 
 ## Discussion

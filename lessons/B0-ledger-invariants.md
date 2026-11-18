@@ -83,8 +83,8 @@ check that looks **across** accounts catches it. `POST /api/testing/reset` clear
 There are no starter tests: you've done enough lessons to set up a test class yourself.
 
 1. **The check.** Implement `workshop/support/LedgerInvariants.java`. The enum, the record and the method
-   signatures are fixed (later missions call them). Add `transfer`, `allAccounts`, `testSupportEnabled`,
-   `plantFault` and `clearFault` to your `LedgerApi`. For transfer pairing, the other leg can be on an account
+   signatures are fixed (later missions call them). Implement `transfer`, `allAccounts`, `testSupportEnabled`,
+   `plantFault` and `clearFault` in your `LedgerApi` (they're stubs there). For transfer pairing, the other leg can be on an account
    you weren't asked about: map `counterpartyAccountNumber` to an id with `allAccounts()` and read its entries too.
 2. **It passes on good data.** Create `workshop/b0/LedgerInvariantsTest.java` with fresh accounts in every test:
    1. `anAccountWithNoHistoryIsBalanced`

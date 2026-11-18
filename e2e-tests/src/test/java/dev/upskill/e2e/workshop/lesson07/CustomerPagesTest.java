@@ -13,21 +13,21 @@ class CustomerPagesTest {
 
     @Test
     void createSearchAndOpenACustomer(Page page) {
-        abort("TODO lesson 07, exercise 1");
+        abort("TODO lesson 07, exercise 3 (test 1)");
     }
 
     @Test
     void deleteACustomer(Page page) {
-        abort("TODO lesson 07, exercise 2");
+        abort("TODO lesson 07, exercise 3 (test 2)");
     }
 
     @Test
     void validationErrorsAreShownNextToFields(Page page) {
-        abort("TODO lesson 07, exercise 3");
+        abort("TODO lesson 07, exercise 3 (test 3)");
     }
 
     @Test
     void searchingForSomethingThatDoesNotExist(Page page) {
-        abort("TODO lesson 07, exercise 4");
+        abort("TODO lesson 07, exercise 3 (test 4)");
     }
 }

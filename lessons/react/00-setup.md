@@ -24,7 +24,7 @@ npm install
 npx playwright install chromium
 ```
 
-`npm install` installs the React app and the test project together (they are npm workspaces). Playwright
+`npm install` installs the front ends and the test project together (they are npm workspaces). Playwright
 drives a real browser build that it downloads itself; add `--with-deps` on Linux.
 
 ## 3. Start Ledgerline

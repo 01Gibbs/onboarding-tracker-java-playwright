@@ -8,7 +8,8 @@ coverage for a feature area by yourself.
 ## Part 1: The customer journey (guided)
 
 Create `workshop/lesson14/CustomerJourneyTest.java` as **one** test, driven through the UI using your
-page objects:
+page objects. Add what your page objects don't have yet: an `OpenAccountPage` for `/accounts/new`, and on
+`CustomerDetailPage` an `openAccount()` method and an `accountRows()` locator.
 
 1. Sign in as teller and create a new customer (unique data). Assert that they are "Active" with no accounts.
 2. From their page, open a **Current** account called "Spending", then a **Savings** account called "Goals".

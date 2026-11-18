@@ -53,16 +53,20 @@ await expect(row.getByTestId('status-badge')).toHaveText('Suspended')
 ### Lists that are still loading
 
 An Angular page shows its frame first and fills it in when the API answers. After you click "Search", the
-**old** rows stay on screen until the new ones arrive. Two consequences:
+rows **disappear** while the new ones load (for a moment the old ones may still show). Two consequences:
 
 - `toHaveCount`, `toHaveText` and friends retry, so they wait for the new rows. Good.
-- `await rows.all()` takes a **snapshot**, right now. Loop over it and you may be checking the old rows.
+- `await rows.all()` takes a **snapshot**, right now. Loop over it and you may be checking no rows at all, so the
+  loop passes without checking anything, or the old rows.
 
 So to check every row, describe the rows that would be wrong, and expect there to be none:
 
 ```ts
 await expect(rows.filter({ hasNot: page.getByText('Frozen', { exact: true }) })).toHaveCount(0)
 ```
+
+"None" is also true of an empty table, so first wait for the filtered list itself: the URL to change
+(`toHaveURL(/status=FROZEN/)`) and a row you know should be there.
 
 ### Finding a locator interactively
 

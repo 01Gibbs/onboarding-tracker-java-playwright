@@ -44,8 +44,9 @@ The exec plugin is already set up in `e2e-tests/pom.xml` to run Playwright's CLI
 ```
 
 This runs everything in `e2e-tests/src/test/java/dev/upskill/e2e/workshop/`, which is where **your**
-tests will live. At the moment it only contains `SetupCheckTest`, which calls the app's health
-endpoint. You should see `Tests run: 1, Failures: 0`.
+tests will live. It holds a starter for every lesson. Two tests pass: `SetupCheckTest`, which calls the
+app's health endpoint, and lesson 01's worked example. Every unfinished exercise is reported as skipped with a
+`TODO` reason, so you should see `Tests run: 64, Failures: 0, Errors: 0, Skipped: 62`.
 
 > If it fails with `ECONNREFUSED` / "Ledgerline is not running", start the app in another terminal
 > (step 2) and run the tests again.
@@ -75,7 +76,7 @@ e2e-tests/src/
   ├─ test/java/.../e2e/workshop/      ← YOUR code: starter files for each lesson (run by default)
   │    ├─ lessonNN/                   ← one package per lesson
   │    ├─ pages/                      ← page objects you build (lessons 07, 09, 11)
-  │    └─ support/                    ← helpers you build (lessons 04, 05, 08)
+  │    └─ support/                    ← helpers you build (lessons 04, 05, 08, mission B0)
   ├─ solutions/java/.../e2e/solutions/ ← reference answers, same layout (only built with -Psolutions)
   └─ broken/java/.../e2e/broken/       ← lesson 13's broken suite (only built with -Pbroken)
 ```

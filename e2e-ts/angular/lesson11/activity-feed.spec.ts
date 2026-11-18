@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from '../support/fixtures.ts'
 
 // Lesson 11 starter: route GET /api/activity to test the dashboard's "Recent activity" states.
 // Finish your DashboardPage's activity locators and refreshActivity() first.

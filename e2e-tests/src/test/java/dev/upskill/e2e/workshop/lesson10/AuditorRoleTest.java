@@ -12,16 +12,16 @@ class AuditorRoleTest {
 
     @Test
     void auditorLandsOnTheDashboardWithoutLoggingIn() {
-        abort("TODO lesson 10, exercise 1");
+        abort("TODO lesson 10, exercise 1 (test 1)");
     }
 
     @Test
     void auditorDoesNotSeeEditingControls() {
-        abort("TODO lesson 10, exercise 2");
+        abort("TODO lesson 10, exercise 1 (test 2)");
     }
 
     @Test
     void auditorIsBlockedFromChangesEvenWithoutTheButtons() {
-        abort("TODO lesson 10, exercise 3");
+        abort("TODO lesson 10, exercise 1 (test 3)");
     }
 }

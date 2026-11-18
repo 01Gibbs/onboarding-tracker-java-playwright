@@ -3,7 +3,7 @@ package dev.upskill.e2e.workshop.pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-/** Lesson 07 (optional) / 14: the account list at /accounts. */
+/** The account list at /accounts. Optional: complete it in lesson 07 if you want, or when a test of yours needs it. */
 public class AccountsPage {
 
     private final Page page;

@@ -1,4 +1,0 @@
-# Signed-in storage state holds live session cookies: never commit it (lesson 10)
-playwright/.auth/
-test-results/
-playwright-report/

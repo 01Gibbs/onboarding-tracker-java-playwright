@@ -1,7 +1,7 @@
 # Course effectiveness review: Playwright for Java upskill
 
-Reviewed 2026-11-11. Scope: `README.md`, `lessons/00–13`, `e2e-tests/.../solutions/` (support, pages, and
-the lesson 03, 06, 09, 10, 11 and 12 solutions read in full), `e2e-tests/pom.xml`, `app/` config and tests,
+Reviewed 2026-11-11. Scope: `README.md`, `lessons/00–13`, `e2e-java/.../solutions/` (support, pages, and
+the lesson 03, 06, 09, 10, 11 and 12 solutions read in full), `e2e-java/pom.xml`, `app/` config and tests,
 `docs/ledgerline-reference.md`, and `docs/research/playwright-java.md`.
 
 Each claim cites a primary source. Statements marked **[Inference]** are my judgement, not a sourced finding.
@@ -105,11 +105,11 @@ from an empty file every time: there are no starter skeletons and no failing or 
   An answer key one click away gives everyone, at every level, the same maximum guidance. **[Inference]**
 
 **Fix.**
-1. Move `solutions/` out of `src/test/java` into `e2e-tests/src/solutions/java`. Add it as a test source
+1. Move `solutions/` out of `src/test/java` into `e2e-java/src/solutions/java`. Add it as a test source
    **only** in the `solutions` profile, with `build-helper-maven-plugin` `add-test-source`. Alternatively,
    publish solutions on a `solutions` git branch or tag. Either way, they stop showing up in completion and
    in `-Dtest` matches.
-2. Add `e2e-tests/src/test/java/dev/upskill/e2e/workshop/lessonNN/` starter files that fade:
+2. Add `e2e-java/src/test/java/dev/upskill/e2e/workshop/lessonNN/` starter files that fade:
    - Lessons 01–03: complete tests with one or two `// TODO` lines blanked (an assertion or a locator).
    - Lessons 04–07: test methods with names, arrange steps and `fail("TODO")` bodies. Learners write act and assert.
    - Lessons 08–11: `@Disabled("lesson 08 – remove when you start")` tests with only a name and a one-line
@@ -135,7 +135,7 @@ and one "make it order-dependent" task. They never get a broken test they didn't
   repetition ([Ericsson, Krampe & Tesch-Römer 1993](https://doi.org/10.1037/0033-295X.100.3.363)). Writing
   green tests to a spec doesn't target the hardest skill: diagnosing red ones. **[Inference]**
 
-**Fix.** Add `lessons/12b-fix-the-suite.md` and `e2e-tests/src/test/java/dev/upskill/e2e/workshop/broken/`.
+**Fix.** Add `lessons/12b-fix-the-suite.md` and `e2e-java/src/test/java/dev/upskill/e2e/workshop/broken/`.
 It should contain 8–10 short tests, each with **one** planted defect drawn from what this course teaches
 against:
 - `assertTrue(locator.isVisible())` straight after a click

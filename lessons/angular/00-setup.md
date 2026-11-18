@@ -59,7 +59,7 @@ little while: Angular compiles the whole app before it answers.
 npm run test:angular
 ```
 
-This runs everything in `e2e-ts/angular/`, which is where **your** tests live. You should see 2 passed (the setup
+This runs everything in `e2e-angular/`, which is where **your** tests live. You should see 2 passed (the setup
 check, and lesson 01's worked example) and the rest **skipped**: those are the exercises still to do.
 
 > If the setup check fails with "Ledgerline is not answering", the back end isn't running: start it (step 3).
@@ -84,11 +84,13 @@ Keep notes. Each of these behaviours becomes a test later in the course.
 
 ```
 lessons/angular/NN-*.md          ← what to learn and do
-e2e-ts/
-  ├─ angular/                    ← YOUR code: playwright.config.ts and the starter files
-  │    └─ lessonNN/*.spec.ts     ← one folder per lesson
+e2e-angular/                      ← everything you run and write for this track
+  ├─ playwright.config.ts        ← YOUR configuration (lesson 04)
+  ├─ lessonNN/*.spec.ts          ← YOUR tests: starter files, one folder per lesson
+  ├─ pages/, support/            ← YOUR page objects and helpers (lessons 07–09)
+  ├─ servers.ts                  ← where the back end and the Angular app run
   ├─ solutions/                  ← reference answers (npm run solutions:angular)
-  └─ frontends.ts                ← where each front end runs
+  └─ broken/                     ← lesson 13's broken suite
 frontends/angular/               ← the Angular app you are testing
 ```
 
@@ -103,7 +105,7 @@ your code.
 
 ### Reference answers
 
-Every "**Reference:**" path in the lessons is relative to `e2e-ts/solutions/`. **Try first; compare after.**
+Every "**Reference:**" path in the lessons is relative to `e2e-angular/solutions/`. **Try first; compare after.**
 To run them against the Angular app:
 
 ```bash

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * Planted bugs for mission B0 (lessons/B0-ledger-invariants.md). Each one makes MoneyService break exactly one
+ * Planted bugs for mission B0 (lessons/java/B0-ledger-invariants.md). Each one makes MoneyService break exactly one
  * ledger invariant, for one account, so learners can prove their checks catch it. Armed only through test support.
  */
 public enum Fault {

@@ -49,7 +49,7 @@ locators properly.
 
 ## Exercise
 
-Open the starter `e2e-ts/angular/lesson01/first.spec.ts`. Exercise 1 is already done as a worked example. Read
+Open the starter `e2e-angular/lesson01/first.spec.ts`. Exercise 1 is already done as a worked example. Read
 it line by line, run it, then replace each `test.skip(...)` line for exercises 2 and 3.
 
 1. **Title.** Go to `/login` and expect the title `Sign in · Ledgerline`.
@@ -82,7 +82,7 @@ npm run test:angular -- --ui                  # UI mode: pick tests, watch, and 
 
 ## Checkpoint
 
-- [ ] 3 passing tests in `e2e-ts/angular/lesson01`
+- [ ] 3 passing tests in `e2e-angular/lesson01`
 - [ ] You can explain why the failing assertion took about 5 seconds
 - [ ] You ran the tests headed, and in UI mode, at least once
 

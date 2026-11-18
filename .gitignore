@@ -9,3 +9,4 @@ playwright/.auth/
 .vscode/
 .DS_Store
 .claude/worktrees/
+contract-report/

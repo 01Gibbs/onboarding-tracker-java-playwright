@@ -55,13 +55,13 @@ that shows one thing while the system recorded another.
 
 ## Exercise
 
-1. Complete the fixtures in `e2e-ts/react/support/fixtures.ts`: `api` is done; add `signedIn` (signs in as the
+1. Complete the fixtures in `e2e-react/support/fixtures.ts`: `api` is done; add `signedIn` (signs in as the
    teller and gives the test a `DashboardPage`) and `accountPage`.
-2. Complete `e2e-ts/react/pages/account-page.ts` (`open(id)` is done): `status`, `flash`, `moveMoney` (the region),
+2. Complete `e2e-react/pages/account-page.ts` (`open(id)` is done): `status`, `flash`, `moveMoney` (the region),
    `amount`, `toAccount`, `submit`, `transactionRows`, `chooseType(label)`, `deposit(v)`, `withdraw(v)`,
    `transfer(v, toId)`, `filterTransactions(label)`, `click(name)` and `clickAndConfirm(name)`.
    Tip: `toAccount.selectOption(String(id))` selects by option *value*.
-3. Complete `e2e-ts/react/lesson09/move-money.spec.ts`, with a fresh account in every test:
+3. Complete `e2e-react/lesson09/move-money.spec.ts`, with a fresh account in every test:
    1. **Deposit** 25.50 into 100 → flash "Deposit of £25.50 completed", balance £125.50, newest row shows
       "Deposit" and "+£25.50".
    2. **Auto-wait.** Withdraw 10, then immediately expect the balance £90.00. No sleeps.

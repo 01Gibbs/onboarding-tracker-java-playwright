@@ -9,7 +9,7 @@ fix it properly, working from the failure output and the trace. Don't guess.
 
 ## The set-up
 
-`e2e-ts/broken/` holds ten cases (11 tests): `case01…` to `case10…`. The runner also lists two sign-in set-up steps, which pass. Each has **exactly one** realistic fault planted in
+`e2e-react/broken/` holds ten cases (11 tests): `case01…` to `case10…`. The runner also lists two sign-in set-up steps, which pass. Each has **exactly one** realistic fault planted in
 it. Ledgerline is fine; the tests are wrong. They use the reference page objects, fixtures and API client, which
 do work.
 
@@ -21,7 +21,7 @@ npm run broken:react
 
 - Actions and assertions give up after **5 seconds** in this suite, so failures are quick.
 - Every failing test keeps a **trace**. The HTML report links to each one:
-  `cd e2e-ts && npx playwright show-report playwright-report/broken-react`
+  `cd e2e-react && npx playwright show-report broken/playwright-report`
 
 > **Run the whole suite at least twice, with the back end running in its own terminal.** One test passes the
 > first time against a freshly started back end and fails afterwards. (If Playwright starts the back end for

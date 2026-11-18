@@ -47,9 +47,9 @@ Guidelines that keep page objects healthy:
 
 ## Exercise
 
-1. Look at `e2e-ts/angular/support/users.ts` (provided): `TELLER`, `AUDITOR` and `LOCKED`.
-2. Study `e2e-ts/angular/pages/login-page.ts`. It's a complete worked example of the pattern. Then complete the
-   other starters in `e2e-ts/angular/pages/`, whose method signatures are already there:
+1. Look at `e2e-angular/support/users.ts` (provided): `TELLER`, `AUDITOR` and `LOCKED`.
+2. Study `e2e-angular/pages/login-page.ts`. It's a complete worked example of the pattern. Then complete the
+   other starters in `e2e-angular/pages/`, whose method signatures are already there:
    - `NavBar`: `customers()` → `CustomersPage`, `accounts()`, `signOut()`, `currentUser`
    - `CustomersPage`: `open()`, `search(text)`, `newCustomer()` → `CustomerFormPage`, `rows`,
      `openCustomer(fullName)` → `CustomerDetailPage`, `emptyMessage`
@@ -57,7 +57,7 @@ Guidelines that keep page objects healthy:
      → itself, `errorSummary`. Its fields are public, so tests can
      `await expect(form.email).toHaveAccessibleDescription('…')`
    - `CustomerDetailPage`: `open(id)`, `nav`, `heading`, `flash`, `detail(term)`, `deleteAndConfirm()`
-3. Complete `e2e-ts/angular/lesson07/customer-pages.spec.ts`:
+3. Complete `e2e-angular/lesson07/customer-pages.spec.ts`:
    - Create a customer from the customers page, search for them, open them, and check that Phone shows "Not provided"
    - Delete a customer, then check that a search finds nothing
    - Validation errors (empty first name, bad email)

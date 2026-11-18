@@ -1,7 +1,7 @@
 # Mission B0: ledger invariants (design research)
 
 - **Date researched:** 2026-11-12
-- **Question:** what can a reusable "ledger invariant" check in `e2e-tests/` actually assert about Ledgerline,
+- **Question:** what can a reusable "ledger invariant" check in `e2e-java/` actually assert about Ledgerline,
   how should learners attach it to their tests, and how should a planted fault prove that it works?
 - **Builds on:** [`banking-upskill.md`](banking-upskill.md) §3 R1 and §4 (B0 is the base the other missions
   build on), [`playwright-java.md`](playwright-java.md) §2 and §6, and
@@ -103,9 +103,9 @@ holding, the one transfer (`Monthly saving`, 1,000.00, 10000001 → 10000002) co
 
 `LedgerApi` (e2e side) needs one small addition. Neither the workshop nor the solutions `LedgerApi` has
 `transfer(...)`. Lesson 08's reference posts `/api/transfers` by hand
-(`e2e-tests/src/solutions/java/dev/upskill/e2e/solutions/lesson08/AccountApiTest.java:82`). B0 should add
+(`e2e-java/src/solutions/java/dev/upskill/e2e/solutions/lesson08/AccountApiTest.java:82`). B0 should add
 `transfer(long from, long to, String amount)` and `allAccounts()`. The broken suite compiles against
-`src/solutions` (`e2e-tests/pom.xml:155-158`), so only **add** methods: don't change existing signatures.
+`src/solutions` (`e2e-java/pom.xml:155-158`), so only **add** methods: don't change existing signatures.
 
 ---
 
@@ -169,7 +169,7 @@ with the check" a rule, C is a natural refactor. Teach it with `AfterTestExecuti
   ([`APIRequestContextExtension.java:28-68`](https://github.com/microsoft/playwright-java/blob/v1.64.0/playwright/src/main/java/com/microsoft/playwright/impl/junit/APIRequestContextExtension.java)).
   Two catches:
   - It's built only from `Options.apiRequestOptions`, which `LedgerlineOptions` sets to just the base URL
-    (`e2e-tests/src/solutions/.../support/LedgerlineOptions.java:22`). It has no bearer token, so every
+    (`e2e-java/src/solutions/.../support/LedgerlineOptions.java:22`). It has no bearer token, so every
     Ledgerline API call through it gets 401 (`auth/ApiAuthInterceptor.java:26-29`).
   - The extension never calls `dispose()` on it; it only drops the reference (lines 32-39).
 - **Conclusion:** an extension *can* reach the same `Playwright` (and from it, `LedgerApi.loginAs(playwright,
@@ -179,7 +179,7 @@ with the check" a rule, C is a natural refactor. Teach it with `AfterTestExecuti
 ### 4.4 Parallel runs and the system-wide total (I9)
 
 - The reference suite runs **classes concurrently and methods within a class sequentially**, with fixed
-  parallelism 4 (`e2e-tests/pom.xml:121-133`). Lesson 12 teaches the same mode with the `dynamic` strategy
+  parallelism 4 (`e2e-java/pom.xml:121-133`). Lesson 12 teaches the same mode with the `dynamic` strategy
   (`lessons/12-debugging-and-scale.md:58-70`).
 - **Per-account checks (I1–I8) are parallel-safe with no locks**, because each test checks only accounts it
   created. This is the "own your data" rule from lesson 06 onwards (`lessons/12-debugging-and-scale.md:72-74`;
@@ -290,9 +290,9 @@ case has "exactly one realistic fault" carries over as "each fault breaks exactl
 
 - Starter tests are `@UsePlaywright(LedgerlineOptions.class)` classes whose methods call
   `abort("TODO lesson NN, exercise N")`, which JUnit reports as *skipped*
-  (`e2e-tests/src/test/java/dev/upskill/e2e/workshop/lesson09/MoveMoneyTest.java:3,16`).
+  (`e2e-java/src/test/java/dev/upskill/e2e/workshop/lesson09/MoveMoneyTest.java:3,16`).
 - Support starters throw `UnsupportedOperationException("TODO lesson 08")`
-  (`e2e-tests/src/test/java/dev/upskill/e2e/workshop/support/LedgerApi.java:61-95`).
+  (`e2e-java/src/test/java/dev/upskill/e2e/workshop/support/LedgerApi.java:61-95`).
 - Fading reaches zero at lesson 12: "From this lesson on there are no starter files"
   (`lessons/12-debugging-and-scale.md:133`).
 - B0 comes after lesson 14, so the faded format applies: **no test starters**. One exception is worth
@@ -323,7 +323,7 @@ case has "exactly one realistic fault" carries over as "each fault breaks exactl
 |---|---|---|
 | Default suite | 2 pass, 62 skipped (62 = the sum of `abort("TODO` calls across `workshop/`; checked by counting) | **Unchanged** if B0 adds no test starters, as recommended. Each starter test with an `abort` would add 1 skipped |
 | `-Psolutions` | 69 tests (69 `@Test` methods in `src/solutions`; checked by counting) | 69 + M. A `@ParameterizedTest` counts once per invocation. For example, 4 invariant tests + 5 fault cases → **78** (illustrative) |
-| `-Pbroken` | fails 9 of 11 on a fresh app, then 10 | **Unchanged**, as long as nothing is added to `src/broken` and `solutions/support` changes are additive (the broken profile compiles `src/solutions`, `e2e-tests/pom.xml:155-158`) and faults are account-scoped |
+| `-Pbroken` | fails 9 of 11 on a fresh app, then 10 | **Unchanged**, as long as nothing is added to `src/broken` and `solutions/support` changes are additive (the broken profile compiles `src/solutions`, `e2e-java/pom.xml:155-158`) and faults are account-scoped |
 | "15 lessons" and the course table | 00–14 | Add a "Banking track" row or table, and update the wording |
 | Layout block | lists `docs/research/playwright-java.md` | Optionally list this note |
 
@@ -359,7 +359,7 @@ Also update:
   `common/LedgerClock.java`, `seed/DataSeeder.java`
 - `app/src/main/resources/application.yml`, `application-dev.yml`
 - `app/src/test/java/dev/upskill/ledger/{MoneyServiceTest,ledger/AmountTest,api/ApiContractTest}.java`
-- `e2e-tests/pom.xml`; `e2e-tests/src/{test,solutions,broken}/java/...`
+- `e2e-java/pom.xml`; `e2e-java/src/{test,solutions,broken}/java/...`
 - `lessons/07, 08, 09, 12, 13, 14`, `lessons/answers/13-fix-the-broken-suite.md`, `README.md`,
   `docs/ledgerline-reference.md`, `docs/research/{banking-upskill,playwright-java}.md`
 

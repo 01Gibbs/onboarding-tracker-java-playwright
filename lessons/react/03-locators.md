@@ -73,7 +73,7 @@ suggests a locator for whatever you click.
 
 ## Exercise
 
-Open the starter `e2e-ts/react/lesson03/locators.spec.ts`. The `beforeEach` sign-in is provided, and each test
+Open the starter `e2e-react/lesson03/locators.spec.ts`. The `beforeEach` sign-in is provided, and each test
 is just a name. Its goal is below.
 
 1. **Navigation.** Click "Customers" *inside the Main navigation*, and expect the "Customers" heading to be
@@ -102,7 +102,7 @@ is just a name. Its goal is below.
 
 ## Checkpoint
 
-- [ ] 6 passing tests in `e2e-ts/react/lesson03`
+- [ ] 6 passing tests in `e2e-react/lesson03`
 - [ ] You triggered and fixed at least one strict mode violation
 - [ ] You used "Pick locator" at least once
 

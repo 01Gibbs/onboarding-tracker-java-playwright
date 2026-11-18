@@ -1,0 +1,17 @@
+{
+  "name": "e2e-react",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "solutions": "playwright test --config solutions",
+    "contract": "playwright test --config solutions/contract.config.ts",
+    "broken": "playwright test --config broken",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^24.19.2",
+    "typescript": "~7.0.2"
+  }
+}

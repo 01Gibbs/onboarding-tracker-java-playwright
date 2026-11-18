@@ -7,7 +7,7 @@ a feature area by yourself.
 
 ## Part 1: The customer journey (guided)
 
-Create `e2e-ts/react/lesson14/customer-journey.spec.ts` as **one** test, driven through the UI with your page
+Create `e2e-react/lesson14/customer-journey.spec.ts` as **one** test, driven through the UI with your page
 objects and fixtures. Add what your page objects don't have yet: an `OpenAccountPage` for `/accounts/new`, and on
 `CustomerDetailPage` an `openAccount()` method and `status` and `accountRows` locators. Group the test into `test.step`s so
 the report and trace read as the story:

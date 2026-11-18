@@ -3,8 +3,8 @@
 End-to-end testing with [Playwright Test](https://playwright.dev/docs/intro) and TypeScript, against
 Ledgerline's **React** front end. This series stands on its own: start at 00 and work through in order.
 
-You write your tests in `e2e-ts/react/`. Each lesson has starter files there; the reference answers are in
-`e2e-ts/solutions/`. Try first, compare after.
+You write your tests in `e2e-react/`. Each lesson has starter files there; the reference answers are in
+`e2e-react/solutions/`. Try first, compare after.
 
 | # | Lesson | You'll learn | Playwright docs |
 |---|--------|--------------|-----------------|

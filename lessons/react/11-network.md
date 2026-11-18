@@ -69,7 +69,7 @@ for (const route of held) await route.continue()
 
 ## Exercise
 
-Complete the starter `e2e-ts/react/lesson11/activity-feed.spec.ts`. Sign in during `beforeEach`, and finish
+Complete the starter `e2e-react/lesson11/activity-feed.spec.ts`. Sign in during `beforeEach`, and finish
 `activityPanel`, `activityItems` and `refreshActivity()` in your `DashboardPage`.
 
 1. **Real data.** `waitForResponse` around `page.reload()` → `200`, and at least one activity item visible.
@@ -82,7 +82,7 @@ Complete the starter `e2e-ts/react/lesson11/activity-feed.spec.ts`. Sign in duri
 6. **Patch the real response.** Use `route.fetch()`, set every description to `PATCHED`, and fulfill.
 7. **Count calls.** After the first load finishes, count `/api/activity` requests. Click Refresh while waiting
    for the response, and expect exactly **1** more call.
-8. Create `e2e-ts/react/lesson11/in-flight-state.spec.ts` yourself: hold the request, expect the "Loading
+8. Create `e2e-react/lesson11/in-flight-state.spec.ts` yourself: hold the request, expect the "Loading
    activity…" status and zero items, release it, then expect the status to disappear and items to appear.
    *Tip: wait for the first load to finish before you add the route, or you'll race with it.*
 

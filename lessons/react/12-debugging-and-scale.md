@@ -18,12 +18,12 @@ logs and the source line. Your `playwright.config.ts` already keeps one for ever
 use: { trace: 'retain-on-failure' }    // 'off' | 'on' | 'retain-on-failure' | 'on-first-retry'
 ```
 
-Traces land in `e2e-ts/test-results/react/<test>/trace.zip`, and the HTML report links to them:
+Traces land in `e2e-react/test-results/<test>/trace.zip`, and the HTML report links to them:
 
 ```bash
-cd e2e-ts
-npx playwright show-report playwright-report/react
-npx playwright show-trace test-results/react/<folder>/trace.zip
+cd e2e-react
+npx playwright show-report playwright-report
+npx playwright show-trace test-results/<folder>/trace.zip
 ```
 
 You can also drag the zip into <https://trace.playwright.dev>, which runs entirely in your browser.
@@ -84,7 +84,7 @@ jobs:
         env: { CI: true }
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
-        with: { name: playwright-report, path: e2e-ts/playwright-report }
+        with: { name: playwright-report, path: e2e-react/playwright-report }
 ```
 
 For big suites, split the run across machines with `--shard=1/4` … `--shard=4/4`.
@@ -96,7 +96,7 @@ From this lesson on there are no starter files: you create every file yourself.
 1. Break a test on purpose (for example, expect the wrong balance in lesson 09), run it, and open the trace.
    Find the failing action, the DOM snapshot at that moment, and the network call that changed the balance.
    Then fix the test.
-2. Write `e2e-ts/react/lesson12/tracing-and-screenshots.spec.ts`: record a trace by hand and save a full-page
+2. Write `e2e-react/lesson12/tracing-and-screenshots.spec.ts`: record a trace by hand and save a full-page
    screenshot plus a screenshot of just the balance, then expect the files to exist. (Hint: while the config's
    `trace` option is on, Playwright owns tracing; `test.use({ trace: 'off' })` in this file hands it to you.)
 3. Tag 2 fast, essential tests `@smoke` and run only those.

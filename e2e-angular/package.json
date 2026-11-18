@@ -7,7 +7,10 @@
     "solutions": "playwright test --config solutions",
     "contract": "playwright test --config solutions/contract.config.ts",
     "broken": "playwright test --config broken",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:angular": "playwright test",
+    "solutions:angular": "playwright test --config solutions",
+    "broken:angular": "playwright test --config broken"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.1",

@@ -56,7 +56,7 @@ open <http://localhost:8080> and sign in as `teller` / `teller-pass`.
 > Paste the commands without trailing `# comments`. zsh (the macOS default shell) doesn't treat
 > `#` as a comment in interactive sessions, so it would pass the comment to Maven as arguments.
 
-Then start at **[lessons/00-setup.md](00-setup.md)**.
+Then start at **[00: Setup and tour](00-setup.md)**.
 
 On Windows, use `mvnw.cmd` instead of `./mvnw`.
 

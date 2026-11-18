@@ -1,6 +1,6 @@
 # Course effectiveness review: Playwright for Java upskill
 
-Reviewed 2026-11-11. Scope: `README.md`, `lessons/00–13`, `e2e-java/.../solutions/` (support, pages, and
+Reviewed 2026-11-11. Scope: `README.md`, `lessons/java/00–13`, `e2e-java/.../solutions/` (support, pages, and
 the lesson 03, 06, 09, 10, 11 and 12 solutions read in full), `e2e-java/pom.xml`, `app/` config and tests,
 `docs/ledgerline-reference.md`, and `docs/research/playwright-java.md`.
 
@@ -31,7 +31,7 @@ are API-only and the rest drive a browser. The app's 4 unit tests are never used
 
 | Course practice | Where | Playwright guidance |
 |---|---|---|
-| Locators ranked role → label → placeholder → text → test id → CSS "last resort"; explains strictness, chaining and filtering | `lessons/03-locators.md` | Locators page: role first, test ids are "not user facing", "CSS and XPath are not recommended as the DOM can often change" ([locators](https://playwright.dev/java/docs/locators)). "Use chaining and filtering" ([best practices](https://playwright.dev/docs/best-practices)) |
+| Locators ranked role → label → placeholder → text → test id → CSS "last resort"; explains strictness, chaining and filtering | `lessons/java/03-locators.md` | Locators page: role first, test ids are "not user facing", "CSS and XPath are not recommended as the DOM can often change" ([locators](https://playwright.dev/java/docs/locators)). "Use chaining and filtering" ([best practices](https://playwright.dev/docs/best-practices)) |
 | "Use this / Not this" table: `assertThat(locator).isVisible()` rather than `assertTrue(locator.isVisible())`; checkpoint "no `Thread.sleep`" | `lessons/02` | "Use web-first assertions… Don't use manual assertions" ([best practices](https://playwright.dev/docs/best-practices)) |
 | A new context per test, owning your own data, never touching seeded data, parallel-safe by construction | `lessons/04`, `06`, `09`, `12`; `TestData.java` | "Make tests as isolated as possible… each test… its own local storage, session storage, data, cookies" ([best practices](https://playwright.dev/docs/best-practices)). Contexts give isolation, so tests can run in any order or in parallel ([browser contexts](https://playwright.dev/java/docs/browser-contexts)) |
 | Sign in once with `storageState`, treat the files as secrets, git-ignore them | `lessons/10`; `.gitignore` has `target/` and `playwright/.auth/` | "The browser state file may contain sensitive cookies… We strongly discourage checking them into private or public repositories" ([auth](https://playwright.dev/java/docs/auth)) |
@@ -336,7 +336,7 @@ justified. Add a lesson 03 discussion question: "Find the CSS locators in `pages
   ([browsers](https://playwright.dev/java/docs/browsers)). The Java CI page recommends the pinned
   `mcr.microsoft.com/playwright/java:v1.64.0-noble` image ([CI](https://playwright.dev/java/docs/ci)).
 
-**Fix.** Add a "Working on a sensitive system" section to `lessons/12-debugging-and-scale.md` (or a new
+**Fix.** Add a "Working on a sensitive system" section to `lessons/java/12-debugging-and-scale.md` (or a new
 `docs/sensitive-projects.md`) covering:
 1. Traces, screenshots and videos are sensitive artefacts. Use `RETAIN_ON_FAILURE` (already done), set
    `retention-days` on `upload-artifact`, and never upload traces from production-like data to public CI.

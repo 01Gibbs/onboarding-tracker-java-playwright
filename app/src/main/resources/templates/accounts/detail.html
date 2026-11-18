@@ -55,6 +55,8 @@
                     <input type="radio" th:field="*{type}" th:value="${t}">
                     <span th:text="${t.label}">Deposit</span>
                 </label>
+                <p class="field-error" id="type-error" th:if="${#fields.hasErrors('type')}"
+                   th:text="${#fields.errors('type')[0]}">Error</p>
             </fieldset>
             <div class="field">
                 <label for="amount">Amount</label>
@@ -64,7 +66,7 @@
                 <p class="field-error" id="amount-error" th:if="${#fields.hasErrors('amount')}"
                    th:text="${#fields.errors('amount')[0]}">Error</p>
             </div>
-            <div class="field" id="transfer-target" th:hidden="*{type.name() != 'TRANSFER'}">
+            <div class="field" id="transfer-target" th:hidden="*{type?.name() != 'TRANSFER'}">
                 <label for="toAccountId">To account</label>
                 <select id="toAccountId" th:field="*{toAccountId}"
                         th:attr="aria-invalid=${#fields.hasErrors('toAccountId')} ? 'true' : null,

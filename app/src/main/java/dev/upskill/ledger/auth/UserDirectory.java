@@ -23,9 +23,11 @@ public class UserDirectory {
         this.properties = properties;
     }
 
+    /** Spaces around the username are ignored, however someone signs in; the password must match exactly. */
     public LoginResult authenticate(String username, String password) {
+        String name = username.strip();
         Optional<UserConfig> match = properties.users().stream()
-                .filter(u -> u.username().equals(username) && u.password().equals(password))
+                .filter(u -> u.username().equals(name) && u.password().equals(password))
                 .findFirst();
         if (match.isEmpty()) {
             return new LoginResult.Failure("Invalid username or password");

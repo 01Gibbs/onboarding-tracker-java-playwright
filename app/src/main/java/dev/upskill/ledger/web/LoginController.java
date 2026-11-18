@@ -29,7 +29,7 @@ public class LoginController {
     public String login(@RequestParam(defaultValue = "") String username,
                         @RequestParam(defaultValue = "") String password,
                         HttpServletRequest request, Model model) {
-        LoginResult result = users.authenticate(username.trim(), password);
+        LoginResult result = users.authenticate(username, password);
         if (result instanceof LoginResult.Failure(String message)) {
             model.addAttribute("error", message);
             model.addAttribute("username", username);

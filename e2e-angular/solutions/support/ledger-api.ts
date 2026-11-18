@@ -46,6 +46,8 @@ export class LedgerApi {
       return new LedgerApi(await requests.newContext({
         baseURL,
         extraHTTPHeaders: { Authorization: `Bearer ${token}` },
+        // Its own limit for arranging data, so a suite with short action timeouts (lesson 13) doesn't cut it off
+        timeout: 30_000,
       }))
     } finally {
       await anonymous.dispose()

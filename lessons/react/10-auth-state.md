@@ -108,6 +108,6 @@ On a React page, first wait for something that **is** there (a row, a heading), 
 - [ ] The auditor tests pass without signing in per test
 - [ ] `playwright/.auth/` is git-ignored (`git status` shows nothing there)
 
-**Reference:** `lesson10/`, `support/auth-state.ts`, and the `setup` project in `solutions/playwright.config.ts`
+**Reference:** `lesson10/`, `support/auth-state.ts`, and the `setup` project in `suites.ts`
 
 Next: [11: Network interception and mocking](11-network.md)

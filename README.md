@@ -27,10 +27,11 @@ front end keeps the same [UI contract](docs/ui-contract.md), so the same skills 
 |-------|-----------|----------|--------|
 | **Java** | Thymeleaf, served by the app on :8080 | Playwright for Java + JUnit 5 (`e2e-tests/`) | [lessons/](lessons/00-setup.md), below |
 | **React** | React 19 + Vite on :5173 (`frontends/react/`) | Playwright Test + TypeScript (`e2e-ts/react/`) | [lessons/react/](lessons/react/README.md): 00–14 |
-| **Angular** | Angular 22 on :4200 (`frontends/angular/`) | Playwright Test + TypeScript | planned |
+| **Angular** | Angular 22 on :4200 (`frontends/angular/`) | Playwright Test + TypeScript (`e2e-ts/angular/`) | [lessons/angular/](lessons/angular/README.md): 00–14 |
 
-The rest of this README is about the Java track. The React track needs Node 22, 24 or 26 as well as the JDK:
-start at [lessons/react/00-setup.md](lessons/react/00-setup.md).
+The rest of this README is about the Java track. The React and Angular tracks need Node 22, 24 or 26 as well as
+the JDK: start at [lessons/react/00-setup.md](lessons/react/00-setup.md) or
+[lessons/angular/00-setup.md](lessons/angular/00-setup.md).
 
 ## Quick start
 
@@ -92,11 +93,14 @@ e2e-tests/src/
 lessons/                     the course (Java track)
 lessons/answers/             answer notes (spoilers)
 lessons/react/               the React track's lessons
+lessons/angular/             the Angular track's lessons
 frontends/react/             the React front end (with its own unit, integration and mutation tests)
 frontends/angular/           the Angular front end (the same contract; its own unit, integration and mutation tests)
 e2e-ts/                      Playwright Test (TypeScript) for the React and Angular tracks
   react/                     YOUR code for the React track: config and starter files
-  solutions/                 reference answers, run against every front end (the contract check)
+  angular/                   YOUR code for the Angular track: config and starter files
+  solutions/                 reference answers: per track, and against every front end (the contract check)
+  suites.ts                  the shared config behind solutions/ and broken/
   broken/                    lesson 13's deliberately broken suite (TypeScript edition)
 docs/
   ledgerline-reference.md    users, seeded data, business rules, UI map, API
@@ -135,18 +139,20 @@ React and Angular track and front-end commands (from the repo root, after `npm i
 | Run the React app | `npm run dev:react` (with the back end running) |
 | Run the Angular app | `npm run dev:angular` (with the back end running) |
 | Your React-track tests | `npm run test:react`, or `npm run test:react -- lesson03 --headed`, or `-- --ui` |
+| Your Angular-track tests | `npm run test:angular` (the same options) |
 | Reference answers on React | `npm run solutions:react` |
 | Reference answers on Angular | `npm run solutions:angular` |
 | Contract check: answers on every front end | `npm run contract` |
-| React lesson 13 broken suite | `npm run broken:react` |
+| Lesson 13 broken suite | `npm run broken:react`, `npm run broken:angular` |
 | Front-end unit and integration tests | `npm run test:frontends` (React and Angular) |
 | Front-end mutation tests (slow) | `npm run mutation:frontends`, reports in `frontends/react/reports/mutation/` and `frontends/angular/reports/mutation/` |
 
-On a fresh checkout, `npm run test:react` is green: 2 tests pass (the setup check and lesson 01's worked
-example) and every unfinished exercise is *skipped* with a "TODO lesson NN" reason. Playwright starts the back
-end and the React front end if they aren't running. The reference answers are 70 tests, plus 2 that sign in first (`npm run solutions:react`);
-`npm run contract` runs them against React, Angular and Thymeleaf. The broken suite (`npm run broken:react`) fails 9 of its 11 tests against
-a freshly started app, and 10 on every later run against the same app, until you've fixed them.
+On a fresh checkout, `npm run test:react` and `npm run test:angular` are green: 2 tests pass in each (the setup
+check and lesson 01's worked example) and every unfinished exercise is *skipped* with a "TODO lesson NN" reason.
+Playwright starts the back end and that track's front end if they aren't running. The reference answers are 70
+tests, plus 2 that sign in first (`npm run solutions:react`, `npm run solutions:angular`); `npm run contract` runs
+them against React, Angular and Thymeleaf. Each track's broken suite fails 9 of its 11 tests against a freshly
+started back end, and 10 on every later run against the same one, until you've fixed them.
 
 ## Versions
 

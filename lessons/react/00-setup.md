@@ -25,7 +25,8 @@ npx playwright install chromium
 ```
 
 `npm install` installs the front ends and the test project together (they are npm workspaces). Playwright
-drives a real browser build that it downloads itself; add `--with-deps` on Linux.
+drives a real browser build that it downloads itself; add `--with-deps` on Linux. Newer npm versions may end
+with "packages have install scripts not yet covered by allowScripts": that's expected, and nothing failed.
 
 ## 3. Start Ledgerline
 

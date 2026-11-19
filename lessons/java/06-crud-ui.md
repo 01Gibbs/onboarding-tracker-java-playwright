@@ -45,7 +45,8 @@ assertThat(page.getByLabel("First name")).hasAttribute("aria-invalid", "true");
 ### Grouping with `@Nested`
 
 JUnit's `@Nested` classes group related tests (for example, "Validation") and inherit the outer
-class's `@BeforeEach` and `@UsePlaywright`.
+class's `@BeforeEach` and `@UsePlaywright`. Maven counts tests per class, so the output shows
+`Tests run: 0 … in CustomerCrudTest` and the real count under `CustomerCrudTest$Validation`: add them up.
 
 ## Exercise
 
@@ -78,7 +79,7 @@ customer" form with unique data, and returns the full name.
 
 7. Submit an empty form. Assert the error summary, the accessible descriptions of First name and Last
    name, and `aria-invalid="true"` on First name.
-8. Submit an invalid email. Assert the message, and that the other fields kept their values.
+8. Submit an invalid email. Assert the message "Enter a valid email address", and that the other fields kept their values.
 9. Use `ALICE.ARCHER@example.test`. Assert "A customer with this email already exists".
 
 ## Discussion

@@ -67,7 +67,8 @@ Get a token in `beforeEach`.
 2. List customers with `?status=SUSPENDED`. Every item has status `SUSPENDED`.
 3. One test that does **create → read → update → delete** on a customer. Check `201` and the `location` header,
    `200`, the changed field, `204`, and finally `404`.
-4. Invalid input → `400`. `fieldErrors.firstName` and `fieldErrors.email` have the expected messages.
+4. Invalid input → `400`. `fieldErrors.firstName` and `fieldErrors.email` have the expected messages (listed under Forms in the
+   [UI contract](../../docs/ui-contract.md#forms)).
 5. Duplicate email → `409`.
 6. Sign in as **auditor**. `GET` works, but `POST` → `403`.
 

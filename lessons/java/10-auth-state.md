@@ -72,7 +72,7 @@ you can check that the server itself refuses a write from a read-only user.
    - `@BeforeAll`: sign in as **auditor** through the UI once and save the state to
      `target/.auth/auditor.json`.
    - `@BeforeEach`/`@AfterEach`: open and close a signed-in context.
-   - Test: `/` shows "Alex Auditor (Auditor)", with no sign-in step.
+   - Test: `/` says it is signed in as "Alex Auditor (Auditor)" (the header contains it), with no sign-in step.
    - Test: no "New customer" link; no "Delete customer" button on Alice Archer; no "Move money"
      region on account `1`, but the transaction rows **are** visible.
    - Test: `page.request().post("/accounts/1/status", form status=FROZEN)` → `403`.

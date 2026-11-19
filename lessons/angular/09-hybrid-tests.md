@@ -15,19 +15,25 @@ the API, then exercise the UI, with fixtures doing the wiring.
 tidies up afterwards. You can add your own with `test.extend`:
 
 ```ts
-export const test = base.extend<{ api: LedgerApi; accountPage: AccountPage }>({
+export const test = base.extend<{ api: LedgerApi; signedIn: DashboardPage; accountPage: AccountPage }>({
   api: async ({ playwright, baseURL }, use) => {
     const api = await LedgerApi.signIn(playwright.request, baseURL!, TELLER)   // set up
     await use(api)                                                             // the test runs here
     await api.dispose()                                                        // tidy up
   },
+  signedIn: async ({ page }, use) => use(await new LoginPage(page).signInAs(TELLER)),   // the browser signs in
   accountPage: async ({ page }, use) => use(new AccountPage(page)),
 })
 ```
 
-Tests then import that `test` instead of the one from `@playwright/test`, and ask for what they need:
+Tests then import that `test` instead of the one from `@playwright/test`, and ask for what they need. The `api`
+client signs in on its own, but the **browser** starts signed out, so the page needs `signedIn` too:
 
 ```ts
+test.beforeEach(async ({ signedIn }) => {
+  await expect(signedIn.heading).toBeVisible()            // every test in this file starts on the dashboard
+})
+
 test('a deposit increases the balance', async ({ api, accountPage: account }) => {
   const { id } = await api.accountWithBalance('100.00')   // arrange (API)
   await account.open(id)

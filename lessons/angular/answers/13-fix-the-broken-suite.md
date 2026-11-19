@@ -94,7 +94,8 @@ Every fix below was checked by running the corrected suite twice.
   workers, which never share module variables.)
 - **Root cause:** one test depends on state another test creates.
 - **Fix:** each test arranges its own data: create the account inside `deposit into the account` with
-  `api.accountWithBalance('0')`, and delete the now-pointless `open an account` test and the shared variable.
+  `api.accountWithBalance('0')`, and remove the shared variable and the `mode: 'default'` line. `open an account`
+  stays as its own test with its own account. Both tests still run (11 in the suite), in any order.
 - **Principle:** tests must be independent, with no shared mutable state (lessons 04, 06 and 12).
 
 ### Case 10: `a teller creates a customer`

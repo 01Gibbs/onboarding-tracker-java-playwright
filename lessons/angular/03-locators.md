@@ -66,7 +66,7 @@ await expect(rows.filter({ hasNot: page.getByText('Frozen', { exact: true }) }))
 ```
 
 "None" is also true of an empty table, such as a list that is still loading. So check it again once a row you
-expect is on screen. The reference answer for exercise 5 shows the pattern.
+expect is on screen.
 
 ### Finding a locator interactively
 

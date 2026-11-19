@@ -7,7 +7,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  reporter: [['list'], ['html', { open: 'never' }]],
+  // Next to this config, so this suite never overwrites the report or traces of your own tests
+  reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
+  outputDir: 'test-results',
   use: { ...devices['Desktop Chrome'], baseURL: frontEnd.url, trace: 'retain-on-failure' },
   webServer: [backEnd, frontEnd.webServer],
   projects: [

@@ -161,6 +161,19 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <!-- One class at a time, whatever your lesson 12 junit-platform.properties says: with 5 s
+                             timeouts, parallel load could fail a case you have already fixed. -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <properties>
+                                <configurationParameters>
+                                    junit.jupiter.execution.parallel.enabled = false
+                                </configurationParameters>
+                            </properties>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

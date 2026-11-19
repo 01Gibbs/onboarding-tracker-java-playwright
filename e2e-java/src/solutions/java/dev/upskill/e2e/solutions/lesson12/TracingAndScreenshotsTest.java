@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
  * Lesson 12: collecting evidence. LedgerlineOptions already keeps a trace for every FAILED test
  * (Options.Trace.RETAIN_ON_FAILURE -> test-results/). This test shows the manual equivalents.
  * Open a trace with:
- * <pre>./mvnw -pl e2e-java exec:java -Dexec.args="show-trace target/traces/account-page.zip"</pre>
+ * <pre>./mvnw -pl e2e-java exec:java -Dexec.args="show-trace e2e-java/target/traces/account-page.zip"</pre>
  */
 @UsePlaywright(LedgerlineOptions.class)
 class TracingAndScreenshotsTest {

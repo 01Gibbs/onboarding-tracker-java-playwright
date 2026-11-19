@@ -85,12 +85,12 @@ On a React page, first wait for something that **is** there (a row, a heading), 
    on it. Create `e2e-react/lesson10/auth.setup.ts` that signs in as **auditor** through the UI and saves
    the state.
 2. In `e2e-react/lesson10/auditor-role.spec.ts`, start every test from that state with `test.use`. Then:
-   `/` shows "Alex Auditor (Auditor)", with no sign-in step.
+   `/` says it is signed in as "Alex Auditor (Auditor)" (the header contains it), with no sign-in step.
 3. No "New customer" link; no "Delete customer" button on Alice Archer; no "Move money" region on account `1`,
    but its transaction rows **are** visible. Wait for something present before each "not there" check.
 4. `page.request.patch('/api/accounts/1', ...)` to freeze the account → `403`.
 5. Add a second setup that signs in as **teller** through the API only (`request`, no page), and a new spec
-   file that uses it: `/customers` shows "Terry Teller (Teller)".
+   file that uses it: `/customers` says it is signed in as "Terry Teller (Teller)".
 6. **Stretch:** save state with codegen, from the `e2e-react` folder so the file lands next to the others:
    `cd e2e-react && npx playwright codegen --save-storage=playwright/.auth/manual.json http://localhost:5173/login`.
    Then load it in a test.

@@ -17,7 +17,7 @@ roles and accessible names, test ids, and the exact text of messages. Styling an
 | `/customers/new`, `/customers/{id}/edit` | `New customer · Ledgerline` / `Edit customer · Ledgerline` | fields "First name", "Last name", "Email", "Phone (optional)"; button "Save customer"; link "Cancel" |
 | `/customers/{id}` | the customer's full name | h1 with the name and status badge; groups "Reference", "Email", "Phone" ("Not provided"), "Customer since"; buttons "Suspend customer"/"Reactivate customer", "Delete customer"; link "Edit"; table "Accounts" with rows `account-row` or "This customer has no accounts yet."; link "Open account" (tellers, active customers) |
 | `/accounts` | `Accounts · Ledgerline` | form "Filter accounts" with "Status", "Type", button "Apply filters"; `result-count` ("Showing 1 account"); table "Accounts" with rows `account-row`; link "Open account" (tellers) |
-| `/accounts/new?customerId=` | `Open account · Ledgerline` | "Account holder" select (active customers, "Name (CUS-0001)"); radio group "Account type" (Current/Savings); "Nickname"; button "Open account" |
+| `/accounts/new?customerId=` | `Open account · Ledgerline` | "Account holder" select (active customers, "Name (CUS-0001)"); group "Account type" (a fieldset) with radios "Current" and "Savings"; "Nickname"; button "Open account" |
 | `/accounts/{id}` | the account's nickname | h1 with nickname and status badge; `account-number`; `account-balance`; buttons "Freeze account"/"Unfreeze account", "Close account", "Delete account" (only when it can be deleted); region "Move money"; table "Transactions" with rows `transaction-row`, filtered by "Show" |
 | anything else, or a record that can't be loaded | `Error · Ledgerline` | heading "Page not found" (404), "Access denied" (403) or "Something went wrong"; `error-message`; link "Back to dashboard" |
 
@@ -48,6 +48,9 @@ error's `message`); otherwise it is one of these:
 | Deleting an account | "Account 10000007 deleted" (on the holder's page) |
 | Moving money | the receipt's message, e.g. "Deposit of £25.50 completed" |
 
+When recent activity can't be loaded, the dashboard's activity panel shows the alert "Could not load recent
+activity. Use Refresh to try again." (`role="alert"`).
+
 Deleting a customer, closing an account and deleting an account ask first with the browser's confirm dialog:
 "Delete customer Ada Lovelace? This cannot be undone.", "Close account 10000001? Closed accounts cannot be
 reopened.", "Delete account 10000001?".
@@ -56,9 +59,23 @@ reopened.", "Delete account 10000001?".
 
 - Each invalid field has `aria-invalid="true"`, and its error is the field's accessible description
   (`aria-describedby`), so `toHaveAccessibleDescription("Nickname is required")` works everywhere.
+- Every field error, the same in the forms and in the API's `fieldErrors`:
+
+  | Field | Messages |
+  |-------|----------|
+  | First name, Last name | "First name is required", "First name must be 50 characters or fewer" (and the same for Last name) |
+  | Email | "Email is required", "Enter a valid email address", "Email must be 120 characters or fewer", "A customer with this email already exists" |
+  | Phone | "Phone must contain 7-20 digits and may start with +" |
+  | Account holder, Account type, Nickname | "Choose an account holder", "Accounts cannot be opened for a suspended customer", "Choose an account type", "Nickname is required", "Nickname must be 40 characters or fewer" (renaming: "Nickname must be between 1 and 40 characters") |
+  | Type | "Choose a type" |
+  | Amount | "Amount is required", "Amount must be greater than zero", "Amount must not exceed 1,000,000.00", "Amount can have at most 2 decimal places", "Insufficient funds. Available balance is …" |
+  | To account | "Choose an account to transfer to", "Cannot transfer to the same account", "Account … is frozen and cannot be used" |
+  | Description | "Description must be 80 characters or fewer" |
+
 - On the customer and open-account forms, field errors also show `error-summary` ("Please fix the highlighted
   fields.", `role="alert"`). "Move money" has none.
-- An error that belongs to no field shows above the form with `role="alert"`.
+- An error that belongs to no field shows above the form with `role="alert"`, e.g. moving money on an account
+  that can't be used: "Account 10000004 is frozen and cannot be used".
 - "Move money": radios "Deposit", "Withdrawal", "Transfer" (Deposit first and checked); "Amount";
   "To account" (only shown for Transfer, options "Everyday (10000001) – Alice Archer"); "Description
   (optional)"; button "Submit", which reads "Processing…" and is disabled while the deliberately slow request
@@ -73,6 +90,8 @@ buttons, or "Move money". The server refuses their writes with `403` whatever th
 
 - Data arrives after the page appears. A test that asserts something is **absent** passes instantly on a page
   that hasn't loaded yet, so assert something that is present first.
+- Until the summary arrives, the dashboard's figures show "…", so each card's name already differs from the nav
+  link's ("Customers…", not "Customers"). Thymeleaf renders the figures with the page.
 - After a filter or search, the previous rows can stay on screen until the new ones arrive. Use assertions
   that retry (`toHaveCount`, `filter({ hasNot })`) rather than looping over a snapshot from `all()`.
 - Sign in with the server session (`POST /api/auth/session`), so storage state and `page.request` behave

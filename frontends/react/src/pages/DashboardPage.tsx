@@ -19,15 +19,15 @@ export function DashboardPage() {
       <section aria-label="Summary" className="stats">
         <Link className="stat" to="/customers" data-testid="stat-customers">
           <span className="stat-label">Customers</span>
-          <span className="stat-value">{summary?.customerCount}</span>
+          <span className="stat-value">{summary?.customerCount ?? '…'}</span>
         </Link>
         <Link className="stat" to="/accounts?status=ACTIVE" data-testid="stat-active-accounts">
           <span className="stat-label">Active accounts</span>
-          <span className="stat-value">{summary?.activeAccountCount}</span>
+          <span className="stat-value">{summary?.activeAccountCount ?? '…'}</span>
         </Link>
         <div className="stat" data-testid="stat-total-balance">
           <span className="stat-label">Total balance held</span>
-          <span className="stat-value">{summary?.totalBalanceDisplay}</span>
+          <span className="stat-value">{summary?.totalBalanceDisplay ?? '…'}</span>
         </div>
       </section>
 

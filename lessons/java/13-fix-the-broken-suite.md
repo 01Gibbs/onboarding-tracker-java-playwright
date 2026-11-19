@@ -19,11 +19,14 @@ Run them:
 ./mvnw -pl e2e-java test -Pbroken
 ```
 
-- Actions time out after **5 seconds** in this suite (see `BrokenSuiteOptions`), so failures are quick.
+- Actions, assertions and page loads time out after **5 seconds** in this suite (see `BrokenSuiteOptions`;
+  Playwright for Java has one setting for all three), so failures are quick. The
+  suite runs one class at a time, even with lesson 12's parallel settings, so a busy machine can't fail a case
+  you have already fixed.
 - Every failing test keeps a **trace** under `e2e-java/test-results/<test>/trace.zip`. Open one with:
 
 ```bash
-./mvnw -pl e2e-java exec:java -Dexec.args="show-trace test-results/<folder>/trace.zip"
+./mvnw -pl e2e-java exec:java -Dexec.args="show-trace e2e-java/test-results/<folder>/trace.zip"
 ```
 
 > **Run the whole suite at least twice.** One test passes the first time and fails afterwards.
@@ -80,7 +83,7 @@ When you're done, or truly stuck, compare your notes with
 
 ## Checkpoint
 
-- [ ] 10/10 green, 3 runs in a row
+- [ ] All 11 tests green, 3 runs in a row
 - [ ] Symptom, evidence, root cause and fix written down for each case
 - [ ] No sleeps, longer timeouts, `force`, retries or disabled tests
 

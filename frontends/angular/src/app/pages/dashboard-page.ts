@@ -55,15 +55,15 @@ export class RecentActivity {
       <section aria-label="Summary" class="stats">
         <a class="stat" routerLink="/customers" data-testid="stat-customers">
           <span class="stat-label">Customers</span>
-          <span class="stat-value">{{ summary.data()?.customerCount }}</span>
+          <span class="stat-value">{{ summary.data()?.customerCount ?? '…' }}</span>
         </a>
         <a class="stat" routerLink="/accounts" [queryParams]="{ status: 'ACTIVE' }" data-testid="stat-active-accounts">
           <span class="stat-label">Active accounts</span>
-          <span class="stat-value">{{ summary.data()?.activeAccountCount }}</span>
+          <span class="stat-value">{{ summary.data()?.activeAccountCount ?? '…' }}</span>
         </a>
         <div class="stat" data-testid="stat-total-balance">
           <span class="stat-label">Total balance held</span>
-          <span class="stat-value">{{ summary.data()?.totalBalanceDisplay }}</span>
+          <span class="stat-value">{{ summary.data()?.totalBalanceDisplay ?? '…' }}</span>
         </div>
       </section>
 

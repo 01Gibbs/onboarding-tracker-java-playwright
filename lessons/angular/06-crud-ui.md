@@ -78,7 +78,9 @@ returns the full name.
 
 4. Create a customer, delete them and **accept** the dialog. Also check the dialog's type and exact message.
    Expect to be on `/customers`, the flash to say "Customer … deleted", and no link with their name.
-5. Create a customer, click delete and **dismiss** the dialog. Expect nothing to have happened.
+5. Create a customer, click delete and **dismiss** the dialog. Expect nothing to have happened. Careful: right
+   after the click, an *accepted* delete looks the same until its request returns, so check with the server
+   (reload the page and expect the customer again).
 6. Try to delete **Alice Archer** (accept the dialog). Expect the error "Customer cannot be deleted while they
    have accounts". (This is safe: the delete is refused.)
 
@@ -86,7 +88,7 @@ returns the full name.
 
 7. Submit an empty form. Expect the error summary, the accessible descriptions of First name and Last name, and
    `aria-invalid="true"` on First name.
-8. Submit an invalid email. Expect the message, and that the other fields kept their values.
+8. Submit an invalid email. Expect the message "Enter a valid email address", and that the other fields kept their values.
 9. Use `ALICE.ARCHER@example.test`. Expect "A customer with this email already exists".
 
 ## Discussion

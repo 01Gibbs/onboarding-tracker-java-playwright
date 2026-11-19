@@ -85,6 +85,8 @@ Run only your class:
 ```
 
 (Use a path pattern. With `-Psolutions`, `-Dtest=FirstTest` would also pick up the reference solution of the same name.)
+Check the output says `Tests run: N`: a mistyped pattern (say `lesson1` for `lesson01`) runs nothing and still
+says BUILD SUCCESS.
 
 ### Watch it run
 

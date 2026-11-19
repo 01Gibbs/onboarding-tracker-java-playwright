@@ -88,10 +88,11 @@ test('dismissing the confirmation keeps the customer', async ({ page }) => {
   page.once('dialog', dialog => dialog.dismiss())
   await page.getByRole('button', { name: 'Delete customer' }).click()
 
-  // Nothing happened: still on the same page, still showing the "created" message
+  // Still on the same page. But an accepted delete also looks like that for a moment, until its request comes
+  // back, so ask the server: after a reload the customer must still be there.
   await expect(page).toHaveURL(/\/customers\/\d+$/)
+  await page.reload()
   await expect(page.getByRole('heading', { level: 1 })).toContainText(name)
-  await expect(page.getByTestId('flash-message')).toContainText('created')
 })
 
 test('customers with accounts cannot be deleted', async ({ page }) => {

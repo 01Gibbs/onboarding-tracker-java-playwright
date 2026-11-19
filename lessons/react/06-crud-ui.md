@@ -78,7 +78,9 @@ returns the full name.
 
 4. Create a customer, delete them and **accept** the dialog. Also check the dialog's type and exact message.
    Expect to be on `/customers`, the flash to say "Customer … deleted", and no link with their name.
-5. Create a customer, click delete and **dismiss** the dialog. Expect nothing to have happened.
+5. Create a customer, click delete and **dismiss** the dialog. Expect nothing to have happened. Careful: right
+   after the click, an *accepted* delete looks the same until its request returns, so check with the server
+   (reload the page and expect the customer again).
 6. Try to delete **Alice Archer** (accept the dialog). Expect the error "Customer cannot be deleted while they
    have accounts". (This is safe: the delete is refused.)
 

@@ -33,8 +33,9 @@ at which level, and why), then build it. Ideas:
 
 - **Accounts list filters:** status and type combinations, "Showing N accounts", and the empty state. How do you
   check counts when other tests create accounts at the same time?
-- **Opening accounts:** validation (no holder, no type, nickname too long), and that suspended customers can't
-  be chosen.
+- **Opening accounts:** validation (no holder, no type), that suspended customers can't be chosen, and the
+  nickname limit: the field stops at 40 characters (`maxlength`), so the server's "too long" rule is one to
+  check through the API.
 - **Customer search:** by email, partial name, combined with the status filter, the "Clear" link, and what the
   URL says after each search.
 - **Account deletion:** "Delete account" only appears on accounts with no history. Delete one, and check where

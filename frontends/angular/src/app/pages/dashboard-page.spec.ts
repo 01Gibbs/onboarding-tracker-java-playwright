@@ -24,11 +24,15 @@ describe('the dashboard', () => {
     server.use(http.get('/api/summary', summary.respond))
     await renderApp('/', TELLER)
 
-    const customers = await screen.findByTestId('stat-customers')
-    expect(customers).toHaveTextContent('Customers…')
-    expect(customers).not.toHaveAccessibleName('Customers')
-    expect(screen.getByTestId('stat-active-accounts')).toHaveTextContent('Active accounts…')
-    expect(screen.getByTestId('stat-total-balance')).toHaveTextContent('Total balance held…')
+    try {
+      const customers = await screen.findByTestId('stat-customers')
+      expect(customers).toHaveTextContent('Customers…')
+      expect(customers).not.toHaveAccessibleName('Customers')
+      expect(screen.getByTestId('stat-active-accounts')).toHaveTextContent('Active accounts…')
+      expect(screen.getByTestId('stat-total-balance')).toHaveTextContent('Total balance held…')
+    } finally {
+      summary.release()   // a response left held crashes the test runner
+    }
   })
 
   it('lists recent activity, money in and money out', async () => {

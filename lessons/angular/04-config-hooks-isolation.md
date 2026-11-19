@@ -77,7 +77,8 @@ fight this. Tests that depend on each other's state are the second biggest sourc
 3. Try the command line:
    - `npm run test:angular -- lesson04 --headed`
    - `npm run test:angular -- -g "summary cards"` runs tests whose title matches
-   - `npm run test:angular -- --last-failed` re-runs only what failed last time (if nothing failed, it says "No tests found")
+   - `npm run test:angular -- --last-failed` re-runs only what failed last time. If nothing failed, it says "No
+     tests found", and npm then reports the script as failed: that's expected.
 4. Stop the Angular app in terminal 2, and run `npm run test:angular -- lesson04` again. What happened, and how
    long did it take?
 

@@ -13,7 +13,7 @@ roles and accessible names, test ids, and the exact text of messages. Styling an
 |-----|-------|----------------------|
 | `/login` | `Sign in · Ledgerline` | heading "Sign in to Ledgerline"; fields labelled "Username" and "Password"; button "Sign in" |
 | `/` | `Dashboard · Ledgerline` | heading "Dashboard"; test ids `stat-customers` (link to `/customers`), `stat-active-accounts` (link to `/accounts?status=ACTIVE`), `stat-total-balance`; region "Recent activity" |
-| `/customers` | `Customers · Ledgerline` | form `role="search"` with "Search customers" (placeholder "Name or email"), "Status", button "Search", link "Clear" while searching; `result-count` ("1 customer", "5 customers"); table "Customers" with rows `customer-row`; link "New customer" (tellers) |
+| `/customers` | `Customers · Ledgerline` | form `role="search"` with "Search customers" (placeholder "Name or email"), "Status", button "Search", link "Clear" while searching; `result-count` ("1 customer", "5 customers"); table "Customers" with rows `customer-row`, or "No customers match your search." when a search finds none; link "New customer" (tellers) |
 | `/customers/new`, `/customers/{id}/edit` | `New customer · Ledgerline` / `Edit customer · Ledgerline` | fields "First name", "Last name", "Email", "Phone (optional)"; button "Save customer"; link "Cancel" |
 | `/customers/{id}` | the customer's full name | h1 with the name and status badge; groups "Reference", "Email", "Phone" ("Not provided"), "Customer since"; buttons "Suspend customer"/"Reactivate customer", "Delete customer"; link "Edit"; table "Accounts" with rows `account-row` or "This customer has no accounts yet."; link "Open account" (tellers, active customers) |
 | `/accounts` | `Accounts · Ledgerline` | form "Filter accounts" with "Status", "Type", button "Apply filters"; `result-count` ("Showing 1 account"); table "Accounts" with rows `account-row`; link "Open account" (tellers) |
@@ -72,6 +72,8 @@ reopened.", "Delete account 10000001?".
   | To account | "Choose an account to transfer to", "Cannot transfer to the same account", "Account … is frozen and cannot be used" |
   | Description | "Description must be 80 characters or fewer" |
 
+- Nickname (40) and Description (80) have `maxlength`, so the field stops there; the "too long" messages
+  come back only from the server.
 - On the customer and open-account forms, field errors also show `error-summary` ("Please fix the highlighted
   fields.", `role="alert"`). "Move money" has none.
 - An error that belongs to no field shows above the form with `role="alert"`, e.g. moving money on an account

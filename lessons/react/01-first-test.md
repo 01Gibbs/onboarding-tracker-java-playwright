@@ -56,7 +56,8 @@ it line by line, run it, then replace each `test.skip(...)` line for exercises 2
 2. **Heading.** Expect the heading "Sign in to Ledgerline" to be visible.
 3. **Redirect.** Go to `/customers` while signed out, and expect to end up on the sign-in page:
    `await expect(page).toHaveURL(/\/login$/)`.
-4. **Break it.** Change the expected title to something wrong and run again. Read the failure message.
+4. **Break it.** Change the expected title to something wrong and run again. Read the failure message. (The
+   `npm error … command failed` lines after it only mean a test failed: npm passes on Playwright's exit code.)
    Notice the test waited about 5 seconds before failing. Why? Put it back afterwards.
 
 Run only this lesson:

@@ -42,7 +42,7 @@ Run them:
    - **Fix:** what you changed
 2. **Fix the test, not the app.** Here the app behaves correctly.
 3. **No band-aids.** None of these count as fixes: `Thread.sleep`, bigger timeouts, `force(true)`,
-   retries, or `@Disabled`.
+   retries, `@Disabled`, or putting tests in a different order (each test arranges its own data).
 4. **Keep the test's intent.** The method name says what it should prove, so make it prove that.
 
 ## Where to look

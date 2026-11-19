@@ -94,7 +94,9 @@ Every fix below was verified by running the corrected suite twice against a fres
   test would fail only some of the time.)
 - **Root cause:** one test depends on state that another test creates.
 - **Fix:** each test arranges its own data. Create the account inside `depositIntoTheAccount` (through
-  `LedgerApi`), and delete the now-pointless `openAccount` test and the static field.
+  `LedgerApi`), and remove the static field and the `@TestMethodOrder`. Keep `openAccount` as its own test with
+  its own account, and give it the check it was missing: the new account is `ACTIVE` with a zero balance. Both
+  tests still run (11 in the suite), in any order.
 - **Principle:** tests must be independent, with no shared mutable state (lessons 04, 06 and 12).
 
 ### Case 10: `tellerCreatesACustomer`

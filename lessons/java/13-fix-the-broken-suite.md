@@ -82,7 +82,7 @@ When you're done, or truly stuck, compare your notes with
 
 ## Checkpoint
 
-- [ ] 10/10 green, 3 runs in a row
+- [ ] All 11 tests green, 3 runs in a row
 - [ ] Symptom, evidence, root cause and fix written down for each case
 - [ ] No sleeps, longer timeouts, `force`, retries or disabled tests
 

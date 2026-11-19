@@ -82,7 +82,9 @@ Guidelines that keep page objects healthy:
       in `pages/`
 - [ ] You could explain the "return the next page" pattern to a colleague
 
-**Reference:** `solutions/pages/`, `solutions/lesson07/` (`pages/` holds the finished, end-of-course page objects, so they already include what lessons 09, 11 and 14
-add; compare only the parts this lesson asked for)
+**Reference:** `solutions/pages/`, `solutions/lesson07/`
+
+> `solutions/pages/` holds the finished, end-of-course page objects, so they already include what lessons 09, 11 and 14
+> add. Compare only the parts this lesson asked for.
 
 Next: [08: API testing](08-api-testing.md)

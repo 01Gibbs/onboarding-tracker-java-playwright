@@ -73,7 +73,7 @@ reopened.", "Delete account 10000001?".
   | Description | "Description must be 80 characters or fewer" |
 
 - Nickname (40) and Description (80) have `maxlength`, so the field stops there; the "too long" messages
-  come back only from the API.
+  come back only from the server.
 - On the customer and open-account forms, field errors also show `error-summary` ("Please fix the highlighted
   fields.", `role="alert"`). "Move money" has none.
 - An error that belongs to no field shows above the form with `role="alert"`, e.g. moving money on an account

@@ -77,7 +77,8 @@ fight this. Tests that depend on each other's state are the second biggest sourc
 3. Try the command line:
    - `npm run test:react -- lesson04 --headed`
    - `npm run test:react -- -g "summary cards"` runs tests whose title matches
-   - `npm run test:react -- --last-failed` re-runs only what failed last time (if nothing failed, it says "No tests found", and npm then reports the script as failed: that's expected)
+   - `npm run test:react -- --last-failed` re-runs only what failed last time. If nothing failed, it says "No
+     tests found", and npm then reports the script as failed: that's expected.
 4. Stop the React app in terminal 2, and run `npm run test:react -- lesson04` again. What happened, and how
    long did it take?
 

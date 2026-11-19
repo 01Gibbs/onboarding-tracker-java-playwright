@@ -38,6 +38,7 @@ export class LedgerApi {
 
   /** Signs in with POST /api/auth/login and returns a client that sends the bearer token. */
   static async signIn(requests: APIRequest, baseURL: string, user: User): Promise<LedgerApi> {
+    // Requests set their own limit, so a suite with short action timeouts (lesson 13) can't cut off its set-up
     const anonymous = await requests.newContext({ baseURL, timeout: 30_000 })
     try {
       const response = await anonymous.post('/api/auth/login', { data: { username: user.username, password: user.password } })

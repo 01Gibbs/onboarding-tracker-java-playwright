@@ -59,19 +59,23 @@ reopened.", "Delete account 10000001?".
 
 - Each invalid field has `aria-invalid="true"`, and its error is the field's accessible description
   (`aria-describedby`), so `toHaveAccessibleDescription("Nickname is required")` works everywhere.
-- The field errors, the same in the forms and in the API's `fieldErrors`:
+- Every field error, the same in the forms and in the API's `fieldErrors`:
 
   | Field | Messages |
   |-------|----------|
   | First name, Last name | "First name is required", "First name must be 50 characters or fewer" (and the same for Last name) |
   | Email | "Email is required", "Enter a valid email address", "Email must be 120 characters or fewer", "A customer with this email already exists" |
   | Phone | "Phone must contain 7-20 digits and may start with +" |
-  | Account holder, Account type, Nickname | "Choose an account holder", "Choose an account type", "Nickname is required", "Nickname must be 40 characters or fewer" |
-  | Amount | "Amount is required", "Amount must be greater than zero", "Amount can have at most 2 decimal places", "Insufficient funds. Available balance is …" |
+  | Account holder, Account type, Nickname | "Choose an account holder", "Accounts cannot be opened for a suspended customer", "Choose an account type", "Nickname is required", "Nickname must be 40 characters or fewer" (renaming: "Nickname must be between 1 and 40 characters") |
+  | Type | "Choose a type" |
+  | Amount | "Amount is required", "Amount must be greater than zero", "Amount must not exceed 1,000,000.00", "Amount can have at most 2 decimal places", "Insufficient funds. Available balance is …" |
+  | To account | "Choose an account to transfer to", "Cannot transfer to the same account", "Account … is frozen and cannot be used" |
+  | Description | "Description must be 80 characters or fewer" |
 
 - On the customer and open-account forms, field errors also show `error-summary` ("Please fix the highlighted
   fields.", `role="alert"`). "Move money" has none.
-- An error that belongs to no field shows above the form with `role="alert"`.
+- An error that belongs to no field shows above the form with `role="alert"`, e.g. moving money on an account
+  that can't be used: "Account 10000004 is frozen and cannot be used".
 - "Move money": radios "Deposit", "Withdrawal", "Transfer" (Deposit first and checked); "Amount";
   "To account" (only shown for Transfer, options "Everyday (10000001) – Alice Archer"); "Description
   (optional)"; button "Submit", which reads "Processing…" and is disabled while the deliberately slow request
@@ -86,6 +90,8 @@ buttons, or "Move money". The server refuses their writes with `403` whatever th
 
 - Data arrives after the page appears. A test that asserts something is **absent** passes instantly on a page
   that hasn't loaded yet, so assert something that is present first.
+- Until the summary arrives, the dashboard's figures show "…", so each card's name already differs from the nav
+  link's ("Customers…", not "Customers"). Thymeleaf renders the figures with the page.
 - After a filter or search, the previous rows can stay on screen until the new ones arrive. Use assertions
   that retry (`toHaveCount`, `filter({ hasNot })`) rather than looping over a snapshot from `all()`.
 - Sign in with the server session (`POST /api/auth/session`), so storage state and `page.request` behave

@@ -28,7 +28,7 @@ Traces are written to `e2e-java/test-results/<TestClass>.<method>-chromium/trace
 Open a trace:
 
 ```bash
-./mvnw -pl e2e-java exec:java -Dexec.args="show-trace test-results/<folder>/trace.zip"
+./mvnw -pl e2e-java exec:java -Dexec.args="show-trace e2e-java/test-results/<folder>/trace.zip"
 ```
 
 You can also drag the zip into <https://trace.playwright.dev>. It runs entirely in your browser, so

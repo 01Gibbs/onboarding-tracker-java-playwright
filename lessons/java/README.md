@@ -72,7 +72,7 @@ On Windows, use `mvnw.cmd` instead of `./mvnw`.
 | Reference suite (parallel) | `./mvnw -pl e2e-java test -Psolutions` |
 | Lesson 13 broken suite | `./mvnw -pl e2e-java test -Pbroken` |
 | Record a test | `./mvnw -pl e2e-java exec:java -Dexec.args="codegen http://localhost:8080/login"` |
-| Open a trace | `./mvnw -pl e2e-java exec:java -Dexec.args="show-trace test-results/<dir>/trace.zip"` |
+| Open a trace | `./mvnw -pl e2e-java exec:java -Dexec.args="show-trace e2e-java/test-results/<dir>/trace.zip"` |
 
 The e2e tests need the app running in another terminal.
 

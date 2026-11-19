@@ -19,11 +19,13 @@ Run them:
 ./mvnw -pl e2e-java test -Pbroken
 ```
 
-- Actions time out after **5 seconds** in this suite (see `BrokenSuiteOptions`), so failures are quick.
+- Actions time out after **5 seconds** in this suite (see `BrokenSuiteOptions`), so failures are quick. The
+  suite runs one class at a time, even with lesson 12's parallel settings, so a busy machine can't fail a case
+  you have already fixed.
 - Every failing test keeps a **trace** under `e2e-java/test-results/<test>/trace.zip`. Open one with:
 
 ```bash
-./mvnw -pl e2e-java exec:java -Dexec.args="show-trace test-results/<folder>/trace.zip"
+./mvnw -pl e2e-java exec:java -Dexec.args="show-trace e2e-java/test-results/<folder>/trace.zip"
 ```
 
 > **Run the whole suite at least twice.** One test passes the first time and fails afterwards.

@@ -38,7 +38,7 @@ export class LedgerApi {
 
   /** Signs in with POST /api/auth/login and returns a client that sends the bearer token. */
   static async signIn(requests: APIRequest, baseURL: string, user: User): Promise<LedgerApi> {
-    const anonymous = await requests.newContext({ baseURL })
+    const anonymous = await requests.newContext({ baseURL, timeout: 30_000 })
     try {
       const response = await anonymous.post('/api/auth/login', { data: { username: user.username, password: user.password } })
       await expect(response).toBeOK()

@@ -19,7 +19,8 @@ Run them:
 npm run broken:react
 ```
 
-- Actions and assertions give up after **5 seconds** in this suite, so failures are quick.
+- Actions and assertions give up after **5 seconds** in this suite, so failures are quick. Opening a page and
+  the API client's own requests keep the usual allowance, so a busy machine can't fail a case you have fixed.
 - Every failing test keeps a **trace**. The HTML report links to each one:
   `cd e2e-react && npx playwright show-report broken/playwright-report`
 

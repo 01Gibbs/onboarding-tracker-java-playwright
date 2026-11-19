@@ -6,9 +6,15 @@ import { backEnd, frontEnd } from '../servers.ts'
 export default defineConfig({
   testDir: '.',
   fullyParallel: true,
-  reporter: [['list'], ['html', { open: 'never' }]],
-  // Actions and assertions give up after 5 s, so failures are quick
-  use: { ...devices['Desktop Chrome'], baseURL: frontEnd.url, trace: 'retain-on-failure', actionTimeout: 5_000 },
+  // Next to this config, so this suite never overwrites the report or traces of your own tests
+  reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
+  outputDir: 'test-results',
+  // Actions and assertions give up after 5 s, so failures are quick. Opening a page isn't what these cases get
+  // wrong, so it keeps the usual allowance and a busy machine can't fail a fixed test.
+  use: {
+    ...devices['Desktop Chrome'], baseURL: frontEnd.url, trace: 'retain-on-failure',
+    actionTimeout: 5_000, navigationTimeout: 30_000,
+  },
   expect: { timeout: 5_000 },
   webServer: [backEnd, frontEnd.webServer],
   projects: [

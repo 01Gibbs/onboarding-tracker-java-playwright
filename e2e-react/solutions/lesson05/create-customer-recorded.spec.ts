@@ -17,7 +17,7 @@ import { uniqueEmail, uniqueLastName } from '../support/test-data.ts'
 //   await page.getByRole('button', { name: 'Save customer' }).click();
 //   await expect(page.getByTestId('flash-message')).toContainText('Customer Grace Hopper created');
 //
-// Codegen added exact: true because the dashboard's "Customers 5" card is also a link whose name contains
+// Codegen added exact: true because the dashboard's "Customers" card (with its count) is also a link whose name contains
 // "Customers". Scoping to the main navigation says what we mean. We also used relative URLs, removed the
 // redundant click() and press('Tab'), made the data unique (so the test can run again), and asserted the
 // outcome rather than just the message.

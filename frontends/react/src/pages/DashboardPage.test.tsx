@@ -17,6 +17,18 @@ describe('the dashboard', () => {
     await waitFor(() => expect(document.title).toBe('Dashboard · Ledgerline'))
   })
 
+  it('shows placeholders, not empty figures, while the summary loads', async () => {
+    // An empty figure would leave the card named just "Customers", the same as the nav link (lesson 05)
+    server.use(http.get('/api/summary', async () => { await delay('infinite') }))
+    renderApp('/', TELLER)
+
+    const customers = await screen.findByTestId('stat-customers')
+    expect(customers).toHaveTextContent('Customers…')
+    expect(customers).not.toHaveAccessibleName('Customers')
+    expect(screen.getByTestId('stat-active-accounts')).toHaveTextContent('Active accounts…')
+    expect(screen.getByTestId('stat-total-balance')).toHaveTextContent('Total balance held…')
+  })
+
   it('lists recent activity, money in and money out', async () => {
     server.use(http.get('/api/activity', ({ request }) => new URL(request.url).searchParams.get('limit') === '8'
       ? HttpResponse.json([SAVING, SALARY]) : apiError(400, 'wrong limit')))

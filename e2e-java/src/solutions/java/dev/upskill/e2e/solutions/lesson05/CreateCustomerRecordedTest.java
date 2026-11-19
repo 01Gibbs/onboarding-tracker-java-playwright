@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save customer")).click();
  * assertThat(page.getByTestId("flash-message")).containsText("Customer Grace Hopper created");
  * </pre>
- * Codegen added setExact(true) because the dashboard's "Customers 5" summary card is also a link whose
+ * Codegen added setExact(true) because the dashboard's "Customers" summary card (with its count) is also a link whose
  * name contains "Customers". We prefer scoping to the main navigation, which says what we mean.
  * What we changed: relative URLs, removed redundant click()/press("Tab"), unique test data
  * (so the test can run more than once), and assertions on the outcome rather than just the flash.

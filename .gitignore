@@ -2,7 +2,7 @@ target/
 test-results/
 playwright-report/
 node_modules/
-playwright/.auth/
+**/playwright/.auth/
 *.log
 .idea/
 *.iml

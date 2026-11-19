@@ -81,6 +81,14 @@ class AuthSessionApiTest {
     }
 
     @Test
+    void tokenSignInIgnoresSpacesAroundTheUsernameToo() throws Exception {
+        // Regression: /api/auth/login refused " teller " while the sign-in form and /api/auth/session accepted it
+        api.perform(json(post("/api/auth/login"), "{\"username\":\" teller \",\"password\":\"teller-pass\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("teller"));
+    }
+
+    @Test
     void nobodySignedInIsA401() throws Exception {
         api.perform(get("/api/auth/me"))
                 .andExpect(status().isUnauthorized())

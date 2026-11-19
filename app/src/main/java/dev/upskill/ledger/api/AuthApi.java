@@ -47,7 +47,7 @@ public class AuthApi {
     @PostMapping("/api/auth/session")
     public ResponseEntity<?> signIn(@RequestBody LoginRequest body, HttpServletRequest request) {
         LoginResult result = users.authenticate(
-                body.username() == null ? "" : body.username().trim(),
+                body.username() == null ? "" : body.username(),
                 body.password() == null ? "" : body.password());
         return switch (result) {
             case LoginResult.Success(var user) -> {

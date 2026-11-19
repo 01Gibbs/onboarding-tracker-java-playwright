@@ -32,6 +32,14 @@ class UserDirectoryTest {
     }
 
     @Test
+    void spacesAroundTheUsernameAreIgnoredWhicheverWaySomeoneSignsIn() {
+        // Regression: the sign-in page and /api/auth/session trimmed, /api/auth/login didn't
+        assertThat(users.authenticate("  teller ", "teller-pass"))
+                .isEqualTo(new LoginResult.Success(new CurrentUser("teller", "Terry Teller", Role.TELLER)));
+        assertThat(users.authenticate("teller", " teller-pass")).isInstanceOf(LoginResult.Failure.class);
+    }
+
+    @Test
     void aLockedUserIsToldTheyAreLocked() {
         assertThat(users.authenticate("locked", "locked-pass"))
                 .isEqualTo(new LoginResult.Failure("This user is locked. Contact an administrator."));

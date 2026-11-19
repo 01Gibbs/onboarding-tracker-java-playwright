@@ -91,6 +91,7 @@
                                 <param>dev.upskill.ledger.common.*</param>
                                 <param>dev.upskill.ledger.customer.*</param>
                                 <param>dev.upskill.ledger.ledger.*</param>
+                                <param>dev.upskill.ledger.web.*</param>
                             </targetClasses>
                             <targetTests>
                                 <param>dev.upskill.ledger.*</param>

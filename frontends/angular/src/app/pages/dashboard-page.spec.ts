@@ -29,6 +29,7 @@ describe('the dashboard', () => {
     expect(customers).not.toHaveAccessibleName('Customers')
     expect(screen.getByTestId('stat-active-accounts')).toHaveTextContent('Active accounts…')
     expect(screen.getByTestId('stat-total-balance')).toHaveTextContent('Total balance held…')
+    summary.release()
   })
 
   it('lists recent activity, money in and money out', async () => {

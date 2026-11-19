@@ -77,6 +77,7 @@ Guidelines that keep page objects healthy:
 - [ ] Your lesson 07 tests contain **no** `getByRole`, `getByLabel` or other locators. Those live only in `pages/`
 - [ ] You could explain the "return the next page" pattern to a colleague
 
-**Reference:** `pages/`, `lesson07/`
+**Reference:** `pages/`, `lesson07/` (`pages/` holds the finished, end-of-course page objects, so they already include what lessons 09, 11 and 14
+add; compare only the parts this lesson asked for)
 
 Next: [08: API testing](08-api-testing.md)

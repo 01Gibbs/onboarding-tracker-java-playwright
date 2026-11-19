@@ -38,7 +38,7 @@ npm run broken:react
    - **Fix:** what you changed
 2. **Fix the test, not Ledgerline.** Here Ledgerline behaves correctly.
 3. **No band-aids.** None of these count as fixes: `waitForTimeout`, bigger timeouts, `force: true`, retries,
-   or `test.skip`.
+   `test.skip`, or putting tests in a different order (each test arranges its own data).
 4. **Keep the test's intent.** Its title says what it should prove, so make it prove that.
 
 ## Where to look

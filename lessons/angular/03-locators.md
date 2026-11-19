@@ -91,7 +91,8 @@ is just a name. Its goal is below.
    Foster', { exact: true })` too.
 5. **Every row.** On `/accounts`, choose Status = Frozen and click "Apply filters". Expect the "Holiday Fund"
    row to be visible, and **no** row to have a badge other than "Frozen". (Try a loop over `.all()` first, run
-   it a few times with `--repeat-each=10`, and see whether it's reliable.)
+   it a few times with `--repeat-each=10`, and see whether it's reliable. On a fast machine it may pass every
+   time: the race is real, it just needs a slow moment to show, which is why it fails in CI first.)
 6. **`has` filter.** From Alice Archer's customer page, click the account link in the row of the "Accounts"
    table that **has** a cell with exactly the text "Savings". Expect the h1 to contain "Rainy Day" and the
    account number to be `10000002`.

@@ -91,7 +91,8 @@ source of flakiness.
 
 ## Checkpoint
 
-- [ ] No `http://localhost:8080` left in any of your tests
+- [ ] No `http://localhost:8080` left in your tests from lesson 02 on (lesson 01's `FirstTest` keeps its own
+  `BASE_URL`, to show where you started)
 - [ ] `-Dheadless=false` works
 - [ ] `IsolationTest` passes
 

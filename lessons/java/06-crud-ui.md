@@ -45,7 +45,8 @@ assertThat(page.getByLabel("First name")).hasAttribute("aria-invalid", "true");
 ### Grouping with `@Nested`
 
 JUnit's `@Nested` classes group related tests (for example, "Validation") and inherit the outer
-class's `@BeforeEach` and `@UsePlaywright`.
+class's `@BeforeEach` and `@UsePlaywright`. Maven counts tests per class, so the output shows
+`Tests run: 0 … in CustomerCrudTest` and the real count under `CustomerCrudTest$Validation`: add them up.
 
 ## Exercise
 

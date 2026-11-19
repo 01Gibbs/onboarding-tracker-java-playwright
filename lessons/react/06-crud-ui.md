@@ -88,7 +88,7 @@ returns the full name.
 
 7. Submit an empty form. Expect the error summary, the accessible descriptions of First name and Last name, and
    `aria-invalid="true"` on First name.
-8. Submit an invalid email. Expect the message, and that the other fields kept their values.
+8. Submit an invalid email. Expect the message "Enter a valid email address", and that the other fields kept their values.
 9. Use `ALICE.ARCHER@example.test`. Expect "A customer with this email already exists".
 
 ## Discussion

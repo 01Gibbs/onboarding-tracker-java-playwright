@@ -78,7 +78,7 @@ Complete the starter `workshop/lesson11/ActivityFeedTest.java` (test names only)
    exactly 2 items, the first contains "Deposit · Mocked salary" and "+£1,234.50", and the second contains
    "-£20.00". (Look at `app.js` to see which JSON fields the panel uses.)
 3. **Empty.** Fulfill `[]` → "No activity yet."
-4. **Server error, then recovery.** Fulfill `500` → the alert "Could not load recent activity". Then
+4. **Server error, then recovery.** Fulfill `500` → the alert "Could not load recent activity. Use Refresh to try again." Then
    `unroute` and click **Refresh** → real items appear.
 5. **Network failure.** `abort("connectionrefused")` → the alert is visible.
 6. **Patch the real response.** Use `route.fetch()`, replace every description with `PATCHED`, and fulfill.

@@ -76,7 +76,7 @@ Complete the starter `e2e-angular/lesson11/activity-feed.spec.ts`. Sign in durin
 2. **Mocked list.** Fulfill with two entries (a deposit of 1,234.50 "Mocked salary" and a withdrawal of 20).
    Expect exactly 2 items, the first containing "Deposit · Mocked salary" and "+£1,234.50", the second "-£20.00".
 3. **Empty.** Fulfill `[]` → "No activity yet."
-4. **Server error, then recovery.** Fulfill `500` → the alert "Could not load recent activity". Then `unroute`
+4. **Server error, then recovery.** Fulfill `500` → the alert "Could not load recent activity. Use Refresh to try again." Then `unroute`
    and click **Refresh** → real items appear.
 5. **Network failure.** `abort('connectionrefused')` → the alert is visible.
 6. **Patch the real response.** Use `route.fetch()`, set every description to `PATCHED`, and fulfill.

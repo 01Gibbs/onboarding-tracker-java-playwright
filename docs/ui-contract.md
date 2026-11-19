@@ -48,6 +48,9 @@ error's `message`); otherwise it is one of these:
 | Deleting an account | "Account 10000007 deleted" (on the holder's page) |
 | Moving money | the receipt's message, e.g. "Deposit of £25.50 completed" |
 
+When recent activity can't be loaded, the dashboard's activity panel shows the alert "Could not load recent
+activity. Use Refresh to try again." (`role="alert"`).
+
 Deleting a customer, closing an account and deleting an account ask first with the browser's confirm dialog:
 "Delete customer Ada Lovelace? This cannot be undone.", "Close account 10000001? Closed accounts cannot be
 reopened.", "Delete account 10000001?".
@@ -56,6 +59,16 @@ reopened.", "Delete account 10000001?".
 
 - Each invalid field has `aria-invalid="true"`, and its error is the field's accessible description
   (`aria-describedby`), so `toHaveAccessibleDescription("Nickname is required")` works everywhere.
+- The field errors, the same in the forms and in the API's `fieldErrors`:
+
+  | Field | Messages |
+  |-------|----------|
+  | First name, Last name | "First name is required", "First name must be 50 characters or fewer" (and the same for Last name) |
+  | Email | "Email is required", "Enter a valid email address", "Email must be 120 characters or fewer", "A customer with this email already exists" |
+  | Phone | "Phone must contain 7-20 digits and may start with +" |
+  | Account holder, Account type, Nickname | "Choose an account holder", "Choose an account type", "Nickname is required", "Nickname must be 40 characters or fewer" |
+  | Amount | "Amount is required", "Amount must be greater than zero", "Amount can have at most 2 decimal places", "Insufficient funds. Available balance is …" |
+
 - On the customer and open-account forms, field errors also show `error-summary` ("Please fix the highlighted
   fields.", `role="alert"`). "Move money" has none.
 - An error that belongs to no field shows above the form with `role="alert"`.
